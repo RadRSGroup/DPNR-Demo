@@ -12,49 +12,16 @@
     <div class="container">
         <!-- Registration Phase -->
         <div id="registration-phase" class="phase active">
-            <h2>Welcome to Core Persona</h2>
-            <form id="registration-form">
-                <div class="mb-3">
-                    <label for="firstName" class="form-label">First Name</label>
-                    <input type="text" class="form-control" id="firstName" required>
+            <div class="welcome-container">
+                <h1 class="text-center mb-4">Onboard Demo</h1>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="text-center mt-4">
+                            <button class="btn btn-primary" onclick="ui.showPhase('initial-segmentation')">Begin Assessment</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="assessmentPurpose" class="form-label">Assessment Purpose</label>
-                    <select class="form-select" id="assessmentPurpose" required>
-                        <option value="">Select a purpose</option>
-                        <option value="personal">Personal Growth</option>
-                        <option value="relationship">Relationship</option>
-                        <option value="professional">Professional</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="familiarityLevel" class="form-label">Familiarity Level</label>
-                    <select class="form-select" id="familiarityLevel" required>
-                        <option value="">Select your familiarity</option>
-                        <option value="none">None</option>
-                        <option value="some">Some</option>
-                        <option value="very">Very Familiar</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="detailLevel" class="form-label">Preferred Detail Level</label>
-                    <select class="form-select" id="detailLevel" required>
-                        <option value="">Select detail level</option>
-                        <option value="brief">Brief</option>
-                        <option value="moderate">Moderate</option>
-                        <option value="comprehensive">Comprehensive</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="motivation" class="form-label">What motivates you to explore personal growth today?</label>
-                    <textarea class="form-control" id="motivation" rows="3"></textarea>
-                </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="privacyConsent" required>
-                    <label class="form-check-label" for="privacyConsent">I agree to the privacy policy</label>
-                </div>
-                <button type="submit" class="btn btn-primary">Begin Assessment</button>
-            </form>
+            </div>
         </div>
 
         <!-- Initial Segmentation Phase -->
