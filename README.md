@@ -61,4 +61,4 @@ To modify or extend the demo:
 
 1. Edit `index.html` for structure changes
 2. Modify `styles.css` for styling updates
-3. Update `app.js` for logic and functionality changes 
+3. Update `app.js` for logic and functionality changes
