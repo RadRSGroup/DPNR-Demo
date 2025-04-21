@@ -1457,12 +1457,14 @@ const ui = {
         }
         container.innerHTML = '';
         
-        // Determine primary type from previous answers
-        const primaryType = this.determinePrimaryType();
+        // Determine primary type from previous answers and scores
+        const primaryType = this.determinePrimaryTypeFromScores();
         if (!primaryType) {
             console.error('Could not determine primary type');
             return;
         }
+        
+        console.log('Primary type determined:', primaryType);
         
         // Get adjacent types
         const adjacentTypes = this.getAdjacentTypes(primaryType);
@@ -1471,91 +1473,106 @@ const ui = {
             return;
         }
         
+        console.log('Adjacent types:', adjacentTypes);
+        
         // Create a copy of the wing type question
         const wingTypeQuestion = JSON.parse(JSON.stringify(questionBank.wingType.Q401));
-        if (!wingTypeQuestion || !wingTypeQuestion.options) {
-            console.error('Invalid wing type question structure');
-            return;
-        }
         
         // Filter options to only show adjacent types
         const filteredOptions = {};
         Object.entries(wingTypeQuestion.options).forEach(([key, option]) => {
-            if (!option || !option.text) {
-                console.error('Invalid option structure:', option);
-                return;
-            }
             const typeNumber = parseInt(key.replace('A40', ''));
             if (adjacentTypes.includes(typeNumber)) {
                 filteredOptions[key] = option;
             }
         });
         
-        if (Object.keys(filteredOptions).length === 0) {
-            console.error('No valid options found for wing type');
-            return;
-        }
+        // Create the question card
+        const questionEl = document.createElement('div');
+        questionEl.className = 'card mb-4';
         
-        wingTypeQuestion.options = filteredOptions;
+        const optionsHtml = Object.entries(filteredOptions).map(([optionId, option]) => `
+            <div class="form-check">
+                <input class="form-check-input" type="radio" 
+                    name="qQ401" 
+                    id="${optionId}" 
+                    value="${optionId}"
+                    required>
+                <label class="form-check-label" for="${optionId}">
+                    ${option.text}
+                </label>
+            </div>
+        `).join('');
         
-        // Render the filtered question
-        this.renderQuestions('wing-type', { Q401: wingTypeQuestion });
+        questionEl.innerHTML = `
+            <div class="card-body">
+                <h5 class="card-title">Wing Type Assessment</h5>
+                <p class="card-text">Based on your primary type (Type ${primaryType}), which of these adjacent types resonates with you more?</p>
+                <div class="form-group">${optionsHtml}</div>
+            </div>
+        `;
+        
+        container.appendChild(questionEl);
+        
+        // Add next button
+        const nextButton = document.createElement('button');
+        nextButton.className = 'btn btn-primary mt-3';
+        nextButton.textContent = 'Next';
+        nextButton.onclick = () => this.validateAndProceed('wing-type');
+        container.appendChild(nextButton);
+        
+        // Add validation alert
+        const validationAlert = document.createElement('div');
+        validationAlert.id = 'validation-alert-wing-type';
+        validationAlert.className = 'alert alert-danger d-none mt-3';
+        validationAlert.textContent = 'Please select a wing type before proceeding.';
+        container.appendChild(validationAlert);
     },
     
-    determinePrimaryType: function() {
-        // Get answers from initial segmentation and type confirmation phases
-        const initialAnswers = state.answers['initial-segmentation'] || {};
-        const confirmationAnswers = state.answers['type-confirmation'] || {};
+    determinePrimaryTypeFromScores: function() {
+        // Calculate current scores
+        const scores = calculatePersonaScore(state.answers);
         
-        // Map of answer IDs to type numbers
-        const answerToType = {
-            'A101': 1, 'A110': 1, // Upholder
-            'A102': 2, 'A111': 2, // Giver
-            'A103': 3, 'A112': 3, // Driver
-            'A104': 4, 'A113': 4, // Seeker
-            'A105': 5, 'A114': 5, // Observer
-            'A106': 6, 'A115': 6, // Guardian
-            'A107': 7, 'A116': 7, // Explorer
-            'A108': 8, 'A117': 8, // Protector
-            'A109': 9, 'A118': 9  // Harmonizer
+        // Map persona names to type numbers
+        const personaToType = {
+            'upholder': 1,
+            'giver': 2,
+            'driver': 3,
+            'seeker': 4,
+            'observer': 5,
+            'guardian': 6,
+            'explorer': 7,
+            'protector': 8,
+            'harmonizer': 9
         };
         
-        // Count occurrences of each type
-        const typeCounts = {};
-        Object.values(initialAnswers).forEach(answer => {
-            const type = answerToType[answer];
-            if (type) {
-                typeCounts[type] = (typeCounts[type] || 0) + 1;
+        // Find the persona with the highest score
+        let highestScore = 0;
+        let primaryPersona = null;
+        
+        Object.entries(scores).forEach(([persona, score]) => {
+            if (score > highestScore) {
+                highestScore = score;
+                primaryPersona = persona;
             }
         });
         
-        Object.values(confirmationAnswers).forEach(answer => {
-            const type = answerToType[answer];
-            if (type) {
-                typeCounts[type] = (typeCounts[type] || 0) + 1;
-            }
-        });
-        
-        // Find the type with the highest count
-        let maxCount = 0;
-        let primaryType = 1; // Default to type 1 if no clear winner
-        Object.entries(typeCounts).forEach(([type, count]) => {
-            if (count > maxCount) {
-                maxCount = count;
-                primaryType = parseInt(type);
-            }
-        });
-        
-        return primaryType;
+        return personaToType[primaryPersona] || null;
     },
     
     getAdjacentTypes: function(type) {
         // Get adjacent types (e.g., if type is 1, return [9, 2])
         const enneagramTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        const index = enneagramTypes.indexOf(type);
+        const index = enneagramTypes.indexOf(parseInt(type));
+        
+        if (index === -1) {
+            console.error('Invalid type number:', type);
+            return [];
+        }
+        
         return [
-            enneagramTypes[(index - 1 + 9) % 9],
-            enneagramTypes[(index + 1) % 9]
+            enneagramTypes[(index - 1 + 9) % 9],  // Previous type (wrap around to 9)
+            enneagramTypes[(index + 1) % 9]       // Next type (wrap around to 1)
         ];
     },
     
@@ -2161,9 +2178,14 @@ const ui = {
                 fragment.appendChild(questionEl);
             });
             
-            // Add next button
+            // Add Complete Assessment button with the correct styling
             const nextButton = document.createElement('button');
-            nextButton.className = 'btn btn-primary mt-3';
+            nextButton.className = 'btn btn-primary';
+            nextButton.style.backgroundColor = '#3B82F6';
+            nextButton.style.border = 'none';
+            nextButton.style.padding = '12px 24px';
+            nextButton.style.borderRadius = '6px';
+            nextButton.style.fontSize = '16px';
             nextButton.textContent = 'Complete Assessment';
             nextButton.onclick = () => this.validateAndProceed('personalization');
             fragment.appendChild(nextButton);

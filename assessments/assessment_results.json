@@ -1,0 +1,60 @@
+{
+    "timestamp": "2025-04-21T18:45:43.990Z",
+    "assessment_id": "assessment_20250421184543",
+    "scores": {
+        "upholder": 54,
+        "driver": 54,
+        "protector": 90,
+        "harmonizer": 54,
+        "questioner": 45,
+        "rebel": 45
+    },
+    "answers": {
+        "initial-segmentation": {
+            "qQ101": ["A103"],
+            "qQ102": ["A110"]
+        },
+        "detailed-differentiation": {
+            "qQ201": ["A204"],
+            "qQ202": ["A211"]
+        },
+        "type-confirmation": {
+            "qQ301": ["A308"]
+        },
+        "wing-type": {
+            "qQ401": ["A409"]
+        },
+        "instinctual-variant": {
+            "qQ501": ["A503"],
+            "qQ502": ["A505"]
+        },
+        "personalization": {
+            "qQ601": ["A603"],
+            "qQ602": ["A605"],
+            "qQ603": ["A608"]
+        },
+        "confirmation": {
+            "qQ701": ["A706"],
+            "qQ702": ["A711"]
+        }
+    },
+    "scoring_metadata": {
+        "phase_weights": {
+            "initial-segmentation": 0.3,
+            "detailed-differentiation": 0.25,
+            "type-confirmation": 0.2,
+            "wing-type": 0.1,
+            "instinctual-variant": 0.1,
+            "confirmation": 0.05
+        },
+        "total_possible_points": 100,
+        "total_earned_points": 95
+    },
+    "performance_metrics": {
+        "wing-type": 8065,
+        "instinctual-variant": 2271,
+        "personalization": 4428,
+        "confirmation": 3191,
+        "total_assessment_time": 17955
+    }
+} 
