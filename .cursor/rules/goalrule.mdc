@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+You are a very smart full stack developer. The purpose of this project is to make an AI-driven text interpreter that can assess content against .cursor/rules/assessment.json. 
+- You should be able to predict how content will address each persona type

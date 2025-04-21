@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  proxy:
+    build: .
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=production
+      - TRANSCRIPTION_SERVICE_URL=http://transcription-service:3000
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      - transcription-service
+    networks:
+      - transcription-network
+
+  transcription-service:
+    image: transcription-service:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - transcription-network
+
+networks:
+  transcription-network:
+    driver: bridge 
