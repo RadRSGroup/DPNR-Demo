@@ -2186,7 +2186,7 @@ const ui = {
             nextButton.style.padding = '12px 24px';
             nextButton.style.borderRadius = '6px';
             nextButton.style.fontSize = '16px';
-            nextButton.textContent = 'Complete Assessment';
+            nextButton.textContent = 'Next';
             nextButton.onclick = () => this.validateAndProceed('personalization');
             fragment.appendChild(nextButton);
             
@@ -2502,18 +2502,18 @@ const answerToPersona = {
     
     // Detailed Differentiation
     'A201': 'upholder',
-    'A202': 'questioner',
-    'A203': 'obliger',
-    'A204': 'rebel',
+    'A202': 'observer',  // was questioner
+    'A203': 'giver',     // was obliger
+    'A204': 'explorer',  // was rebel
     'A205': 'harmonizer',
     'A206': 'observer',
     'A207': 'explorer',
     'A208': 'protector',
     'A209': 'driver',
     'A210': 'upholder',
-    'A211': 'questioner',
-    'A212': 'obliger',
-    'A213': 'rebel',
+    'A211': 'observer',  // was questioner
+    'A212': 'giver',     // was obliger
+    'A213': 'explorer',  // was rebel
     'A214': 'harmonizer',
     'A215': 'observer',
     'A216': 'explorer',
@@ -2522,9 +2522,9 @@ const answerToPersona = {
     
     // Type Confirmation
     'A301': 'upholder',
-    'A302': 'questioner',
-    'A303': 'obliger',
-    'A304': 'rebel',
+    'A302': 'observer',  // was questioner
+    'A303': 'giver',     // was obliger
+    'A304': 'explorer',  // was rebel
     'A305': 'harmonizer',
     'A306': 'observer',
     'A307': 'driver',
