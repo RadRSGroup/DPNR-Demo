@@ -33,43 +33,8 @@
             <h2>Welcome to Core Persona</h2>
             <form id="registration-form">
                 <div class="mb-3">
-                    <label for="firstName" class="form-label">First Name</label>
+                    <label for="firstName" class="form-label">Name</label>
                     <input type="text" class="form-control" id="firstName" required>
-                </div>
-                <div class="mb-3">
-                    <label for="assessmentPurpose" class="form-label">Assessment Purpose</label>
-                    <select class="form-select" id="assessmentPurpose" required>
-                        <option value="">Select a purpose</option>
-                        <option value="personal">Personal Growth</option>
-                        <option value="relationship">Relationship</option>
-                        <option value="professional">Professional</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="familiarityLevel" class="form-label">Familiarity Level</label>
-                    <select class="form-select" id="familiarityLevel" required>
-                        <option value="">Select your familiarity</option>
-                        <option value="none">None</option>
-                        <option value="some">Some</option>
-                        <option value="very">Very Familiar</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="detailLevel" class="form-label">Preferred Detail Level</label>
-                    <select class="form-select" id="detailLevel" required>
-                        <option value="">Select detail level</option>
-                        <option value="brief">Brief</option>
-                        <option value="moderate">Moderate</option>
-                        <option value="comprehensive">Comprehensive</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="motivation" class="form-label">What motivates you to explore personal growth today?</label>
-                    <textarea class="form-control" id="motivation" rows="3"></textarea>
-                </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="privacyConsent" required>
-                    <label class="form-check-label" for="privacyConsent">I agree to the privacy policy</label>
                 </div>
                 <button type="submit" class="btn btn-primary">Begin Assessment</button>
             </form>
@@ -147,11 +112,23 @@
             <div id="personalization-questions"></div>
         </div>
 
+        <!-- Confirmation Phase -->
+        <div id="confirmation-phase" class="phase">
+            <h2>Final Confirmation</h2>
+            <div class="progress mb-3">
+                <div class="progress-bar" role="progressbar" style="width: 92%">Step 7 of 8</div>
+            </div>
+            <div id="validation-alert-confirmation" class="alert alert-danger d-none mb-3">
+                Please answer all questions before continuing.
+            </div>
+            <div id="confirmation-questions"></div>
+        </div>
+
         <!-- Results Phase -->
         <div id="results-phase" class="phase">
             <h2>Assessment Complete</h2>
             <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 100%">Step 7 of 7</div>
+                <div class="progress-bar" role="progressbar" style="width: 100%">Step 8 of 8</div>
             </div>
             <div id="persona-result" class="card mb-4">
                 <div class="card-body">

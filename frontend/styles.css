@@ -203,4 +203,178 @@ canvas {
     max-width: 100%;
     height: auto !important;
     margin: 1rem 0;
+}
+
+/* Persona Results Styles */
+.persona-results {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.primary-persona {
+    background: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.primary-persona h2 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.primary-persona .score {
+    font-size: 1.2rem;
+    color: #3498db;
+    margin-bottom: 2rem;
+}
+
+.primary-persona h3 {
+    color: #2c3e50;
+    margin: 1.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.primary-persona ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.primary-persona li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.primary-persona li:last-child {
+    border-bottom: none;
+}
+
+/* Core Emotional Needs */
+.core-emotional-needs li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Blind Spots */
+.blind-spots li {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+/* Aspirations */
+.aspirations li {
+    color: #2ecc71;
+    font-weight: 500;
+}
+
+/* Stress vs Growth Patterns */
+.pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.pattern-card {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+    border-left: 4px solid #3498db;
+}
+
+.pattern-card h4 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+/* Boundaries */
+.boundaries li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Life Domain Impact */
+.domain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.domain-card {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+.domain-card h4 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    text-transform: capitalize;
+}
+
+/* Potential */
+.potential {
+    margin-top: 2rem;
+}
+
+.capabilities ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.capabilities li {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+    border-left: 4px solid #2ecc71;
+}
+
+.changes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.change-card {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+.change-card h5 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    text-transform: capitalize;
+}
+
+/* Secondary Personas */
+.secondary-personas {
+    margin-top: 2rem;
+}
+
+.persona-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.secondary-persona {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.secondary-persona h4 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
 } 

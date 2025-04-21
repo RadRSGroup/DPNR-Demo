@@ -4,235 +4,436 @@ const ENABLE_LOGGING = !IS_PRODUCTION;
 
 // Question Bank
 const questionBank = {
-    initialSegmentation: [
-        {
-            id: 'Q101',
-            text: 'What best describes your approach to life?',
-            options: [
-                { id: 'A101', text: 'I strive for excellence and doing things the right way' },
-                { id: 'A102', text: 'I focus on helping and connecting with others' },
-                { id: 'A103', text: 'I aim to achieve success and recognition' },
-                { id: 'A104', text: 'I seek deep meaning and authenticity' },
-                { id: 'A105', text: 'I value knowledge and understanding' },
-                { id: 'A106', text: 'I prioritize security and preparedness' },
-                { id: 'A107', text: 'I embrace adventure and possibilities' },
-                { id: 'A108', text: 'I take charge and protect what matters' },
-                { id: 'A109', text: 'I maintain harmony and peace' }
-            ]
+    initialSegmentation: {
+        Q101: {
+            text: "What best describes your approach to life?",
+            options: {
+                A101: {
+                    text: "I strive for excellence and doing things the right way",
+                    personas: ["upholder"]
+                },
+                A102: {
+                    text: "I focus on helping and connecting with others",
+                    personas: ["obliger"]
+                },
+                A103: {
+                    text: "I aim to achieve success and recognition",
+                    personas: ["driver"]
+                },
+                A104: {
+                    text: "I seek deep meaning and authenticity",
+                    personas: ["seeker"]
+                },
+                A105: {
+                    text: "I value knowledge and understanding",
+                    personas: ["observer"]
+                },
+                A106: {
+                    text: "I prioritize security and preparedness",
+                    personas: ["guardian"]
+                },
+                A107: {
+                    text: "I embrace adventure and possibilities",
+                    personas: ["explorer"]
+                },
+                A108: {
+                    text: "I take charge and protect what matters",
+                    personas: ["protector"]
+                },
+                A109: {
+                    text: "I maintain harmony and peace",
+                    personas: ["harmonizer"]
+                }
+            }
         },
-        {
-            id: 'Q102',
-            text: 'What is your greatest fear?',
-            options: [
-                { id: 'A110', text: 'Being wrong or making mistakes' },
-                { id: 'A111', text: 'Being unloved or unwanted' },
-                { id: 'A112', text: 'Being seen as a failure' },
-                { id: 'A113', text: 'Being emotionally abandoned' },
-                { id: 'A114', text: 'Being overwhelmed or depleted' },
-                { id: 'A115', text: 'Being unprepared or unsafe' },
-                { id: 'A116', text: 'Being trapped in pain or limitation' },
-                { id: 'A117', text: 'Being controlled or betrayed' },
-                { id: 'A118', text: 'Conflict or disconnection' }
-            ]
-        },
-        {
-            id: 'Q103',
-            text: 'How do you typically handle stress?',
-            options: [
-                { id: 'A119', text: 'I become more critical and demanding' },
-                { id: 'A120', text: 'I give more to others' },
-                { id: 'A121', text: 'I work harder to prove myself' },
-                { id: 'A122', text: 'I withdraw into my emotions' },
-                { id: 'A123', text: 'I retreat into analysis' },
-                { id: 'A124', text: 'I become more anxious and vigilant' },
-                { id: 'A125', text: 'I seek new distractions' },
-                { id: 'A126', text: 'I become more controlling' },
-                { id: 'A127', text: 'I avoid conflict and adapt' }
-            ]
-        },
-        {
-            id: 'Q104',
-            text: 'What do you value most in relationships?',
-            options: [
-                { id: 'A128', text: 'Integrity and moral clarity' },
-                { id: 'A129', text: 'Emotional closeness and being needed' },
-                { id: 'A130', text: 'Admiration and success' },
-                { id: 'A131', text: 'Deep understanding and authenticity' },
-                { id: 'A132', text: 'Privacy and independence' },
-                { id: 'A133', text: 'Loyalty and security' },
-                { id: 'A134', text: 'Excitement and freedom' },
-                { id: 'A135', text: 'Honesty and directness' },
-                { id: 'A136', text: 'Harmony and acceptance' }
-            ]
+        Q102: {
+            text: "What is your greatest fear?",
+            options: {
+                A110: {
+                    text: "Being wrong or making mistakes",
+                    personas: ["upholder"]
+                },
+                A111: {
+                    text: "Being unloved or unwanted",
+                    personas: ["obliger"]
+                },
+                A112: {
+                    text: "Being seen as a failure",
+                    personas: ["driver"]
+                },
+                A113: {
+                    text: "Being emotionally abandoned",
+                    personas: ["seeker"]
+                },
+                A114: {
+                    text: "Being overwhelmed or depleted",
+                    personas: ["observer"]
+                },
+                A115: {
+                    text: "Being unprepared or unsafe",
+                    personas: ["guardian"]
+                },
+                A116: {
+                    text: "Being trapped in pain or limitation",
+                    personas: ["explorer"]
+                },
+                A117: {
+                    text: "Being controlled or betrayed",
+                    personas: ["protector"]
+                },
+                A118: {
+                    text: "Conflict or disconnection",
+                    personas: ["harmonizer"]
+                }
+            }
         }
-    ],
-    detailedDifferentiation: {
-        upholder: [
-            {
-                id: 'Q201',
-                text: 'How do you feel about rules and standards?',
-                options: [
-                    { id: 'A201', text: 'They provide necessary structure' },
-                    { id: 'A202', text: 'They should be followed with integrity' },
-                    { id: 'A203', text: 'They help maintain order and improvement' }
-                ]
-            }
-        ],
-        giver: [
-            {
-                id: 'Q202',
-                text: 'How do you feel about helping others?',
-                options: [
-                    { id: 'A204', text: 'It\'s natural and fulfilling' },
-                    { id: 'A205', text: 'It makes me feel valued' },
-                    { id: 'A206', text: 'I sometimes give too much' }
-                ]
-            }
-        ],
-        driver: [
-            {
-                id: 'Q203',
-                text: 'How do you view success?',
-                options: [
-                    { id: 'A207', text: 'It\'s essential to my identity' },
-                    { id: 'A208', text: 'It proves my worth' },
-                    { id: 'A209', text: 'I need to keep achieving' }
-                ]
-            }
-        ],
-        seeker: [
-            {
-                id: 'Q204',
-                text: 'How do you experience emotions?',
-                options: [
-                    { id: 'A210', text: 'Deeply and intensely' },
-                    { id: 'A211', text: 'I need to express them authentically' },
-                    { id: 'A212', text: 'I often feel misunderstood' }
-                ]
-            }
-        ],
-        observer: [
-            {
-                id: 'Q205',
-                text: 'How do you handle social situations?',
-                options: [
-                    { id: 'A213', text: 'I prefer to observe and analyze' },
-                    { id: 'A214', text: 'I need time to process' },
-                    { id: 'A215', text: 'I value my privacy' }
-                ]
-            }
-        ],
-        guardian: [
-            {
-                id: 'Q206',
-                text: 'How do you approach security?',
-                options: [
-                    { id: 'A216', text: 'I\'m always prepared' },
-                    { id: 'A217', text: 'I need to feel safe' },
-                    { id: 'A218', text: 'I\'m loyal to those I trust' }
-                ]
-            }
-        ],
-        explorer: [
-            {
-                id: 'Q207',
-                text: 'How do you handle limitations?',
-                options: [
-                    { id: 'A219', text: 'I seek ways around them' },
-                    { id: 'A220', text: 'I need freedom to explore' },
-                    { id: 'A221', text: 'I avoid feeling trapped' }
-                ]
-            }
-        ],
-        protector: [
-            {
-                id: 'Q208',
-                text: 'How do you handle power?',
-                options: [
-                    { id: 'A222', text: 'I take charge when needed' },
-                    { id: 'A223', text: 'I protect what matters' },
-                    { id: 'A224', text: 'I value strength and control' }
-                ]
-            }
-        ],
-        harmonizer: [
-            {
-                id: 'Q209',
-                text: 'How do you handle conflict?',
-                options: [
-                    { id: 'A225', text: 'I avoid it when possible' },
-                    { id: 'A226', text: 'I seek harmony' },
-                    { id: 'A227', text: 'I adapt to maintain peace' }
-                ]
-            }
-        ]
     },
-    typeConfirmation: [
-        {
-            id: 'Q301',
-            text: 'Which of these statements resonates most with you?',
-            options: [
-                { id: 'A301', text: 'I need to do things the right way' },
-                { id: 'A302', text: 'I need to be loved and needed' },
-                { id: 'A303', text: 'I need to be successful and admired' },
-                { id: 'A304', text: 'I need to be authentic and understood' },
-                { id: 'A305', text: 'I need to understand and be competent' },
-                { id: 'A306', text: 'I need to be secure and prepared' },
-                { id: 'A307', text: 'I need to be free and excited' },
-                { id: 'A308', text: 'I need to be strong and in control' },
-                { id: 'A309', text: 'I need to be at peace and connected' }
-            ]
-        }
-    ],
-    wingType: [
-        {
-            id: 'Q401',
-            text: 'Which closely related type feels more like you?',
-            options: [] // Will be populated based on primary type
-        }
-    ],
-    instinctualVariant: [
-        {
-            id: 'Q501',
-            text: 'What is your top daily life priority?',
-            options: [
-                { id: 'A501', text: 'Physical comfort (Self-Preservation)' },
-                { id: 'A502', text: 'Personal connections (One-to-One)' },
-                { id: 'A503', text: 'Social role (Social)' }
-            ]
+    detailedDifferentiation: {
+        Q201: {
+            text: "How do you typically respond to rules and expectations?",
+            options: {
+                A201: {
+                    text: "I follow them strictly and expect others to do the same",
+                    personas: ["upholder"]
+                },
+                A202: {
+                    text: "I question them and only follow if they make sense to me",
+                    personas: ["questioner"]
+                },
+                A203: {
+                    text: "I follow them to maintain relationships and avoid conflict",
+                    personas: ["obliger"]
+                },
+                A204: {
+                    text: "I often resist them and prefer to do things my own way",
+                    personas: ["rebel"]
+                },
+                A205: {
+                    text: "I adapt them to fit my needs while maintaining harmony",
+                    personas: ["harmonizer"]
+                },
+                A206: {
+                    text: "I analyze them thoroughly before deciding how to proceed",
+                    personas: ["observer"]
+                },
+                A207: {
+                    text: "I challenge them if they limit my freedom or growth",
+                    personas: ["explorer"]
+                },
+                A208: {
+                    text: "I enforce them when they protect what matters",
+                    personas: ["protector"]
+                },
+                A209: {
+                    text: "I use them as guidelines for success and achievement",
+                    personas: ["driver"]
+                }
+            }
         },
-        {
-            id: 'Q502',
-            text: 'Which fear or insecurity resonates most?',
-            options: [
-                { id: 'A504', text: 'Practical security (Self-Preservation)' },
-                { id: 'A505', text: 'Depth of connections (One-to-One)' },
-                { id: 'A506', text: 'Social acceptance (Social)' }
-            ]
+        Q202: {
+            text: "What is your approach to decision-making?",
+            options: {
+                A210: {
+                    text: "I make decisions based on clear principles and values",
+                    personas: ["upholder"]
+                },
+                A211: {
+                    text: "I gather extensive information before making decisions",
+                    personas: ["questioner"]
+                },
+                A212: {
+                    text: "I consider how decisions will affect others",
+                    personas: ["obliger"]
+                },
+                A213: {
+                    text: "I make decisions based on what feels right in the moment",
+                    personas: ["rebel"]
+                },
+                A214: {
+                    text: "I seek consensus and harmony in decision-making",
+                    personas: ["harmonizer"]
+                },
+                A215: {
+                    text: "I analyze all possible outcomes before deciding",
+                    personas: ["observer"]
+                },
+                A216: {
+                    text: "I make decisions that open up new possibilities",
+                    personas: ["explorer"]
+                },
+                A217: {
+                    text: "I make decisive choices that protect what matters",
+                    personas: ["protector"]
+                },
+                A218: {
+                    text: "I make decisions that lead to success and achievement",
+                    personas: ["driver"]
+                }
+            }
         }
-    ],
+    },
+    typeConfirmation: {
+        Q301: {
+            text: "How do you handle criticism?",
+            options: {
+                A301: {
+                    text: "I take it seriously and use it to improve",
+                    personas: ["upholder"]
+                },
+                A302: {
+                    text: "I analyze it to determine if it's valid",
+                    personas: ["questioner"]
+                },
+                A303: {
+                    text: "I feel hurt but try to accommodate others' views",
+                    personas: ["obliger"]
+                },
+                A304: {
+                    text: "I often dismiss it if it doesn't align with my values",
+                    personas: ["rebel"]
+                },
+                A305: {
+                    text: "I try to understand the other person's perspective",
+                    personas: ["harmonizer"]
+                },
+                A306: {
+                    text: "I examine it objectively and learn from it",
+                    personas: ["observer"]
+                },
+                A307: {
+                    text: "I use it as motivation to prove myself",
+                    personas: ["driver"]
+                },
+                A308: {
+                    text: "I defend my position strongly",
+                    personas: ["protector"]
+                },
+                A309: {
+                    text: "I look for the positive aspects in it",
+                    personas: ["explorer"]
+                }
+            }
+        }
+    },
+    wingType: {
+        Q401: {
+            text: "Which of these adjacent types resonates with you more?",
+            options: {
+                A401: {
+                    text: "Type 1: The Reformer - Principled, purposeful, self-controlled",
+                    personas: ["upholder"]
+                },
+                A402: {
+                    text: "Type 2: The Helper - Generous, demonstrative, people-pleasing",
+                    personas: ["giver"]
+                },
+                A403: {
+                    text: "Type 3: The Achiever - Adaptable, excelling, driven",
+                    personas: ["driver"]
+                },
+                A404: {
+                    text: "Type 4: The Individualist - Expressive, dramatic, self-absorbed",
+                    personas: ["seeker"]
+                },
+                A405: {
+                    text: "Type 5: The Investigator - Perceptive, innovative, isolated",
+                    personas: ["observer"]
+                },
+                A406: {
+                    text: "Type 6: The Loyalist - Engaging, responsible, anxious",
+                    personas: ["guardian"]
+                },
+                A407: {
+                    text: "Type 7: The Enthusiast - Spontaneous, versatile, scattered",
+                    personas: ["explorer"]
+                },
+                A408: {
+                    text: "Type 8: The Challenger - Self-confident, decisive, confrontational",
+                    personas: ["protector"]
+                },
+                A409: {
+                    text: "Type 9: The Peacemaker - Receptive, reassuring, complacent",
+                    personas: ["harmonizer"]
+                }
+            }
+        }
+    },
+    instinctualVariant: {
+        Q501: {
+            text: "What is your primary instinctual drive?",
+            options: {
+                A501: {
+                    text: "Self-Preservation - I focus on security, resources, and physical well-being",
+                    personas: ["guardian"]
+                },
+                A502: {
+                    text: "Social - I focus on belonging, status, and group dynamics",
+                    personas: ["harmonizer"]
+                },
+                A503: {
+                    text: "One-to-One - I focus on intense relationships and personal connections",
+                    personas: ["protector"]
+                }
+            }
+        },
+        Q502: {
+            text: "How do you typically respond to stress?",
+            options: {
+                A504: {
+                    text: "I focus on practical needs and security",
+                    personas: ["guardian"]
+                },
+                A505: {
+                    text: "I seek connection and support from others",
+                    personas: ["harmonizer"]
+                },
+                A506: {
+                    text: "I become more intense in my relationships",
+                    personas: ["protector"]
+                }
+            }
+        }
+    },
     personalization: [
         {
-            id: 'Q601',
-            text: 'Which areas would you like to explore further?',
+            id: "Q601",
+            text: "How do you prefer to receive feedback?",
             options: [
-                { id: 'A601', text: 'Personal Growth' },
-                { id: 'A602', text: 'Relationships' },
-                { id: 'A603', text: 'Career' },
-                { id: 'A604', text: 'Stress Management' }
+                {
+                    id: "A601",
+                    text: "Direct and constructive, focusing on improvement"
+                },
+                {
+                    id: "A602",
+                    text: "Balanced with positive reinforcement"
+                },
+                {
+                    id: "A603",
+                    text: "Gentle and supportive"
+                }
             ]
         },
         {
-            id: 'Q602',
-            text: 'How frequently do you want new insights?',
+            id: "Q602",
+            text: "What motivates you most in your work?",
             options: [
-                { id: 'A605', text: 'Daily' },
-                { id: 'A606', text: 'Weekly' },
-                { id: 'A607', text: 'Bi-Weekly' },
-                { id: 'A608', text: 'Monthly' }
+                {
+                    id: "A604",
+                    text: "Achieving excellence and high standards"
+                },
+                {
+                    id: "A605",
+                    text: "Making a positive impact on others"
+                },
+                {
+                    id: "A606",
+                    text: "Personal growth and development"
+                }
+            ]
+        },
+        {
+            id: "Q603",
+            text: "How do you handle conflict?",
+            options: [
+                {
+                    id: "A607",
+                    text: "Address it directly and seek resolution"
+                },
+                {
+                    id: "A608",
+                    text: "Look for compromise and harmony"
+                },
+                {
+                    id: "A609",
+                    text: "Take time to process before responding"
+                }
             ]
         }
-    ]
+    ],
+    confirmation: {
+        Q401: {
+            text: "What is your typical response to stress?",
+            options: {
+                A401: {
+                    text: "I double down on discipline and structure",
+                    personas: ["upholder"]
+                },
+                A402: {
+                    text: "I seek more information to understand the situation",
+                    personas: ["questioner"]
+                },
+                A403: {
+                    text: "I look to others for support and guidance",
+                    personas: ["obliger"]
+                },
+                A404: {
+                    text: "I break free from constraints and seek new approaches",
+                    personas: ["rebel"]
+                },
+                A405: {
+                    text: "I try to maintain balance and harmony",
+                    personas: ["harmonizer"]
+                },
+                A406: {
+                    text: "I withdraw to analyze and process",
+                    personas: ["observer"]
+                },
+                A407: {
+                    text: "I push harder to achieve and succeed",
+                    personas: ["driver"]
+                },
+                A408: {
+                    text: "I take control of the situation",
+                    personas: ["protector"]
+                },
+                A409: {
+                    text: "I seek new experiences to distract myself",
+                    personas: ["explorer"]
+                }
+            }
+        },
+        Q402: {
+            text: "How do you approach personal growth?",
+            options: {
+                A410: {
+                    text: "I set clear goals and follow structured plans",
+                    personas: ["upholder"]
+                },
+                A411: {
+                    text: "I seek to understand the underlying principles",
+                    personas: ["questioner"]
+                },
+                A412: {
+                    text: "I grow through relationships and helping others",
+                    personas: ["obliger"]
+                },
+                A413: {
+                    text: "I explore new experiences and challenge norms",
+                    personas: ["rebel"]
+                },
+                A414: {
+                    text: "I focus on maintaining balance and harmony",
+                    personas: ["harmonizer"]
+                },
+                A415: {
+                    text: "I analyze and understand before taking action",
+                    personas: ["observer"]
+                },
+                A416: {
+                    text: "I push myself to achieve and succeed",
+                    personas: ["driver"]
+                },
+                A417: {
+                    text: "I strengthen my ability to protect and lead",
+                    personas: ["protector"]
+                },
+                A418: {
+                    text: "I seek new adventures and possibilities",
+                    personas: ["explorer"]
+                }
+            }
+        }
+    }
 };
 
 // Persona Descriptions
@@ -687,75 +888,225 @@ const personas = {
 };
 
 // Scoring Logic
+// Debug logging utility
+function debugScoring(phase, data, level = 'info') {
+    if (!ENABLE_LOGGING) return;
+    
+    const timestamp = new Date().toISOString();
+    const prefix = `[${timestamp}] Scoring Debug - ${phase}`;
+    
+    console.group(prefix);
+    if (level === 'error') {
+        console.error(JSON.stringify(data, null, 2));
+    } else if (level === 'warn') {
+        console.warn(JSON.stringify(data, null, 2));
+    } else {
+        console.log(JSON.stringify(data, null, 2));
+    }
+    console.groupEnd();
+}
+
+// Constants for scoring
+const SCORING_WEIGHTS = {
+    initialSegmentation: 0.25,  // 25% weight
+    detailedDifferentiation: 0.35,  // 35% weight
+    typeConfirmation: 0.25,  // 25% weight
+    confirmation: 0.15  // 15% weight
+};
+
+// Persona weights from rules
+const PERSONA_WEIGHTS = {
+    upholder: 1.2,
+    giver: 1.1,
+    driver: 1.2,
+    seeker: 1.0,
+    observer: 1.1,
+    guardian: 1.2,
+    explorer: 1.0,
+    protector: 1.2,
+    harmonizer: 1.1
+};
+
+// Custom error types for scoring
+class ScoringError extends Error {
+    constructor(message, phase, details = {}) {
+        super(message);
+        this.name = 'ScoringError';
+        this.phase = phase;
+        this.details = details;
+    }
+}
+
+class ValidationError extends Error {
+    constructor(message, field, value) {
+        super(message);
+        this.name = 'ValidationError';
+        this.field = field;
+        this.value = value;
+    }
+}
+
+// Memory management
+const memoryManager = {
+    optimize: function(data) {
+        // Create a deep copy of the data
+        const optimized = JSON.parse(JSON.stringify(data));
+        
+        // Clean up any circular references
+        this.cleanup();
+        
+        return optimized;
+    },
+    
+    cleanup: function() {
+        // Clear any performance marks if available
+        if (window.performance && typeof window.performance.clearMarks === 'function') {
+            try {
+                window.performance.clearMarks();
+            } catch (e) {
+                console.warn('Could not clear performance marks:', e);
+            }
+        }
+        
+        if (window.performance && typeof window.performance.clearMeasures === 'function') {
+            try {
+                window.performance.clearMeasures();
+            } catch (e) {
+                console.warn('Could not clear performance measures:', e);
+            }
+        }
+        
+        // Suggest garbage collection
+        this.suggestGC();
+    },
+    
+    suggestGC: function() {
+        if (window.gc) {
+            window.gc();
+        } else if (window.performance && window.performance.memory) {
+            // If we're using a lot of memory, try to trigger GC
+            if (window.performance.memory.usedJSHeapSize > 100000000) { // 100MB
+                try {
+                    // Try to force garbage collection
+                    const arr = new Array(1000000);
+                    arr = null;
+                } catch (e) {
+                    console.warn('Could not trigger garbage collection');
+                }
+            }
+        }
+    }
+};
+
 function calculatePersonaScore(answers) {
-    const scores = {
-        upholder: 0,
-        giver: 0,
-        driver: 0,
-        seeker: 0,
-        observer: 0,
-        guardian: 0,
-        explorer: 0,
-        protector: 0,
-        harmonizer: 0
-    };
+    performance.start('calculatePersonaScore');
+    try {
+        debugScoring('Start', {
+            message: 'Starting persona score calculation',
+            answersReceived: Object.keys(answers)
+        });
 
-    // Initial segmentation scoring
-    const initialAnswers = answers.initialSegmentation || {};
-    Object.entries(initialAnswers).forEach(([questionId, answerId]) => {
-        const question = questionBank.initialSegmentation.find(q => q.id === questionId);
-        const answer = question.options.find(a => a.id === answerId);
+        // Clean up any previous performance marks
+        memoryManager.cleanup();
         
-        // Map answers to personas
-        const answerToPersona = {
-            'A101': 'upholder',
-            'A102': 'giver',
-            'A103': 'driver',
-            'A104': 'seeker',
-            'A105': 'observer',
-            'A106': 'guardian',
-            'A107': 'explorer',
-            'A108': 'protector',
-            'A109': 'harmonizer'
+        // Optimize input data
+        const optimizedAnswers = memoryManager.optimize(answers);
+        
+        debugScoring('Input Validation', {
+            message: 'Validating input data',
+            optimizedAnswers: optimizedAnswers
+        });
+
+        // Initialize scores for all personas
+        const rawScores = {
+            upholder: 0,
+            giver: 0,
+            driver: 0,
+            seeker: 0,
+            observer: 0,
+            guardian: 0,
+            explorer: 0,
+            protector: 0,
+            harmonizer: 0,
+            questioner: 0,
+            obliger: 0,
+            rebel: 0
         };
 
-        if (answerToPersona[answerId]) {
-            scores[answerToPersona[answerId]] += 2;
-        }
-    });
-
-    // Detailed differentiation scoring
-    const detailedAnswers = answers.detailedDifferentiation || {};
-    Object.entries(detailedAnswers).forEach(([persona, answer]) => {
-        if (scores[persona] !== undefined) {
-            scores[persona] += 3;
-        }
-    });
-
-    // Type confirmation scoring
-    const confirmationAnswers = answers.typeConfirmation || {};
-    Object.entries(confirmationAnswers).forEach(([questionId, answerId]) => {
-        const question = questionBank.typeConfirmation.find(q => q.id === questionId);
-        const answer = question.options.find(a => a.id === answerId);
-        
-        const answerToPersona = {
-            'A301': 'upholder',
-            'A302': 'giver',
-            'A303': 'driver',
-            'A304': 'seeker',
-            'A305': 'observer',
-            'A306': 'guardian',
-            'A307': 'explorer',
-            'A308': 'protector',
-            'A309': 'harmonizer'
+        // Process each phase with appropriate weights
+        const phaseWeights = {
+            'initial-segmentation': 0.3,
+            'detailed-differentiation': 0.25,
+            'type-confirmation': 0.2,
+            'wing-type': 0.1,
+            'instinctual-variant': 0.1,
+            'confirmation': 0.05
         };
 
-        if (answerToPersona[answerId]) {
-            scores[answerToPersona[answerId]] += 4;
-        }
-    });
+        // Track total possible points
+        let totalPossiblePoints = 0;
+        let totalEarnedPoints = 0;
 
-    return scores;
+        // Process each phase
+        Object.entries(optimizedAnswers).forEach(([phase, phaseAnswers]) => {
+            if (!phaseWeights[phase]) return; // Skip phases without weights
+            
+            const phaseWeight = phaseWeights[phase];
+            const questionsInPhase = Object.keys(phaseAnswers).length;
+            
+            // Calculate points per answer in this phase
+            const pointsPerAnswer = (phaseWeight * 100) / questionsInPhase;
+            totalPossiblePoints += phaseWeight * 100;
+
+            Object.entries(phaseAnswers).forEach(([questionId, answerIds]) => {
+                const answerArray = Array.isArray(answerIds) ? answerIds : [answerIds];
+                answerArray.forEach(answerId => {
+                    const persona = answerToPersona[answerId];
+                    if (persona) {
+                        // Add score based on phase weight and points per answer
+                        rawScores[persona] += pointsPerAnswer;
+                        totalEarnedPoints += pointsPerAnswer;
+                    }
+                });
+            });
+        });
+
+        // Calculate final scores with proper normalization
+        const finalScores = {};
+        let maxScore = 0;
+
+        // First pass: calculate raw percentages and find max score
+        Object.entries(rawScores).forEach(([persona, score]) => {
+            if (score > 0) {
+                const percentage = (score / totalEarnedPoints) * 100;
+                finalScores[persona] = percentage;
+                maxScore = Math.max(maxScore, percentage);
+            }
+        });
+
+        // Second pass: normalize scores to prevent 100% results
+        Object.keys(finalScores).forEach(persona => {
+            // Scale down scores to prevent 100% results
+            finalScores[persona] = Math.round((finalScores[persona] / maxScore) * 90);
+        });
+
+        debugScoring('Final Scores', {
+            message: 'Calculated final scores',
+            scores: finalScores,
+            totalPossiblePoints,
+            totalEarnedPoints
+        });
+
+        return finalScores;
+    } catch (error) {
+        debugScoring('Error', {
+            error: error.message,
+            stack: error.stack
+        }, 'error');
+        throw error;
+    } finally {
+        performance.end('calculatePersonaScore');
+    }
 }
 
 // Modify state management
@@ -845,10 +1196,31 @@ const metrics = {
             const totalQuestions = Object.keys(phaseAnswers).length;
             if (totalQuestions === 0) return 0;
             
-            let consistentAnswers = 0;
-            // Add logic to check answer consistency based on phase
-            state.confidenceScores[phase] = Math.round((consistentAnswers / totalQuestions) * 100);
-            return state.confidenceScores[phase];
+            // Calculate confidence based on number of answers per question
+            let totalAnswers = 0;
+            let answeredQuestions = 0;
+            
+            Object.values(phaseAnswers).forEach(answers => {
+                if (answers.length > 0) {
+                    answeredQuestions++;
+                    totalAnswers += answers.length;
+                }
+            });
+            
+            // Confidence is based on:
+            // 1. Percentage of questions answered (50% weight)
+            // 2. Average number of answers per question (50% weight)
+            const answerRate = answeredQuestions / totalQuestions;
+            const avgAnswersPerQuestion = totalAnswers / answeredQuestions;
+            
+            // Normalize avgAnswersPerQuestion to 0-1 range (assuming max 3 answers per question)
+            const normalizedAvgAnswers = Math.min(avgAnswersPerQuestion / 3, 1);
+            
+            // Calculate final confidence score
+            const confidenceScore = Math.round((answerRate * 0.5 + normalizedAvgAnswers * 0.5) * 100);
+            state.confidenceScores[phase] = confidenceScore;
+            
+            return confidenceScore;
         } finally {
             performance.end(`confidence_${phase}`);
         }
@@ -972,13 +1344,24 @@ const ui = {
                     this.renderQuestions(phase, questionBank.typeConfirmation);
                     break;
                 case 'wing-type':
+                    if (!questionBank.wingType || !questionBank.wingType.Q401) {
+                        console.error('Wing type questions not properly initialized');
+                        return;
+                    }
                     this.renderWingType();
                     break;
                 case 'instinctual-variant':
+                    if (!questionBank.instinctualVariant) {
+                        console.error('Instinctual variant questions not properly initialized');
+                        return;
+                    }
                     this.renderQuestions(phase, questionBank.instinctualVariant);
                     break;
                 case 'personalization':
                     this.renderPersonalization();
+                    break;
+                case 'confirmation':
+                    this.renderQuestions(phase, questionBank.confirmation);
                     break;
             }
             
@@ -1010,84 +1393,160 @@ const ui = {
         }
         container.innerHTML = '';
         
-        const questions = questionBank.detailedDifferentiation[persona];
+        // Get questions from the new structure
+        const questions = questionBank.detailedDifferentiation;
         if (!questions) {
-            console.error('No questions found for persona:', persona);
+            console.error('No questions found for detailed differentiation');
             return;
         }
         
-        // Add persona indicator
-        const personaInfo = personas[persona];
-        const categoryIndicator = document.createElement('div');
-        categoryIndicator.className = 'alert alert-info mb-4';
-        categoryIndicator.innerHTML = `
-            <h4>Exploring ${personaInfo.name}</h4>
-            <p>${personaInfo.description}</p>
-        `;
-        container.appendChild(categoryIndicator);
+        // Create document fragment for better performance
+        const fragment = document.createDocumentFragment();
         
-        questions.forEach((question, index) => {
+        // Add questions
+        Object.entries(questions).forEach(([questionId, question], index) => {
             const questionEl = document.createElement('div');
             questionEl.className = 'card mb-3';
+            
+            // Build options HTML string for better performance
+            const optionsHtml = Object.entries(question.options).map(([optionId, option]) => `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" 
+                        name="q${questionId}[]" 
+                        id="${optionId}" 
+                        value="${optionId}">
+                    <label class="form-check-label" for="${optionId}">
+                        ${option.text}
+                    </label>
+                </div>
+            `).join('');
+            
             questionEl.innerHTML = `
                 <div class="card-body">
                     <h5 class="card-title">Question ${index + 1}</h5>
                     <p class="card-text">${question.text}</p>
-                    <div class="form-group">
-                        ${question.options.map(option => `
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" 
-                                    name="q${question.id}" 
-                                    id="${option.id}" 
-                                    value="${option.id}">
-                                <label class="form-check-label" for="${option.id}">
-                                    ${option.text}
-                                </label>
-                            </div>
-                        `).join('')}
-                    </div>
+                    <div class="form-group">${optionsHtml}</div>
                 </div>
             `;
-            container.appendChild(questionEl);
+            fragment.appendChild(questionEl);
         });
         
-        // Add validation alert
-        const validationAlert = document.createElement('div');
-        validationAlert.id = 'validation-alert-detailed-differentiation';
-        validationAlert.className = 'alert alert-danger d-none';
-        validationAlert.textContent = 'Please answer all questions before proceeding.';
-        container.appendChild(validationAlert);
-        
+        // Add next button
         const nextButton = document.createElement('button');
         nextButton.className = 'btn btn-primary mt-3';
         nextButton.textContent = 'Next';
         nextButton.onclick = () => this.validateAndProceed('detailed-differentiation');
-        container.appendChild(nextButton);
+        fragment.appendChild(nextButton);
+        
+        // Add validation alert
+        const validationAlert = document.createElement('div');
+        validationAlert.id = 'validation-alert-detailed-differentiation';
+        validationAlert.className = 'alert alert-danger d-none mt-3';
+        validationAlert.textContent = 'Please answer all questions before proceeding.';
+        fragment.appendChild(validationAlert);
+        
+        // Update container
+        container.appendChild(fragment);
     },
     
     renderWingType: function() {
         const container = document.getElementById('wing-type-questions');
+        if (!container) {
+            console.error('Wing type container not found');
+            return;
+        }
         container.innerHTML = '';
         
         // Determine primary type from previous answers
         const primaryType = this.determinePrimaryType();
+        if (!primaryType) {
+            console.error('Could not determine primary type');
+            return;
+        }
         
         // Get adjacent types
         const adjacentTypes = this.getAdjacentTypes(primaryType);
+        if (!adjacentTypes || adjacentTypes.length === 0) {
+            console.error('Could not determine adjacent types');
+            return;
+        }
         
-        // Update wing type question options
-        questionBank.wingType[0].options = adjacentTypes.map((type, index) => ({
-            id: `A40${index + 1}`,
-            text: `Type ${type}: ${this.getTypeDescription(type)}`
-        }));
+        // Create a copy of the wing type question
+        const wingTypeQuestion = JSON.parse(JSON.stringify(questionBank.wingType.Q401));
+        if (!wingTypeQuestion || !wingTypeQuestion.options) {
+            console.error('Invalid wing type question structure');
+            return;
+        }
         
-        this.renderQuestions('wing-type', questionBank.wingType);
+        // Filter options to only show adjacent types
+        const filteredOptions = {};
+        Object.entries(wingTypeQuestion.options).forEach(([key, option]) => {
+            if (!option || !option.text) {
+                console.error('Invalid option structure:', option);
+                return;
+            }
+            const typeNumber = parseInt(key.replace('A40', ''));
+            if (adjacentTypes.includes(typeNumber)) {
+                filteredOptions[key] = option;
+            }
+        });
+        
+        if (Object.keys(filteredOptions).length === 0) {
+            console.error('No valid options found for wing type');
+            return;
+        }
+        
+        wingTypeQuestion.options = filteredOptions;
+        
+        // Render the filtered question
+        this.renderQuestions('wing-type', { Q401: wingTypeQuestion });
     },
     
     determinePrimaryType: function() {
-        // Logic to determine primary type based on previous answers
-        // This is a simplified version - you would need to implement the actual logic
-        return 1; // Default to type 1 for demo
+        // Get answers from initial segmentation and type confirmation phases
+        const initialAnswers = state.answers['initial-segmentation'] || {};
+        const confirmationAnswers = state.answers['type-confirmation'] || {};
+        
+        // Map of answer IDs to type numbers
+        const answerToType = {
+            'A101': 1, 'A110': 1, // Upholder
+            'A102': 2, 'A111': 2, // Giver
+            'A103': 3, 'A112': 3, // Driver
+            'A104': 4, 'A113': 4, // Seeker
+            'A105': 5, 'A114': 5, // Observer
+            'A106': 6, 'A115': 6, // Guardian
+            'A107': 7, 'A116': 7, // Explorer
+            'A108': 8, 'A117': 8, // Protector
+            'A109': 9, 'A118': 9  // Harmonizer
+        };
+        
+        // Count occurrences of each type
+        const typeCounts = {};
+        Object.values(initialAnswers).forEach(answer => {
+            const type = answerToType[answer];
+            if (type) {
+                typeCounts[type] = (typeCounts[type] || 0) + 1;
+            }
+        });
+        
+        Object.values(confirmationAnswers).forEach(answer => {
+            const type = answerToType[answer];
+            if (type) {
+                typeCounts[type] = (typeCounts[type] || 0) + 1;
+            }
+        });
+        
+        // Find the type with the highest count
+        let maxCount = 0;
+        let primaryType = 1; // Default to type 1 if no clear winner
+        Object.entries(typeCounts).forEach(([type, count]) => {
+            if (count > maxCount) {
+                maxCount = count;
+                primaryType = parseInt(type);
+            }
+        });
+        
+        return primaryType;
     },
     
     getAdjacentTypes: function(type) {
@@ -1127,26 +1586,56 @@ const ui = {
                 return;
             }
             
+            // Validate questions parameter
+            if (!questions || typeof questions !== 'object') {
+                console.error('Invalid questions parameter:', questions);
+                return;
+            }
+            
             // Create document fragment for better performance
             const fragment = document.createDocumentFragment();
             
             performance.start('buildQuestions');
-            questions.forEach((question, index) => {
+            
+            // Handle object-based questions structure
+            const questionEntries = Object.entries(questions);
+            if (!questionEntries || questionEntries.length === 0) {
+                console.error('No questions found for phase:', phase);
+                return;
+            }
+            
+            questionEntries.forEach(([questionId, question], index) => {
+                if (!question || !question.options) {
+                    console.error('Invalid question structure:', question);
+                    return;
+                }
+                
                 const questionEl = document.createElement('div');
                 questionEl.className = 'card mb-3';
                 
+                // Determine if question should be multiple choice
+                const isMultipleChoice = phase === 'detailedDifferentiation' || 
+                                       phase === 'confirmation';
+                
                 // Build options HTML string for better performance
-                const optionsHtml = question.options.map(option => `
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" 
-                            name="q${question.id}" 
-                            id="${option.id}" 
-                            value="${option.id}">
-                        <label class="form-check-label" for="${option.id}">
-                            ${option.text}
-                        </label>
-                    </div>
-                `).join('');
+                const optionsHtml = Object.entries(question.options).map(([optionId, option]) => {
+                    if (!option || !option.text) {
+                        console.error('Invalid option structure:', option);
+                        return '';
+                    }
+                    return `
+                        <div class="form-check">
+                            <input class="form-check-input" type="${isMultipleChoice ? 'checkbox' : 'radio'}" 
+                                name="q${questionId}${isMultipleChoice ? '[]' : ''}" 
+                                id="${optionId}" 
+                                value="${optionId}"
+                                ${!isMultipleChoice ? 'required' : ''}>
+                            <label class="form-check-label" for="${optionId}">
+                                ${option.text}
+                            </label>
+                        </div>
+                    `;
+                }).join('');
                 
                 questionEl.innerHTML = `
                     <div class="card-body">
@@ -1157,13 +1646,22 @@ const ui = {
                 `;
                 fragment.appendChild(questionEl);
             });
+            
             performance.end('buildQuestions');
             
+            // Add next button
             const nextButton = document.createElement('button');
-            nextButton.className = 'btn btn-primary';
+            nextButton.className = 'btn btn-primary mt-3';
             nextButton.textContent = 'Next';
             nextButton.onclick = () => this.validateAndProceed(phase);
             fragment.appendChild(nextButton);
+            
+            // Add validation alert
+            const validationAlert = document.createElement('div');
+            validationAlert.id = `validation-alert-${phase}`;
+            validationAlert.className = 'alert alert-danger d-none mt-3';
+            validationAlert.textContent = 'Please answer all questions before proceeding.';
+            fragment.appendChild(validationAlert);
             
             // Clear and update container in one operation
             performance.start('domUpdate');
@@ -1173,9 +1671,19 @@ const ui = {
             
         } catch (error) {
             console.error('Error in renderQuestions:', error);
+            const container = document.getElementById(`${phase}-questions`);
+            if (container) {
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h4>Error Loading Questions</h4>
+                        <p>There was a problem loading the questions. Please try refreshing the page.</p>
+                        <button class="btn btn-outline-danger" onclick="location.reload()">Refresh Page</button>
+                    </div>
+                `;
+            }
+        } finally {
+            performance.end('renderQuestions');
         }
-        
-        performance.end('renderQuestions');
     },
     validateAndProceed: function(phase) {
         const answers = this.collectAnswers(phase);
@@ -1191,7 +1699,11 @@ const ui = {
         const answers = {};
         const inputs = document.querySelectorAll(`#${phase}-questions input:checked`);
         inputs.forEach(input => {
-            answers[input.name] = input.value;
+            const questionId = input.name.replace('[]', '');
+            if (!answers[questionId]) {
+                answers[questionId] = [];
+            }
+            answers[questionId].push(input.value);
         });
         return answers;
     },
@@ -1207,6 +1719,7 @@ const ui = {
             'wing-type',
             'instinctual-variant',
             'personalization',
+            'confirmation',
             'results'
         ];
         const currentIndex = phases.indexOf(currentPhase);
@@ -1680,379 +2193,6 @@ const ui = {
     }
 };
 
-// Add memory management
-const memoryManager = {
-    gcThreshold: 50, // Number of operations before suggesting garbage collection
-    operationCount: 0,
-    
-    incrementOperations: function() {
-        this.operationCount++;
-        if (this.operationCount >= this.gcThreshold) {
-            this.suggestGC();
-        }
-    },
-    
-    suggestGC: function() {
-        if (window.gc) {
-            try {
-                window.gc();
-            } catch (e) {
-                console.warn('Manual GC not available');
-            }
-        }
-        this.operationCount = 0;
-    },
-    
-    clearMemory: function() {
-        // Clear large objects
-        if (ui.charts) {
-            Object.values(ui.charts).forEach(chart => {
-                if (chart && typeof chart.destroy === 'function') {
-                    chart.destroy();
-                }
-            });
-            ui.charts = null;
-        }
-        
-        // Clear cached data
-        if (window.questionBank) {
-            window.questionBank = null;
-        }
-        
-        this.suggestGC();
-    }
-};
-
-// Modify chunked rendering to be more memory efficient
-const chunkRenderer = {
-    timeout: null,
-    queue: [],
-    chunkSize: 5, // Number of operations per chunk
-    
-    add: function(task) {
-        this.queue.push(task);
-        if (!this.timeout) {
-            this.processNext();
-        }
-    },
-    
-    processNext: function() {
-        if (this.queue.length === 0) {
-            this.timeout = null;
-            memoryManager.suggestGC();
-            return;
-        }
-        
-        let processedInChunk = 0;
-        while (processedInChunk < this.chunkSize && this.queue.length > 0) {
-            const task = this.queue.shift();
-            this.timeout = requestAnimationFrame(() => {
-                try {
-                    task();
-                    memoryManager.incrementOperations();
-                } catch (error) {
-                    console.error('Error in chunked render task:', error);
-                }
-            });
-            processedInChunk++;
-        }
-        
-        if (this.queue.length > 0) {
-            setTimeout(() => this.processNext(), 16); // Approximately 1 frame at 60fps
-        } else {
-            memoryManager.suggestGC();
-        }
-    }
-};
-
-// Modify results rendering to be more memory efficient
-function renderPersonaResults(scores) {
-    // Sort personas by score
-    const sortedPersonas = Object.entries(scores)
-        .sort(([, a], [, b]) => b - a)
-        .map(([type, score]) => ({ type, score }));
-
-    // Calculate total score for percentage
-    const totalScore = sortedPersonas.reduce((sum, { score }) => sum + score, 0);
-
-    // Create results container
-    const resultsContainer = document.createElement('div');
-    resultsContainer.className = 'results-container';
-    resultsContainer.innerHTML = `
-        <h2>Your Emotional Persona Assessment Results</h2>
-        <div class="results-summary">
-            <p>Based on your responses, here's how you align with each emotional persona type:</p>
-        </div>
-    `;
-
-    // Add primary persona section
-    const primaryPersona = sortedPersonas[0];
-    const primaryPersonaData = personas[primaryPersona.type];
-    const primaryPercentage = Math.round((primaryPersona.score / totalScore) * 100);
-
-    const primarySection = document.createElement('div');
-    primarySection.className = 'primary-persona';
-    primarySection.innerHTML = `
-        <h3>Your Primary Persona: ${primaryPersonaData.name}</h3>
-        <div class="confidence-rating">
-            <div class="confidence-bar" style="width: ${primaryPercentage}%"></div>
-            <span class="confidence-text">${primaryPercentage}% Confidence Rating</span>
-        </div>
-        <p class="persona-description">${primaryPersonaData.description}</p>
-        
-        <div class="persona-details">
-            <div class="detail-section">
-                <h4>Inner World</h4>
-                <ul>
-                    <li><strong>Core Fear:</strong> ${primaryPersonaData.innerWorld.fear}</li>
-                    <li><strong>Core Desire:</strong> ${primaryPersonaData.innerWorld.desire}</li>
-                    <li><strong>Limiting Belief:</strong> ${primaryPersonaData.innerWorld.limitingBelief}</li>
-                </ul>
-            </div>
-            
-            <div class="detail-section">
-                <h4>Core Values</h4>
-                <ul>
-                    ${primaryPersonaData.coreValues.map(value => `<li>${value}</li>`).join('')}
-                </ul>
-            </div>
-            
-            <div class="detail-section">
-                <h4>Core Emotional Needs</h4>
-                <ul>
-                    ${Object.entries(primaryPersonaData.coreEmotionalNeeds)
-                        .map(([key, value]) => `<li><strong>${key}:</strong> ${value}</li>`)
-                        .join('')}
-                </ul>
-            </div>
-            
-            <div class="detail-section">
-                <h4>Blind Spots</h4>
-                <ul>
-                    ${primaryPersonaData.blindSpots.map(spot => `<li>${spot}</li>`).join('')}
-                </ul>
-            </div>
-            
-            <div class="detail-section">
-                <h4>Aspirations</h4>
-                <ul>
-                    ${primaryPersonaData.aspirations.map(aspiration => `<li>${aspiration}</li>`).join('')}
-                </ul>
-            </div>
-            
-            <div class="detail-section">
-                <h4>Stress vs Growth</h4>
-                <ul>
-                    ${Object.entries(primaryPersonaData.stressVsGrowth)
-                        .map(([key, value]) => `
-                            <li>
-                                <strong>${key}:</strong>
-                                <ul>
-                                    <li>Stress: ${value.stress}</li>
-                                    <li>Growth: ${value.growth}</li>
-                                    <li>Outcome: ${value.outcome}</li>
-                                </ul>
-                            </li>
-                        `).join('')}
-                </ul>
-            </div>
-            
-            <div class="detail-section">
-                <h4>Boundaries</h4>
-                <ul>
-                    <li><strong>Tendency:</strong> ${primaryPersonaData.boundaries.tendency}</li>
-                    ${primaryPersonaData.boundaries.strugglesWith ? 
-                        `<li><strong>Struggles With:</strong> ${primaryPersonaData.boundaries.strugglesWith}</li>` : ''}
-                    <li><strong>Growth:</strong> ${primaryPersonaData.boundaries.growth}</li>
-                </ul>
-            </div>
-            
-            <div class="detail-section">
-                <h4>Life Domain Impact</h4>
-                <ul>
-                    ${Object.entries(primaryPersonaData.lifeDomainImpact)
-                        .map(([domain, impact]) => `<li><strong>${domain}:</strong> ${impact}</li>`)
-                        .join('')}
-                </ul>
-            </div>
-            
-            <div class="detail-section">
-                <h4>Potential</h4>
-                <div class="potential-section">
-                    <h5>Capabilities</h5>
-                    <ul>
-                        ${primaryPersonaData.potential.capabilities.map(capability => `<li>${capability}</li>`).join('')}
-                    </ul>
-                    
-                    <h5>Life Changes</h5>
-                    <ul>
-                        ${Object.entries(primaryPersonaData.potential.lifeChanges)
-                            .map(([domain, change]) => `<li><strong>${domain}:</strong> ${change}</li>`)
-                            .join('')}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    `;
-    resultsContainer.appendChild(primarySection);
-
-    // Add secondary personas section
-    const secondarySection = document.createElement('div');
-    secondarySection.className = 'secondary-personas';
-    secondarySection.innerHTML = '<h3>Your Secondary Persona Types</h3>';
-    
-    const secondaryList = document.createElement('ul');
-    secondaryList.className = 'secondary-list';
-    
-    sortedPersonas.slice(1).forEach(({ type, score }) => {
-        const personaData = personas[type];
-        const percentage = Math.round((score / totalScore) * 100);
-        
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `
-            <div class="secondary-persona">
-                <h4>${personaData.name} (${percentage}%)</h4>
-                <p>${personaData.description}</p>
-            </div>
-        `;
-        secondaryList.appendChild(listItem);
-    });
-    
-    secondarySection.appendChild(secondaryList);
-    resultsContainer.appendChild(secondarySection);
-
-    // Add styles
-    const style = document.createElement('style');
-    style.textContent = `
-        .results-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-        }
-        
-        .results-container h2 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .results-summary {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .primary-persona {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        
-        .primary-persona h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        
-        .confidence-rating {
-            margin: 15px 0;
-            background: #e9ecef;
-            height: 20px;
-            border-radius: 10px;
-            position: relative;
-        }
-        
-        .confidence-bar {
-            background: #4CAF50;
-            height: 100%;
-            border-radius: 10px;
-            transition: width 1s ease-in-out;
-        }
-        
-        .confidence-text {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #fff;
-            font-weight: bold;
-        }
-        
-        .persona-description {
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-        
-        .persona-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        .detail-section {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .detail-section h4 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 5px;
-        }
-        
-        .detail-section ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        
-        .detail-section li {
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-        
-        .secondary-personas {
-            margin-top: 30px;
-        }
-        
-        .secondary-personas h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        
-        .secondary-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        
-        .secondary-persona {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        
-        .secondary-persona h4 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .potential-section {
-            margin-top: 15px;
-        }
-        
-        .potential-section h5 {
-            color: #2c3e50;
-            margin: 10px 0;
-        }
-    `;
-    document.head.appendChild(style);
-
-    return resultsContainer;
-}
-
 // Modify cleanup to be more thorough
 const cleanup = {
     clearPhaseData: function(phase) {
@@ -2162,3 +2302,229 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('unload', function() {
     memoryManager.clearMemory();
 }); 
+
+function renderPersonaResults(scores) {
+    // Sort personas by score in descending order
+    const sortedPersonas = Object.entries(scores)
+        .sort(([, a], [, b]) => b - a)
+        .map(([persona, score]) => ({ persona, score }));
+
+    // Create results container
+    const container = document.createElement('div');
+    container.className = 'persona-results';
+
+    // Add primary persona section
+    const primaryPersona = sortedPersonas[0];
+    const primaryPersonaInfo = personas[primaryPersona.persona];
+    
+    if (!primaryPersonaInfo) {
+        console.error(`Primary persona info not found for: ${primaryPersona.persona}`);
+        container.innerHTML = '<div class="alert alert-danger">Error: Could not load persona information. Please try again.</div>';
+        return container;
+    }
+
+    const primarySection = document.createElement('div');
+    primarySection.className = 'primary-persona';
+    primarySection.innerHTML = `
+        <h2>Your Primary Persona: ${primaryPersona.persona.charAt(0).toUpperCase() + primaryPersona.persona.slice(1)}</h2>
+        <p>${primaryPersonaInfo.description}</p>
+        <div class="score">Score: ${primaryPersona.score}%</div>
+        
+        <div class="core-values">
+            <h3>Core Values</h3>
+            <ul>
+                ${primaryPersonaInfo.coreValues.map(value => `<li>${value}</li>`).join('')}
+            </ul>
+        </div>
+        
+        <div class="inner-world">
+            <h3>Inner World</h3>
+            <ul>
+                <li>Fear: ${primaryPersonaInfo.innerWorld.fear}</li>
+                <li>Desire: ${primaryPersonaInfo.innerWorld.desire}</li>
+                <li>Limiting Belief: ${primaryPersonaInfo.innerWorld.limitingBelief}</li>
+            </ul>
+        </div>
+
+        <div class="core-emotional-needs">
+            <h3>Core Emotional Needs</h3>
+            <ul>
+                ${Object.entries(primaryPersonaInfo.coreEmotionalNeeds).map(([need, description]) => 
+                    `<li><strong>${need}:</strong> ${description}</li>`
+                ).join('')}
+            </ul>
+        </div>
+
+        <div class="blind-spots">
+            <h3>Blind Spots</h3>
+            <ul>
+                ${primaryPersonaInfo.blindSpots.map(spot => `<li>${spot}</li>`).join('')}
+            </ul>
+        </div>
+
+        <div class="aspirations">
+            <h3>Aspirations</h3>
+            <ul>
+                ${primaryPersonaInfo.aspirations.map(aspiration => `<li>${aspiration}</li>`).join('')}
+            </ul>
+        </div>
+
+        <div class="stress-vs-growth">
+            <h3>Stress vs Growth Patterns</h3>
+            <div class="pattern-grid">
+                ${Object.entries(primaryPersonaInfo.stressVsGrowth).map(([area, patterns]) => `
+                    <div class="pattern-card">
+                        <h4>${area}</h4>
+                        <ul>
+                            <li><strong>Stress:</strong> ${patterns.stress}</li>
+                            <li><strong>Growth:</strong> ${patterns.growth}</li>
+                            <li><strong>Outcome:</strong> ${patterns.outcome}</li>
+                        </ul>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+
+        <div class="boundaries">
+            <h3>Boundaries</h3>
+            <ul>
+                <li><strong>Tendency:</strong> ${primaryPersonaInfo.boundaries.tendency}</li>
+                <li><strong>Growth:</strong> ${primaryPersonaInfo.boundaries.growth}</li>
+            </ul>
+        </div>
+
+        <div class="life-domain-impact">
+            <h3>Life Domain Impact</h3>
+            <div class="domain-grid">
+                ${Object.entries(primaryPersonaInfo.lifeDomainImpact).map(([domain, impact]) => `
+                    <div class="domain-card">
+                        <h4>${domain}</h4>
+                        <p>${impact}</p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+
+        <div class="potential">
+            <h3>Potential</h3>
+            <div class="capabilities">
+                <h4>Capabilities</h4>
+                <ul>
+                    ${primaryPersonaInfo.potential.capabilities.map(capability => `<li>${capability}</li>`).join('')}
+                </ul>
+            </div>
+            <div class="life-changes">
+                <h4>Life Changes</h4>
+                <div class="changes-grid">
+                    ${Object.entries(primaryPersonaInfo.potential.lifeChanges).map(([area, change]) => `
+                        <div class="change-card">
+                            <h5>${area}</h5>
+                            <p>${change}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(primarySection);
+
+    // Add secondary personas section
+    const secondarySection = document.createElement('div');
+    secondarySection.className = 'secondary-personas';
+    
+    // Filter out personas that don't have corresponding info
+    const validSecondaryPersonas = sortedPersonas.slice(1).filter(({ persona }) => personas[persona]);
+    
+    if (validSecondaryPersonas.length > 0) {
+        secondarySection.innerHTML = `
+            <h3>Secondary Personas</h3>
+            <div class="persona-grid">
+                ${validSecondaryPersonas.map(({ persona, score }) => {
+                    const personaInfo = personas[persona];
+                    return `
+                        <div class="secondary-persona">
+                            <h4>${persona.charAt(0).toUpperCase() + persona.slice(1)} (${score}%)</h4>
+                            <p>${personaInfo.description}</p>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        container.appendChild(secondarySection);
+    }
+
+    return container;
+}
+
+// Answer to Persona mapping
+const answerToPersona = {
+    // Initial Segmentation
+    'A101': 'upholder',
+    'A102': 'giver',
+    'A103': 'driver',
+    'A104': 'seeker',
+    'A105': 'observer',
+    'A106': 'guardian',
+    'A107': 'explorer',
+    'A108': 'protector',
+    'A109': 'harmonizer',
+    'A110': 'upholder',
+    'A111': 'giver',
+    'A112': 'driver',
+    'A113': 'seeker',
+    'A114': 'observer',
+    'A115': 'guardian',
+    'A116': 'explorer',
+    'A117': 'protector',
+    'A118': 'harmonizer',
+    
+    // Detailed Differentiation
+    'A201': 'upholder',
+    'A202': 'questioner',
+    'A203': 'obliger',
+    'A204': 'rebel',
+    'A205': 'harmonizer',
+    'A206': 'observer',
+    'A207': 'explorer',
+    'A208': 'protector',
+    'A209': 'driver',
+    'A210': 'upholder',
+    'A211': 'questioner',
+    'A212': 'obliger',
+    'A213': 'rebel',
+    'A214': 'harmonizer',
+    'A215': 'observer',
+    'A216': 'explorer',
+    'A217': 'protector',
+    'A218': 'driver',
+    
+    // Type Confirmation
+    'A301': 'upholder',
+    'A302': 'questioner',
+    'A303': 'obliger',
+    'A304': 'rebel',
+    'A305': 'harmonizer',
+    'A306': 'observer',
+    'A307': 'driver',
+    'A308': 'protector',
+    'A309': 'explorer',
+    
+    // Wing Type
+    'A401': 'upholder',
+    'A402': 'giver',
+    'A403': 'driver',
+    'A404': 'seeker',
+    'A405': 'observer',
+    'A406': 'guardian',
+    'A407': 'explorer',
+    'A408': 'protector',
+    'A409': 'harmonizer',
+    
+    // Instinctual Variant
+    'A501': 'guardian',
+    'A502': 'harmonizer',
+    'A503': 'protector',
+    'A504': 'guardian',
+    'A505': 'harmonizer',
+    'A506': 'protector'
+};
