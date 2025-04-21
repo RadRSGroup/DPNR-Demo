@@ -1,0 +1,210 @@
+{
+    "rules": [
+        {
+            "name": "scoring-consistency",
+            "description": "Ensure consistent scoring weights and calculations",
+            "pattern": "SCORING_WEIGHTS",
+            "message": "Use SCORING_WEIGHTS constant for all scoring calculations",
+            "severity": "error"
+        },
+        {
+            "name": "debug-logging",
+            "description": "Ensure proper debug logging implementation",
+            "pattern": "debugScoring",
+            "message": "Use debugScoring function for all scoring-related logging",
+            "severity": "warning"
+        },
+        {
+            "name": "error-handling",
+            "description": "Ensure proper error handling in scoring functions",
+            "pattern": "calculatePersonaScore",
+            "message": "Implement proper error handling for scoring calculations",
+            "severity": "error"
+        },
+        {
+            "name": "state-management",
+            "description": "Ensure proper state management",
+            "pattern": "stateManager",
+            "message": "Use stateManager for all state operations",
+            "severity": "error"
+        },
+        {
+            "name": "performance-monitoring",
+            "description": "Ensure proper performance monitoring",
+            "pattern": "performance.start|performance.end",
+            "message": "Use performance monitoring for critical operations",
+            "severity": "warning"
+        },
+        {
+            "name": "memory-management",
+            "description": "Ensure proper memory management",
+            "pattern": "memoryManager",
+            "message": "Use memoryManager for memory optimization",
+            "severity": "warning"
+        },
+        {
+            "name": "ui-rendering",
+            "description": "Ensure efficient UI rendering",
+            "pattern": "renderQuestions|renderResults",
+            "message": "Use document fragments and efficient DOM updates",
+            "severity": "warning"
+        },
+        {
+            "name": "metrics-tracking",
+            "description": "Ensure proper metrics tracking",
+            "pattern": "metrics.startTimer|metrics.endTimer",
+            "message": "Use metrics tracking for timing and interactions",
+            "severity": "warning"
+        },
+        {
+            "name": "cleanup-operations",
+            "description": "Ensure proper cleanup operations",
+            "pattern": "cleanup.clearPhaseData|cleanup.removeEventListeners",
+            "message": "Use cleanup operations for phase transitions",
+            "severity": "error"
+        },
+        {
+            "name": "event-delegation",
+            "description": "Ensure proper event delegation",
+            "pattern": "addEventListener",
+            "message": "Use event delegation for better performance",
+            "severity": "warning"
+        },
+        {
+            "name": "persona-scoring",
+            "description": "Ensure consistent persona scoring based on the 9 Emotional Personas",
+            "pattern": "calculatePersonaScore",
+            "message": "Scoring must align with the 9 Emotional Personas framework",
+            "severity": "error",
+            "details": {
+                "personas": [
+                    {
+                        "name": "The Upholder",
+                        "type": "Type 1",
+                        "keyTraits": ["Integrity", "Responsibility", "Justice", "Self-discipline", "Improvement", "Moral clarity"],
+                        "scoringWeight": 1.2
+                    },
+                    {
+                        "name": "The Giver",
+                        "type": "Type 2",
+                        "keyTraits": ["Generosity", "Loyalty", "Compassion", "Service", "Belonging", "Emotional intimacy"],
+                        "scoringWeight": 1.1
+                    },
+                    {
+                        "name": "The Driver",
+                        "type": "Type 3",
+                        "keyTraits": ["Excellence", "Achievement", "Efficiency", "Recognition", "Ambition", "Progress"],
+                        "scoringWeight": 1.2
+                    },
+                    {
+                        "name": "The Seeker",
+                        "type": "Type 4",
+                        "keyTraits": ["Authenticity", "Depth", "Individuality", "Emotional truth", "Beauty", "Creativity"],
+                        "scoringWeight": 1.0
+                    },
+                    {
+                        "name": "The Observer",
+                        "type": "Type 5",
+                        "keyTraits": ["Knowledge", "Autonomy", "Competence", "Objectivity", "Privacy", "Clarity"],
+                        "scoringWeight": 1.1
+                    },
+                    {
+                        "name": "The Guardian",
+                        "type": "Type 6",
+                        "keyTraits": ["Loyalty", "Security", "Preparedness", "Support", "Courage", "Honesty"],
+                        "scoringWeight": 1.2
+                    },
+                    {
+                        "name": "The Explorer",
+                        "type": "Type 7",
+                        "keyTraits": ["Freedom", "Adventure", "Optimism", "Flexibility", "Enthusiasm", "Possibility"],
+                        "scoringWeight": 1.0
+                    },
+                    {
+                        "name": "The Protector",
+                        "type": "Type 8",
+                        "keyTraits": ["Strength", "Justice", "Protection", "Leadership", "Autonomy", "Directness"],
+                        "scoringWeight": 1.2
+                    },
+                    {
+                        "name": "The Harmonizer",
+                        "type": "Type 9",
+                        "keyTraits": ["Peace", "Harmony", "Acceptance", "Stability", "Empathy", "Unity"],
+                        "scoringWeight": 1.1
+                    }
+                ],
+                "scoringPhases": {
+                    "initialSegmentation": {
+                        "weight": 0.3,
+                        "maxScore": 30
+                    },
+                    "detailedDifferentiation": {
+                        "weight": 0.4,
+                        "maxScore": 40
+                    },
+                    "typeConfirmation": {
+                        "weight": 0.3,
+                        "maxScore": 30
+                    }
+                },
+                "scoringRules": {
+                    "traitAlignment": "Score based on alignment with key traits",
+                    "emotionalNeeds": "Consider core emotional needs in scoring",
+                    "growthPotential": "Factor in growth vs stress outcomes",
+                    "boundaryTendencies": "Account for boundary patterns",
+                    "lifeDomainImpact": "Consider impact across life domains"
+                }
+            }
+        },
+        {
+            "name": "persona-validation",
+            "description": "Ensure proper validation of persona results",
+            "pattern": "validatePersonaResults",
+            "message": "Results must include all required persona components",
+            "severity": "error",
+            "details": {
+                "requiredComponents": [
+                    "Primary Persona",
+                    "Secondary Personas",
+                    "Core Values",
+                    "Emotional Needs",
+                    "Blind Spots",
+                    "Growth Areas",
+                    "Life Domain Impact",
+                    "2.0 Self Potential"
+                ]
+            }
+        },
+        {
+            "name": "persona-presentation",
+            "description": "Ensure consistent presentation of persona results",
+            "pattern": "renderPersonaResults",
+            "message": "Results must follow the standard presentation format",
+            "severity": "warning",
+            "details": {
+                "format": {
+                    "header": "Your Emotional Persona Assessment Results",
+                    "sections": [
+                        "Primary Persona Profile",
+                        "Core Values and Needs",
+                        "Growth and Development",
+                        "Life Domain Impact",
+                        "Your 2.0 Self Potential"
+                    ],
+                    "visualization": "Include persona distribution chart",
+                    "confidence": "Display confidence score"
+                }
+            }
+        }
+    ],
+    "settings": {
+        "maxLineLength": 100,
+        "indentSize": 4,
+        "useTabs": false,
+        "quoteStyle": "single",
+        "semicolon": true,
+        "trailingComma": "es5",
+        "bracketSpacing": true,
+        "arrowParens": "always"
+    }
+} 
