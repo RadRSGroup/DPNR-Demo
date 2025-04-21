@@ -1,6 +1,244 @@
----
-description: 
-globs: 
-alwaysApply: true
----
- 
+# 9 Emotional Personas Assessment System Rules
+
+## Core Framework
+
+### Assessment Phases
+1. **Initial Segmentation** (30% weight)
+   - Basic personality traits identification
+   - Core values alignment
+   - Initial emotional needs assessment
+
+2. **Detailed Differentiation** (40% weight)
+   - Deep dive into persona characteristics
+   - Emotional patterns analysis
+   - Growth potential assessment
+
+3. **Type Confirmation** (30% weight)
+   - Final persona alignment
+   - Secondary traits identification
+   - Confidence scoring
+
+## Persona Definitions
+
+### 1. The Upholder (Type 1)
+- **Core Traits**: Integrity, Responsibility, Justice, Self-discipline, Improvement, Moral clarity
+- **Scoring Weight**: 1.2
+- **Key Indicators**:
+  - Strong sense of right and wrong
+  - High personal standards
+  - Focus on improvement
+  - Need for structure
+  - Fear of imperfection
+
+### 2. The Giver (Type 2)
+- **Core Traits**: Generosity, Loyalty, Compassion, Service, Belonging, Emotional intimacy
+- **Scoring Weight**: 1.1
+- **Key Indicators**:
+  - Strong desire to help others
+  - Need for connection
+  - Emotional awareness
+  - Fear of being unloved
+  - Tendency to over-give
+
+### 3. The Driver (Type 3)
+- **Core Traits**: Excellence, Achievement, Efficiency, Recognition, Ambition, Progress
+- **Scoring Weight**: 1.2
+- **Key Indicators**:
+  - Goal-oriented
+  - Image-conscious
+  - High achiever
+  - Fear of failure
+  - Need for recognition
+
+### 4. The Seeker (Type 4)
+- **Core Traits**: Authenticity, Depth, Individuality, Emotional truth, Beauty, Creativity
+- **Scoring Weight**: 1.0
+- **Key Indicators**:
+  - Emotional depth
+  - Creative expression
+  - Need for authenticity
+  - Fear of being ordinary
+  - Strong aesthetic sense
+
+### 5. The Observer (Type 5)
+- **Core Traits**: Knowledge, Autonomy, Competence, Objectivity, Privacy, Clarity
+- **Scoring Weight**: 1.1
+- **Key Indicators**:
+  - Intellectual curiosity
+  - Need for privacy
+  - Analytical thinking
+  - Fear of being overwhelmed
+  - Independence
+
+### 6. The Guardian (Type 6)
+- **Core Traits**: Loyalty, Security, Preparedness, Support, Courage, Honesty
+- **Scoring Weight**: 1.2
+- **Key Indicators**:
+  - Risk assessment
+  - Need for security
+  - Loyalty to values
+  - Fear of uncertainty
+  - Preparedness
+
+### 7. The Explorer (Type 7)
+- **Core Traits**: Freedom, Adventure, Optimism, Flexibility, Enthusiasm, Possibility
+- **Scoring Weight**: 1.0
+- **Key Indicators**:
+  - Spontaneity
+  - Need for variety
+  - Positive outlook
+  - Fear of limitation
+  - Energy and enthusiasm
+
+### 8. The Protector (Type 8)
+- **Core Traits**: Strength, Justice, Protection, Leadership, Autonomy, Directness
+- **Scoring Weight**: 1.2
+- **Key Indicators**:
+  - Assertiveness
+  - Need for control
+  - Protective nature
+  - Fear of vulnerability
+  - Strong leadership
+
+### 9. The Harmonizer (Type 9)
+- **Core Traits**: Peace, Harmony, Acceptance, Stability, Empathy, Unity
+- **Scoring Weight**: 1.1
+- **Key Indicators**:
+  - Conflict avoidance
+  - Need for harmony
+  - Acceptance of others
+  - Fear of conflict
+  - Mediation skills
+
+## Scoring System
+
+### Phase Weights
+- Initial Segmentation: 30%
+- Detailed Differentiation: 40%
+- Type Confirmation: 30%
+
+### Scoring Components
+1. **Trait Alignment** (40%)
+   - Core values match
+   - Behavioral patterns
+   - Emotional responses
+
+2. **Emotional Needs** (30%)
+   - Primary needs
+   - Secondary needs
+   - Growth needs
+
+3. **Growth Potential** (20%)
+   - Current state
+   - Growth opportunities
+   - Stress responses
+
+4. **Life Impact** (10%)
+   - Relationship patterns
+   - Career alignment
+   - Personal development
+
+## Results Format
+
+### Required Sections
+1. **Primary Persona Profile**
+   - Core description
+   - Key traits
+   - Emotional patterns
+
+2. **Secondary Personas**
+   - Supporting traits
+   - Integration potential
+   - Balance indicators
+
+3. **Growth Analysis**
+   - Current strengths
+   - Development areas
+   - Potential pathways
+
+4. **Life Domain Impact**
+   - Relationships
+   - Career
+   - Personal growth
+   - Health and wellness
+
+5. **2.0 Self Potential**
+   - Growth opportunities
+   - Transformation path
+   - Integration strategies
+
+### Visualization Requirements
+- Persona distribution chart
+- Growth potential graph
+- Life domain impact matrix
+- Confidence score display
+
+## Implementation Guidelines
+
+### Code Structure
+```javascript
+// Persona scoring constants
+const PERSONA_WEIGHTS = {
+    upholder: 1.2,
+    giver: 1.1,
+    driver: 1.2,
+    seeker: 1.0,
+    observer: 1.1,
+    guardian: 1.2,
+    explorer: 1.0,
+    protector: 1.2,
+    harmonizer: 1.1
+};
+
+// Phase weights
+const PHASE_WEIGHTS = {
+    initialSegmentation: 0.3,
+    detailedDifferentiation: 0.4,
+    typeConfirmation: 0.3
+};
+
+// Scoring components
+const SCORING_COMPONENTS = {
+    traitAlignment: 0.4,
+    emotionalNeeds: 0.3,
+    growthPotential: 0.2,
+    lifeImpact: 0.1
+};
+```
+
+### Validation Rules
+1. All required sections must be present
+2. Scores must be within valid ranges
+3. Confidence scores must be calculated
+4. Results must be reproducible
+5. Visualizations must be clear and accurate
+
+### Error Handling
+1. Invalid input detection
+2. Score range validation
+3. Missing data handling
+4. Confidence threshold checks
+5. Result consistency verification
+
+## Best Practices
+
+### Scoring
+- Use weighted averages for final scores
+- Consider multiple data points
+- Validate against known patterns
+- Include confidence intervals
+- Document scoring decisions
+
+### Presentation
+- Clear section organization
+- Consistent formatting
+- Accessible visualizations
+- Actionable insights
+- Growth-focused recommendations
+
+### Implementation
+- Modular code structure
+- Clear documentation
+- Error handling
+- Performance optimization
+- Data validation 
