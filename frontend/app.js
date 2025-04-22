@@ -2,6 +2,14 @@
 const IS_PRODUCTION = window.location.hostname !== 'localhost';
 const ENABLE_LOGGING = !IS_PRODUCTION;
 
+// Import the text analysis agent
+import { textAnalysisAgent } from './text-analysis-agent.js';
+
+// Initialize the text analysis agent
+textAnalysisAgent.initialize().catch(error => {
+    console.error('Failed to initialize text analysis agent:', error);
+});
+
 // Question Bank
 const questionBank = {
     initialSegmentation: {
@@ -44,7 +52,10 @@ const questionBank = {
                     text: "I maintain harmony and peace",
                     personas: ["harmonizer"]
                 }
-            }
+            },
+            allowTextInput: true,
+            textInputPlaceholder: "Or describe your approach to life in your own words...",
+            textInputMaxLength: 500
         },
         Q102: {
             text: "What is your greatest fear?",
@@ -85,7 +96,10 @@ const questionBank = {
                     text: "Conflict or disconnection",
                     personas: ["harmonizer"]
                 }
-            }
+            },
+            allowTextInput: true,
+            textInputPlaceholder: "Or describe your greatest fear in your own words...",
+            textInputMaxLength: 500
         }
     },
     detailedDifferentiation: {
@@ -98,76 +112,44 @@ const questionBank = {
                 },
                 A202: {
                     text: "I question them and only follow if they make sense to me",
-                    personas: ["questioner"]
+                    personas: ["observer"]
                 },
                 A203: {
                     text: "I follow them to maintain relationships and avoid conflict",
-                    personas: ["obliger"]
+                    personas: ["harmonizer"]
                 },
                 A204: {
                     text: "I often resist them and prefer to do things my own way",
-                    personas: ["rebel"]
+                    personas: ["explorer"]
                 },
                 A205: {
                     text: "I adapt them to fit my needs while maintaining harmony",
                     personas: ["harmonizer"]
-                },
-                A206: {
-                    text: "I analyze them thoroughly before deciding how to proceed",
-                    personas: ["observer"]
-                },
-                A207: {
-                    text: "I challenge them if they limit my freedom or growth",
-                    personas: ["explorer"]
-                },
-                A208: {
-                    text: "I enforce them when they protect what matters",
-                    personas: ["protector"]
-                },
-                A209: {
-                    text: "I use them as guidelines for success and achievement",
-                    personas: ["driver"]
                 }
             }
         },
         Q202: {
             text: "What is your approach to decision-making?",
             options: {
-                A210: {
+                A206: {
                     text: "I make decisions based on clear principles and values",
                     personas: ["upholder"]
                 },
-                A211: {
+                A207: {
                     text: "I gather extensive information before making decisions",
-                    personas: ["questioner"]
-                },
-                A212: {
-                    text: "I consider how decisions will affect others",
-                    personas: ["obliger"]
-                },
-                A213: {
-                    text: "I make decisions based on what feels right in the moment",
-                    personas: ["rebel"]
-                },
-                A214: {
-                    text: "I seek consensus and harmony in decision-making",
-                    personas: ["harmonizer"]
-                },
-                A215: {
-                    text: "I analyze all possible outcomes before deciding",
                     personas: ["observer"]
                 },
-                A216: {
-                    text: "I make decisions that open up new possibilities",
-                    personas: ["explorer"]
-                },
-                A217: {
-                    text: "I make decisive choices that protect what matters",
+                A208: {
+                    text: "I consider how decisions will affect others",
                     personas: ["protector"]
                 },
-                A218: {
-                    text: "I make decisions that lead to success and achievement",
-                    personas: ["driver"]
+                A209: {
+                    text: "I make decisions based on what feels right in the moment",
+                    personas: ["explorer"]
+                },
+                A210: {
+                    text: "I seek consensus and harmony in decision-making",
+                    personas: ["harmonizer"]
                 }
             }
         }
@@ -311,7 +293,10 @@ const questionBank = {
                     id: "A603",
                     text: "Gentle and supportive"
                 }
-            ]
+            ],
+            allowTextInput: true,
+            textInputPlaceholder: "Or describe your preferred feedback style in your own words...",
+            textInputMaxLength: 500
         },
         {
             id: "Q602",
@@ -329,7 +314,10 @@ const questionBank = {
                     id: "A606",
                     text: "Personal growth and development"
                 }
-            ]
+            ],
+            allowTextInput: true,
+            textInputPlaceholder: "Or describe what truly motivates you in your own words...",
+            textInputMaxLength: 500
         },
         {
             id: "Q603",
@@ -347,7 +335,36 @@ const questionBank = {
                     id: "A609",
                     text: "Take time to process before responding"
                 }
-            ]
+            ],
+            allowTextInput: true,
+            textInputPlaceholder: "Or describe your approach to conflict in your own words...",
+            textInputMaxLength: 500
+        }
+    ],
+    textInput: [
+        {
+            id: "Q701",
+            text: "What brings you joy?",
+            type: "textarea",
+            placeholder: "Please share what makes you truly happy...",
+            required: true,
+            maxLength: 500
+        },
+        {
+            id: "Q702",
+            text: "What area of your life would you like to change?",
+            type: "textarea",
+            placeholder: "Please describe the changes you'd like to make...",
+            required: true,
+            maxLength: 500
+        },
+        {
+            id: "Q703",
+            text: "What are your goals for your life?",
+            type: "textarea",
+            placeholder: "Please share your aspirations and dreams...",
+            required: true,
+            maxLength: 500
         }
     ],
     confirmation: {
@@ -1164,21 +1181,57 @@ const stateManager = {
 
 // Modify metrics tracking to use more efficient data structures
 const metrics = {
+    timers: {},
     startTimer: function(phase) {
         performance.start(`timer_${phase}`);
-        state.phaseTimes[phase] = {
-            start: Date.now(),
-            end: null
+        this.timers[phase] = {
+            start: window.performance?.now?.() || Date.now(),
+            lastInteraction: window.performance?.now?.() || Date.now()
         };
+        
+        // Add debounced interaction tracking
+        const container = document.getElementById(`${phase}-questions`);
+        if (container) {
+            this.debouncedInteraction = this.debounce(() => {
+                this.timers[phase].lastInteraction = window.performance?.now?.() || Date.now();
+            }, 100);
+            
+            container.addEventListener('change', this.debouncedInteraction);
+        }
     },
     
     endTimer: function(phase) {
-        if (state.phaseTimes[phase]) {
-            state.phaseTimes[phase].end = Date.now();
-            performance.end(`timer_${phase}`);
-            // Save state after significant changes
-            stateManager.saveState();
+        if (!this.timers[phase]) return;
+        
+        const endTime = window.performance?.now?.() || Date.now();
+        const duration = endTime - this.timers[phase].start;
+        const idleTime = endTime - this.timers[phase].lastInteraction;
+        
+        // Only warn if actual interaction time is high
+        if (duration - idleTime > 100) {
+            console.warn(`Performance warning: timer_${phase} had high interaction time`);
         }
+        
+        performance.end(`timer_${phase}`);
+        delete this.timers[phase];
+        
+        // Clean up event listener
+        const container = document.getElementById(`${phase}-questions`);
+        if (container && this.debouncedInteraction) {
+            container.removeEventListener('change', this.debouncedInteraction);
+        }
+    },
+    
+    debounce: function(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     },
     
     recordInteraction: function(phase) {
@@ -1233,8 +1286,8 @@ const performance = {
     start: function(label) {
         if (ENABLE_LOGGING) {
             this.marks[label] = {
-                start: Date.now(),
-                memory: window.performance.memory ? {
+                start: window.performance?.now?.() || Date.now(),
+                memory: window.performance?.memory ? {
                     usedJSHeapSize: window.performance.memory.usedJSHeapSize,
                     totalJSHeapSize: window.performance.memory.totalJSHeapSize
                 } : null
@@ -1244,12 +1297,12 @@ const performance = {
     },
     end: function(label) {
         if (ENABLE_LOGGING && this.marks[label]) {
-            this.marks[label].end = Date.now();
+            this.marks[label].end = window.performance?.now?.() || Date.now();
             const duration = this.marks[label].end - this.marks[label].start;
             console.log(`${label} took ${duration}ms`);
             
             // Log memory usage if available
-            if (window.performance.memory && this.marks[label].memory) {
+            if (window.performance?.memory && this.marks[label].memory) {
                 const memoryDiff = {
                     usedHeap: (window.performance.memory.usedJSHeapSize - this.marks[label].memory.usedJSHeapSize) / 1048576,
                     totalHeap: (window.performance.memory.totalJSHeapSize - this.marks[label].memory.totalJSHeapSize) / 1048576
@@ -1319,23 +1372,7 @@ const ui = {
             
             switch(phase) {
                 case 'detailed-differentiation':
-                    const initialAnswers = state.answers['initial-segmentation'] || {};
-                    let persona = 'upholder';
-                    const answerToPersona = {
-                        'A101': 'upholder',
-                        'A102': 'giver',
-                        'A103': 'driver',
-                        'A104': 'seeker',
-                        'A105': 'observer',
-                        'A106': 'guardian',
-                        'A107': 'explorer',
-                        'A108': 'protector',
-                        'A109': 'harmonizer'
-                    };
-                    if (initialAnswers['qQ101'] && answerToPersona[initialAnswers['qQ101']]) {
-                        persona = answerToPersona[initialAnswers['qQ101']];
-                    }
-                    this.renderDetailedDifferentiation(persona);
+                    this.renderQuestions(phase, questionBank.detailedDifferentiation);
                     break;
                 case 'initial-segmentation':
                     this.renderQuestions(phase, questionBank.initialSegmentation);
@@ -1358,7 +1395,10 @@ const ui = {
                     this.renderQuestions(phase, questionBank.instinctualVariant);
                     break;
                 case 'personalization':
-                    this.renderPersonalization();
+                    this.renderQuestions(phase, questionBank.personalization);
+                    break;
+                case 'text-input':
+                    this.renderQuestions(phase, questionBank.textInput);
                     break;
                 case 'confirmation':
                     this.renderQuestions(phase, questionBank.confirmation);
@@ -1475,39 +1515,36 @@ const ui = {
         
         console.log('Adjacent types:', adjacentTypes);
         
-        // Create a copy of the wing type question
-        const wingTypeQuestion = JSON.parse(JSON.stringify(questionBank.wingType.Q401));
-        
-        // Filter options to only show adjacent types
-        const filteredOptions = {};
-        Object.entries(wingTypeQuestion.options).forEach(([key, option]) => {
-            const typeNumber = parseInt(key.replace('A40', ''));
-            if (adjacentTypes.includes(typeNumber)) {
-                filteredOptions[key] = option;
-            }
-        });
-        
         // Create the question card
         const questionEl = document.createElement('div');
         questionEl.className = 'card mb-4';
         
-        const optionsHtml = Object.entries(filteredOptions).map(([optionId, option]) => `
-            <div class="form-check">
-                <input class="form-check-input" type="radio" 
-                    name="qQ401" 
-                    id="${optionId}" 
-                    value="${optionId}"
-                    required>
-                <label class="form-check-label" for="${optionId}">
-                    ${option.text}
-                </label>
-            </div>
-        `).join('');
+        // Build options HTML for adjacent types
+        const optionsHtml = adjacentTypes.map(typeNumber => {
+            const optionId = `A40${typeNumber}`;
+            const option = questionBank.wingType.Q401.options[optionId];
+            if (!option) {
+                console.error(`Option not found for type ${typeNumber}`);
+                return '';
+            }
+            return `
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" 
+                        name="qQ401" 
+                        id="${optionId}" 
+                        value="${optionId}"
+                        required>
+                    <label class="form-check-label" for="${optionId}">
+                        ${option.text}
+                    </label>
+                </div>
+            `;
+        }).join('');
         
         questionEl.innerHTML = `
             <div class="card-body">
                 <h5 class="card-title">Wing Type Assessment</h5>
-                <p class="card-text">Based on your primary type (Type ${primaryType}), which of these adjacent types resonates with you more?</p>
+                <p class="card-text">Based on your primary type (Type ${primaryType}: ${this.getTypeDescription(primaryType)}), which of these adjacent types resonates with you more?</p>
                 <div class="form-group">${optionsHtml}</div>
             </div>
         `;
@@ -1614,55 +1651,162 @@ const ui = {
             
             performance.start('buildQuestions');
             
-            // Handle object-based questions structure
-            const questionEntries = Object.entries(questions);
-            if (!questionEntries || questionEntries.length === 0) {
-                console.error('No questions found for phase:', phase);
-                return;
-            }
-            
-            questionEntries.forEach(([questionId, question], index) => {
-                if (!question || !question.options) {
-                    console.error('Invalid question structure:', question);
+            // Handle array-based questions structure
+            if (Array.isArray(questions)) {
+                questions.forEach((question, index) => {
+                    const questionEl = document.createElement('div');
+                    questionEl.className = 'card mb-3';
+                    
+                    // Special handling for text-input phase
+                    if (phase === 'text-input') {
+                        questionEl.innerHTML = `
+                            <div class="card-body">
+                                <h5 class="card-title">Question ${index + 1}</h5>
+                                <p class="card-text">${question.text}</p>
+                                <div class="form-group">
+                                    <textarea class="form-control" 
+                                        name="q${question.id}" 
+                                        id="q${question.id}" 
+                                        placeholder="${question.placeholder || 'Please provide your answer...'}"
+                                        maxlength="${question.maxLength || 500}"
+                                        rows="4"
+                                        ${question.required ? 'required' : ''}></textarea>
+                                    <small class="text-muted">Maximum ${question.maxLength || 500} characters</small>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Build options HTML string
+                        const optionsHtml = question.options.map(option => `
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" 
+                                    name="q${question.id}" 
+                                    id="${option.id}" 
+                                    value="${option.id}"
+                                    required>
+                                <label class="form-check-label" for="${option.id}">
+                                    ${option.text}
+                                </label>
+                            </div>
+                        `).join('');
+                        
+                        // Add text input option if allowed
+                        let textInputHtml = '';
+                        if (question.allowTextInput) {
+                            textInputHtml = `
+                                <div class="form-check mt-3">
+                                    <input class="form-check-input" type="radio" 
+                                        name="q${question.id}" 
+                                        id="q${question.id}_text" 
+                                        value="text_input">
+                                    <label class="form-check-label" for="q${question.id}_text">
+                                        Other (please specify)
+                                    </label>
+                                </div>
+                                <div class="mt-2" id="q${question.id}_text_container" style="display: none;">
+                                    <textarea class="form-control" 
+                                        name="q${question.id}_text" 
+                                        id="q${question.id}_text_input" 
+                                        placeholder="${question.textInputPlaceholder || 'Please provide your answer...'}"
+                                        maxlength="${question.textInputMaxLength || 500}"
+                                        rows="3"></textarea>
+                                    <small class="text-muted">Maximum ${question.textInputMaxLength || 500} characters</small>
+                                </div>
+                            `;
+                        }
+                        
+                        questionEl.innerHTML = `
+                            <div class="card-body">
+                                <h5 class="card-title">Question ${index + 1}</h5>
+                                <p class="card-text">${question.text}</p>
+                                <div class="form-group">
+                                    ${optionsHtml}
+                                    ${textInputHtml}
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Add event listeners for text input toggle
+                        if (question.allowTextInput) {
+                            const textRadio = questionEl.querySelector(`#q${question.id}_text`);
+                            const textContainer = questionEl.querySelector(`#q${question.id}_text_container`);
+                            const textInput = questionEl.querySelector(`#q${question.id}_text_input`);
+                            
+                            textRadio.addEventListener('change', () => {
+                                textContainer.style.display = textRadio.checked ? 'block' : 'none';
+                                if (textRadio.checked) {
+                                    textInput.required = true;
+                                } else {
+                                    textInput.required = false;
+                                    textInput.value = '';
+                                }
+                            });
+                            
+                            // Also handle when other options are selected
+                            question.options.forEach(option => {
+                                const optionRadio = questionEl.querySelector(`#${option.id}`);
+                                optionRadio.addEventListener('change', () => {
+                                    textContainer.style.display = 'none';
+                                    textInput.required = false;
+                                    textInput.value = '';
+                                });
+                            });
+                        }
+                    }
+                    
+                    fragment.appendChild(questionEl);
+                });
+            } else {
+                // Handle object-based questions structure (existing multiple choice questions)
+                const questionEntries = Object.entries(questions);
+                if (!questionEntries || questionEntries.length === 0) {
+                    console.error('No questions found for phase:', phase);
                     return;
                 }
                 
-                const questionEl = document.createElement('div');
-                questionEl.className = 'card mb-3';
-                
-                // Determine if question should be multiple choice
-                const isMultipleChoice = phase === 'detailedDifferentiation' || 
-                                       phase === 'confirmation';
-                
-                // Build options HTML string for better performance
-                const optionsHtml = Object.entries(question.options).map(([optionId, option]) => {
-                    if (!option || !option.text) {
-                        console.error('Invalid option structure:', option);
-                        return '';
+                questionEntries.forEach(([questionId, question], index) => {
+                    if (!question || !question.options) {
+                        console.error('Invalid question structure:', question);
+                        return;
                     }
-                    return `
-                        <div class="form-check">
-                            <input class="form-check-input" type="${isMultipleChoice ? 'checkbox' : 'radio'}" 
-                                name="q${questionId}${isMultipleChoice ? '[]' : ''}" 
-                                id="${optionId}" 
-                                value="${optionId}"
-                                ${!isMultipleChoice ? 'required' : ''}>
-                            <label class="form-check-label" for="${optionId}">
-                                ${option.text}
-                            </label>
+                    
+                    const questionEl = document.createElement('div');
+                    questionEl.className = 'card mb-3';
+                    
+                    // Determine if question should be multiple choice
+                    const isMultipleChoice = phase === 'detailedDifferentiation' || 
+                                           phase === 'confirmation';
+                    
+                    // Build options HTML string for better performance
+                    const optionsHtml = Object.entries(question.options).map(([optionId, option]) => {
+                        if (!option || !option.text) {
+                            console.error('Invalid option structure:', option);
+                            return '';
+                        }
+                        return `
+                            <div class="form-check">
+                                <input class="form-check-input" type="${isMultipleChoice ? 'checkbox' : 'radio'}" 
+                                    name="q${questionId}${isMultipleChoice ? '[]' : ''}" 
+                                    id="${optionId}" 
+                                    value="${optionId}"
+                                    ${!isMultipleChoice ? 'required' : ''}>
+                                <label class="form-check-label" for="${optionId}">
+                                    ${option.text}
+                                </label>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    questionEl.innerHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title">Question ${index + 1}</h5>
+                            <p class="card-text">${question.text}</p>
+                            <div class="form-group">${optionsHtml}</div>
                         </div>
                     `;
-                }).join('');
-                
-                questionEl.innerHTML = `
-                    <div class="card-body">
-                        <h5 class="card-title">Question ${index + 1}</h5>
-                        <p class="card-text">${question.text}</p>
-                        <div class="form-group">${optionsHtml}</div>
-                    </div>
-                `;
-                fragment.appendChild(questionEl);
-            });
+                    fragment.appendChild(questionEl);
+                });
+            }
             
             performance.end('buildQuestions');
             
@@ -1714,18 +1858,89 @@ const ui = {
     },
     collectAnswers: function(phase) {
         const answers = {};
-        const inputs = document.querySelectorAll(`#${phase}-questions input:checked`);
-        inputs.forEach(input => {
-            const questionId = input.name.replace('[]', '');
-            if (!answers[questionId]) {
-                answers[questionId] = [];
-            }
-            answers[questionId].push(input.value);
-        });
+        const container = document.getElementById(`${phase}-questions`);
+        
+        if (phase === 'text-input') {
+            // Handle text input phase differently - collect from textareas
+            const textareas = container.querySelectorAll('textarea');
+            textareas.forEach(textarea => {
+                const questionId = textarea.name;
+                if (textarea.value.trim()) {
+                    answers[questionId] = [textarea.value.trim()];
+                }
+            });
+        } else if (phase === 'confirmation') {
+            // Handle confirmation phase with checkboxes
+            const questions = container.querySelectorAll('.card');
+            questions.forEach(questionEl => {
+                const checkboxInputs = questionEl.querySelectorAll('input[type="checkbox"]:checked');
+                const questionId = checkboxInputs.length > 0 ? checkboxInputs[0].name.replace('[]', '') : null;
+                if (questionId) {
+                    answers[questionId] = Array.from(checkboxInputs).map(input => input.value);
+                }
+            });
+        } else {
+            // Handle multiple choice and text input questions
+            const questions = container.querySelectorAll('.card');
+            questions.forEach(questionEl => {
+                const radioInputs = questionEl.querySelectorAll('input[type="radio"]:checked');
+                radioInputs.forEach(input => {
+                    const questionId = input.name;
+                    if (input.value === 'text_input') {
+                        // Handle text input response
+                        const textInput = questionEl.querySelector(`#${questionId}_text_input`);
+                        if (textInput && textInput.value.trim()) {
+                            answers[questionId] = [textInput.value.trim()];
+                        }
+                    } else {
+                        // Handle regular option selection
+                        if (!answers[questionId]) {
+                            answers[questionId] = [];
+                        }
+                        answers[questionId].push(input.value);
+                    }
+                });
+            });
+        }
+        
         return answers;
     },
     validateAnswers: function(answers) {
-        return Object.keys(answers).length > 0;
+        // Check if there are any answers
+        if (Object.keys(answers).length === 0) {
+            return false;
+        }
+        
+        // Get current phase
+        const currentPhase = state.currentPhase;
+        
+        // Validate each answer based on phase type
+        for (const [questionId, answerValues] of Object.entries(answers)) {
+            // For text input answers, check if the answer is not empty
+            if (answerValues.length === 1 && answerValues[0] === '') {
+                return false;
+            }
+            
+            // For confirmation phase, require at least one checkbox selected per question
+            if (currentPhase === 'confirmation') {
+                if (answerValues.length === 0) {
+                    return false;
+                }
+            } else {
+                // For other phases, check if at least one option is selected
+                if (answerValues.length === 0) {
+                    return false;
+                }
+            }
+        }
+        
+        // For confirmation phase, ensure all questions are answered
+        if (currentPhase === 'confirmation') {
+            const expectedQuestions = ['qQ401', 'qQ402'];
+            return expectedQuestions.every(qId => answers[qId] && answers[qId].length > 0);
+        }
+        
+        return true;
     },
     proceedToNextPhase: async function(currentPhase) {
         const phases = [
@@ -1737,6 +1952,7 @@ const ui = {
             'instinctual-variant',
             'personalization',
             'confirmation',
+            'text-input',
             'results'
         ];
         const currentIndex = phases.indexOf(currentPhase);
@@ -2502,23 +2718,15 @@ const answerToPersona = {
     
     // Detailed Differentiation
     'A201': 'upholder',
-    'A202': 'observer',  // was questioner
-    'A203': 'giver',     // was obliger
-    'A204': 'explorer',  // was rebel
+    'A202': 'observer',
+    'A203': 'harmonizer',
+    'A204': 'explorer',
     'A205': 'harmonizer',
-    'A206': 'observer',
-    'A207': 'explorer',
+    'A206': 'upholder',
+    'A207': 'observer',
     'A208': 'protector',
-    'A209': 'driver',
-    'A210': 'upholder',
-    'A211': 'observer',  // was questioner
-    'A212': 'giver',     // was obliger
-    'A213': 'explorer',  // was rebel
-    'A214': 'harmonizer',
-    'A215': 'observer',
-    'A216': 'explorer',
-    'A217': 'protector',
-    'A218': 'driver',
+    'A209': 'explorer',
+    'A210': 'harmonizer',
     
     // Type Confirmation
     'A301': 'upholder',
@@ -2550,3 +2758,95 @@ const answerToPersona = {
     'A505': 'harmonizer',
     'A506': 'protector'
 };
+
+function startTimer(phase) {
+    const startTime = Date.now();
+    const lastInteraction = Date.now();
+    
+    const debouncedInteraction = debounce(() => {
+        lastInteraction = Date.now();
+    }, 1000);
+    
+    const trackInteraction = () => {
+        debouncedInteraction();
+    };
+    
+    document.addEventListener('click', trackInteraction);
+    document.addEventListener('keydown', trackInteraction);
+    document.addEventListener('input', trackInteraction);
+    
+    const cleanup = () => {
+        document.removeEventListener('click', trackInteraction);
+        document.removeEventListener('keydown', trackInteraction);
+        document.removeEventListener('input', trackInteraction);
+    };
+    
+    return { startTime, lastInteraction, cleanup };
+}
+
+function endTimer(phase, timer) {
+    if (!timer || !timer.startTime) return;
+    
+    const endTime = Date.now();
+    const duration = endTime - timer.startTime;
+    const interactionTime = timer.lastInteraction - timer.startTime;
+    const idleTime = duration - interactionTime;
+    
+    if (interactionTime > 100) {
+        console.warn(`Performance warning: ${phase} phase took ${interactionTime}ms of interaction time`);
+    }
+    
+    if (timer.cleanup) {
+        timer.cleanup();
+    }
+    
+    return { duration, interactionTime, idleTime };
+}
+
+async function collectAnswers(phase) {
+    const answers = {};
+    const questions = questionBank[phase];
+    
+    for (const [questionId, question] of Object.entries(questions)) {
+        const radioInputs = document.querySelectorAll(`input[type="radio"][name="q${questionId}"]`);
+        const textInput = document.querySelector(`#q${questionId}_text_input`);
+        
+        // Check for text input first
+        if (textInput && textInput.value.trim()) {
+            try {
+                if (ENABLE_LOGGING) {
+                    console.log(`Analyzing text response for question ${questionId}:`, textInput.value);
+                }
+                
+                const analysisResult = await textAnalysisAgent.analyzeResponse(textInput.value.trim(), question);
+                
+                answers[questionId] = {
+                    type: 'text',
+                    value: textInput.value.trim(),
+                    analysis: analysisResult
+                };
+                
+                if (ENABLE_LOGGING) {
+                    console.log(`Analysis result for question ${questionId}:`, analysisResult);
+                }
+            } catch (error) {
+                console.error(`Error analyzing text response for question ${questionId}:`, error);
+                throw new ValidationError('Failed to analyze text response', questionId, textInput.value);
+            }
+        } else {
+            // Check radio inputs
+            const selectedOption = Array.from(radioInputs).find(input => input.checked);
+            
+            if (selectedOption) {
+                answers[questionId] = {
+                    type: 'option',
+                    value: selectedOption.value
+                };
+            } else if (question.required !== false) {
+                throw new ValidationError('No answer provided for required question', questionId);
+            }
+        }
+    }
+    
+    return answers;
+}

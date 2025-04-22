@@ -1,0 +1,21 @@
+{
+  "name": "core-persona-dev",
+  "version": "1.0.0",
+  "description": "Development environment for Core Persona assessment",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch frontend --exec \"http-server frontend -p 3000\"",
+    "test": "jest",
+    "lint": "eslint frontend/**/*.js",
+    "format": "prettier --write frontend/**/*.{js,html,css}"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.2.4"
+  }
+} 

@@ -42,7 +42,7 @@
 
         <!-- Initial Segmentation Phase -->
         <div id="initial-segmentation-phase" class="phase">
-            <h2>Initial Segmentation</h2>
+            <h2>Getting to know you</h2>
             <div class="progress mb-3">
                 <div class="progress-bar" role="progressbar" style="width: 14%">Step 1 of 7</div>
             </div>
@@ -54,7 +54,7 @@
 
         <!-- Detailed Differentiation Phase -->
         <div id="detailed-differentiation-phase" class="phase">
-            <h2>Detailed Differentiation</h2>
+            <h2>What makes you unique?</h2>
             <div class="progress mb-3">
                 <div class="progress-bar" role="progressbar" style="width: 28%">Step 2 of 7</div>
             </div>
@@ -66,7 +66,7 @@
 
         <!-- Type Confirmation Phase -->
         <div id="type-confirmation-phase" class="phase">
-            <h2>Type Confirmation</h2>
+            <h2>Core Self</h2>
             <div class="progress mb-3">
                 <div class="progress-bar" role="progressbar" style="width: 42%">Step 3 of 7</div>
             </div>
@@ -78,7 +78,7 @@
 
         <!-- Wing Type Exploration Phase -->
         <div id="wing-type-phase" class="phase">
-            <h2>Wing Type Exploration</h2>
+            <h2>I resonate more with...</h2>
             <div class="progress mb-3">
                 <div class="progress-bar" role="progressbar" style="width: 56%">Step 4 of 7</div>
             </div>
@@ -90,7 +90,7 @@
 
         <!-- Instinctual Variant Assessment Phase -->
         <div id="instinctual-variant-phase" class="phase">
-            <h2>Instinctual Variant Assessment</h2>
+            <h2>My instincts are more aligned with...</h2>
             <div class="progress mb-3">
                 <div class="progress-bar" role="progressbar" style="width: 70%">Step 5 of 7</div>
             </div>
@@ -102,14 +102,26 @@
 
         <!-- Personalization Phase -->
         <div id="personalization-phase" class="phase">
-            <h2>Personalization & Preferences</h2>
+            <h2>How I express my personality</h2>
             <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 84%">Step 6 of 7</div>
+                <div class="progress-bar" role="progressbar" style="width: 85%">Step 6 of 7</div>
             </div>
             <div id="validation-alert-personalization" class="alert alert-danger d-none mb-3">
                 Please answer all questions before continuing.
             </div>
             <div id="personalization-questions"></div>
+        </div>
+
+        <!-- Text Input Phase -->
+        <div id="text-input-phase" class="phase">
+            <h2>In My Words</h2>
+            <div class="progress mb-3">
+                <div class="progress-bar" role="progressbar" style="width: 90%">Step 7 of 7</div>
+            </div>
+            <div id="validation-alert-text-input" class="alert alert-danger d-none mb-3">
+                Please answer all questions before continuing.
+            </div>
+            <div id="text-input-questions"></div>
         </div>
 
         <!-- Confirmation Phase -->
@@ -205,6 +217,6 @@
         // Show loading initially
         showLoading();
     </script>
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html> 
