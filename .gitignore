@@ -32,4 +32,4 @@ coverage/
 
 # Logs
 logs/
-*.log 
+*.log .DS_Store

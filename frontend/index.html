@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Core Persona Onboarding Funnel</title>
+    <title>Core Persona Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Rubik:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Add NLP dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/compromise@12.0.0/builds/compromise.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/compromise-sentences@0.1.0/builds/compromise-sentences.min.js"></script>
+    <!-- End NLP dependencies -->
     <script>
         // Handle Chart.js loading errors
         window.chartLoadError = false;
@@ -19,174 +24,72 @@
         defer></script>
 </head>
 <body>
-    <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); z-index: 9999;">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    </div>
-
     <div class="container">
-        <!-- Registration Phase -->
-        <div id="registration-phase" class="phase active">
-            <h2>Welcome to Core Persona</h2>
-            <form id="registration-form">
-                <div class="mb-3">
-                    <label for="firstName" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="firstName" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Begin Assessment</button>
-            </form>
-        </div>
-
-        <!-- Initial Segmentation Phase -->
-        <div id="initial-segmentation-phase" class="phase">
-            <h2>Getting to know you</h2>
-            <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 14%">Step 1 of 7</div>
+        <header>
+            <h1>DPNR Demo</h1>
+            <div class="language-selector">
+                <label for="languageSelect">Language:</label>
+                <select id="languageSelect">
+                    <option value="en">English</option>
+                    <option value="he">עברית</option>
+                </select>
             </div>
-            <div id="validation-alert-segmentation" class="alert alert-danger d-none mb-3">
-                Please answer all questions before continuing.
-            </div>
-            <div id="initial-segmentation-questions"></div>
-        </div>
-
-        <!-- Detailed Differentiation Phase -->
-        <div id="detailed-differentiation-phase" class="phase">
-            <h2>What makes you unique?</h2>
-            <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 28%">Step 2 of 7</div>
-            </div>
-            <div id="validation-alert-differentiation" class="alert alert-danger d-none mb-3">
-                Please answer all questions before continuing.
-            </div>
-            <div id="detailed-differentiation-questions"></div>
-        </div>
-
-        <!-- Type Confirmation Phase -->
-        <div id="type-confirmation-phase" class="phase">
-            <h2>Core Self</h2>
-            <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 42%">Step 3 of 7</div>
-            </div>
-            <div id="validation-alert-confirmation" class="alert alert-danger d-none mb-3">
-                Please answer all questions before continuing.
-            </div>
-            <div id="type-confirmation-questions"></div>
-        </div>
-
-        <!-- Wing Type Exploration Phase -->
-        <div id="wing-type-phase" class="phase">
-            <h2>I resonate more with...</h2>
-            <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 56%">Step 4 of 7</div>
-            </div>
-            <div id="validation-alert-wing" class="alert alert-danger d-none mb-3">
-                Please answer all questions before continuing.
-            </div>
-            <div id="wing-type-questions"></div>
-        </div>
-
-        <!-- Instinctual Variant Assessment Phase -->
-        <div id="instinctual-variant-phase" class="phase">
-            <h2>My instincts are more aligned with...</h2>
-            <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 70%">Step 5 of 7</div>
-            </div>
-            <div id="validation-alert-instinctual" class="alert alert-danger d-none mb-3">
-                Please answer all questions before continuing.
-            </div>
-            <div id="instinctual-variant-questions"></div>
-        </div>
-
-        <!-- Personalization Phase -->
-        <div id="personalization-phase" class="phase">
-            <h2>How I express my personality</h2>
-            <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 85%">Step 6 of 7</div>
-            </div>
-            <div id="validation-alert-personalization" class="alert alert-danger d-none mb-3">
-                Please answer all questions before continuing.
-            </div>
-            <div id="personalization-questions"></div>
-        </div>
-
-        <!-- Text Input Phase -->
-        <div id="text-input-phase" class="phase">
-            <h2>In My Words</h2>
-            <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 90%">Step 7 of 7</div>
-            </div>
-            <div id="validation-alert-text-input" class="alert alert-danger d-none mb-3">
-                Please answer all questions before continuing.
-            </div>
-            <div id="text-input-questions"></div>
-        </div>
-
-        <!-- Confirmation Phase -->
-        <div id="confirmation-phase" class="phase">
-            <h2>Final Confirmation</h2>
-            <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 92%">Step 7 of 8</div>
-            </div>
-            <div id="validation-alert-confirmation" class="alert alert-danger d-none mb-3">
-                Please answer all questions before continuing.
-            </div>
-            <div id="confirmation-questions"></div>
-        </div>
-
-        <!-- Results Phase -->
-        <div id="results-phase" class="phase">
-            <h2>Assessment Complete</h2>
-            <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 100%">Step 8 of 8</div>
-            </div>
-            <div id="persona-result" class="card mb-4">
-                <div class="card-body">
-                    <h3 class="card-title">Your Core Persona Profile</h3>
-                    <div id="persona-details"></div>
-                </div>
-            </div>
-            <div id="recursive-feedback" class="mt-3"></div>
-        </div>
-
-        <!-- Metrics Dashboard -->
-        <div id="metrics-dashboard" class="phase">
-            <h2>Assessment Metrics</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card mb-4">
+        </header>
+        
+        <main>
+            <div id="assessment-container">
+                <!-- Registration form -->
+                <div id="registration-phase" class="phase active">
+                    <form id="registration-form" class="card" onsubmit="return false;">
                         <div class="card-body">
-                            <h5 class="card-title">Time Metrics</h5>
-                            <canvas id="timeChart"></canvas>
-                            <p>Total Time: <span id="total-time">0</span> seconds</p>
-                            <p>Average Time per Question: <span id="avg-time-per-question">0</span> seconds</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">Completion Metrics</h5>
-                            <canvas id="completionChart"></canvas>
-                            <p>Questions Answered: <span id="questions-answered">0</span></p>
-                            <p>Confidence Score: <span id="confidence-score">0</span>%</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Interaction Metrics</h5>
-                            <canvas id="interactionChart"></canvas>
-                            <div class="mt-3">
-                                <button id="export-metrics" class="btn btn-primary">Export Metrics as JSON</button>
+                            <h5 class="card-title">Welcome to the Core Persona Assessment</h5>
+                            <p class="card-text">Please provide some basic information to begin your assessment.</p>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
                             </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Begin Assessment</button>
                         </div>
-                    </div>
+                    </form>
+                </div>
+                <!-- Phase containers will be dynamically populated by app.js -->
+                <div id="initial-segmentation-phase" class="phase">
+                    <div id="initial-segmentation-questions"></div>
+                </div>
+                <div id="detailed-differentiation-phase" class="phase">
+                    <div id="detailed-differentiation-questions"></div>
+                </div>
+                <div id="type-confirmation-phase" class="phase">
+                    <div id="type-confirmation-questions"></div>
+                </div>
+                <div id="wing-type-phase" class="phase">
+                    <div id="wing-type-questions"></div>
+                </div>
+                <div id="instinctual-variant-phase" class="phase">
+                    <div id="instinctual-variant-questions"></div>
+                </div>
+                <div id="personalization-phase" class="phase">
+                    <div id="personalization-questions"></div>
+                </div>
+                <div id="confirmation-phase" class="phase">
+                    <div id="confirmation-questions"></div>
+                </div>
+                <div id="results-phase" class="phase">
+                    <div id="persona-details"></div>
+                    <!-- Results actions will be dynamically added here when needed -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading overlay -->
+        <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); z-index: 9999;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
         </div>

@@ -1,21 +1,24 @@
 {
-  "name": "core-persona-dev",
+  "name": "dpnr-demo",
   "version": "1.0.0",
-  "description": "Development environment for Core Persona assessment",
+  "description": "Core Persona Assessment System - A comprehensive personality assessment platform",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --watch frontend --exec \"http-server frontend -p 3000\"",
-    "test": "jest",
-    "lint": "eslint frontend/**/*.js",
-    "format": "prettier --write frontend/**/*.{js,html,css}"
+    "start": "http-server ./frontend -p 8000",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "http-server": "^14.1.1"
+    "compromise": "^12.0.0",
+    "compromise-sentences": "^0.1.0",
+    "natural": "^6.10.0"
   },
   "devDependencies": {
-    "eslint": "^8.56.0",
-    "jest": "^29.7.0",
-    "nodemon": "^3.0.2",
-    "prettier": "^3.2.4"
-  }
-} 
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true
+}
