@@ -20,8 +20,15 @@ export async function loadLanguageResources(lang = 'en') {
       }));
 
     case 'en':
+      return Promise.all([
+        import('./en/translations.js'),
+      ]).then(([translations]) => ({
+        translations: translations.default || translations,
+        questions: [],
+        personas: {},
+      }));
+
     default:
-      // English is currently embedded in the application core
       return { translations: {}, questions: [], personas: {} };
   }
 } 
