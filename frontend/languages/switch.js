@@ -1,6 +1,7 @@
 import { languageConfig, getLanguageConfig } from './config.js';
 import { loadLanguageResources } from './index.js';
 import { setStoredLanguage } from './storage.js';
+import { loadFont } from './font-loader.js';
 
 /**
  * Switch application language
@@ -28,6 +29,8 @@ export async function switchLanguage(lang) {
     const { rtl, font } = getLanguageConfig(lang);
     document.documentElement.dir = rtl ? 'rtl' : 'ltr';
     document.documentElement.style.fontFamily = font;
+    // Ensure web font is loaded before applying
+    await loadFont(font);
   } catch (error) {
     console.error('Language switch failed', error);
     throw error;
