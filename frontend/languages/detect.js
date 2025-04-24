@@ -3,6 +3,7 @@
 // Falls back to 'en' if no supported language is found
 
 import { languageConfig } from './config.js';
+import { getStoredLanguage } from './storage.js';
 
 /**
  * Detect the most suitable language for the user.
@@ -22,8 +23,7 @@ export const detectLanguage = () => {
   }
 
   // 2. Stored preference (sessionStorage, then localStorage)
-  const storedLang =
-    window.sessionStorage.getItem('lang') || window.localStorage.getItem('lang');
+  const storedLang = getStoredLanguage();
   if (storedLang && languageConfig[storedLang]) {
     return storedLang;
   }

@@ -1,5 +1,6 @@
 import { languageConfig, getLanguageConfig } from './config.js';
 import { loadLanguageResources } from './index.js';
+import { setStoredLanguage } from './storage.js';
 
 /**
  * Switch application language
@@ -14,8 +15,7 @@ export async function switchLanguage(lang) {
 
   try {
     // Persist preference
-    window.sessionStorage.setItem('lang', lang);
-    window.localStorage.setItem('lang', lang);
+    setStoredLanguage(lang);
 
     // Load language resources
     const { translations, questions, personas } = await loadLanguageResources(lang);
