@@ -1,6 +1,4 @@
-// Hebrew personas placeholder
-// TODO: Replace with real persona descriptions
+// Hebrew personas
+import { hebrewPersonaDescriptions } from '../../language-config.js';
 
-export default {
-  // example: type1: { name: 'הפרפקציוניסט', description: 'שואף למצוינות...' },
-}; 
+export default hebrewPersonaDescriptions; 
