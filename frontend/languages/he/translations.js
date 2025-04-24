@@ -9,4 +9,10 @@ export default {
   nameLabel: 'שם',
   emailLabel: 'אימייל',
   beginAssessment: 'התחל את המבחן',
+  progressStep: 'שלב',
+  progressOf: 'מתוך',
+  resultsTitle: 'תוצאות',
+  resultsDownload: 'הורד תוצאות',
+  resultsClear: 'נקה תוצאות',
+  resultsNoData: 'אין נתונים להצגה',
 }; 
