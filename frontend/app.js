@@ -5,59 +5,96 @@ const ENABLE_LOGGING = !IS_PRODUCTION;
 // Import the text analysis agent
 import { textAnalysisAgent } from './text-analysis-agent.js';
 
+// Import Claude agent
+import { claudeAgent } from './claude-agent.js';
+
+// Import assessment manager
+import { assessmentManager } from './js/core/assessment-manager.js';
+
 // Import language configuration
-import { languageConfig, hebrewTranslations, hebrewPersonaDescriptions } from './language-config.js';
+import { t, setTranslations, refreshI18nTexts } from './i18n.js';
+import { switchLanguage, detectLanguage } from './languages/index.js';
 
 // Import personas configuration
 import { personas } from './personas.js';
 
 // Import LanguageHandler
-import LanguageHandler from './language-handler.js';
-import LanguageSelector from './components/language-selector.js';
+import { LanguageHandler } from './language-handler.js';
+import { LanguageSelector } from './components/language-selector.js';
 
-// Initialize the text analysis agent
-textAnalysisAgent.initialize().catch(error => {
-    console.error('Failed to initialize text analysis agent:', error);
-});
+// Initialize components after DOM is loaded
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Initialize the text analysis agent
+        await textAnalysisAgent.initialize().catch(error => {
+            console.error('Failed to initialize text analysis agent:', error);
+        });
 
-// Initialize language handler
-const languageHandler = new LanguageHandler();
-languageHandler.initializeEnglishPersonas(personas);
+        // Initialize Claude agent with API key
+        const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY; // Make sure to set this in your environment
+        await claudeAgent.initialize(CLAUDE_API_KEY).catch(error => {
+            console.error('Failed to initialize Claude agent:', error);
+        });
 
-// Initialize language selector
-const languageSelector = new LanguageSelector(languageHandler, 'language-selector-container');
+        // Initialize language handler
+        const languageHandler = new LanguageHandler();
+        await languageHandler.initializeEnglishPersonas(personas);
 
-// Add language change observer for UI updates
-languageHandler.addObserver(event => {
-    if (event.type === 'languageChange') {
-        updateUI();
-        languageSelector.updateStyles();
+        // Initialize language selector
+        const languageSelector = new LanguageSelector(languageHandler, 'language-selector-container');
+
+        // Initialize assessment manager
+        await assessmentManager.initialize().catch(error => {
+            console.error('Failed to initialize assessment manager:', error);
+        });
+
+        // Add language change observer for UI updates
+        languageHandler.addObserver(event => {
+            if (event.type === 'languageChange') {
+                updateUI();
+                languageSelector.updateStyles();
+            }
+        });
+
+        // Hide loading overlay once everything is initialized
+        window.hideLoading();
+    } catch (error) {
+        console.error('Error during initialization:', error);
+        window.hideLoading();
+        // Show error message to user
+        alert('There was an error initializing the application. Please refresh the page and try again.');
     }
 });
 
-// Update UI elements with translations
+// Initialize language based on detection
+const initialLang = detectLanguage();
+switchLanguage(initialLang);
+
 function updateUI() {
-    // Update all UI elements with translations
-    const elements = document.querySelectorAll('[data-i18n]');
-    elements.forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        el.textContent = languageHandler.getTranslation(key);
-    });
-    
-    // Update RTL/LTR specific styles
-    const rtlStyles = document.getElementById('rtl-styles');
-    if (languageHandler.isRTL()) {
-        if (!rtlStyles) {
-            const style = document.createElement('style');
-            style.id = 'rtl-styles';
-            style.textContent = `
-                body { direction: rtl; }
-                .question-container { text-align: right; }
-                .option-container { text-align: right; }
-            `;
-            document.head.appendChild(style);
-        }
-    } else if (rtlStyles) {
-        rtlStyles.remove();
+  refreshI18nTexts();
+}
+
+// Enhanced analysis function that uses both agents
+async function analyzeResponse(text, question) {
+    try {
+        // Run both analyses in parallel
+        const [textAnalysis, claudeAnalysis] = await Promise.all([
+            textAnalysisAgent.analyzeResponse(text, question),
+            claudeAgent.analyzeResponse(text, question)
+        ]);
+
+        // Combine results with weighted confidence
+        return {
+            personas: [...new Set([...textAnalysis.personas, ...claudeAnalysis.personas])],
+            confidence: (textAnalysis.confidence + claudeAnalysis.confidence) / 2,
+            keywords: [...new Set([...textAnalysis.keywords, ...claudeAnalysis.topics])],
+            sentiment: textAnalysis.confidence > claudeAnalysis.confidence ? 
+                textAnalysis.sentiment : claudeAnalysis.sentiment,
+            entities: [...new Set([...textAnalysis.entities, ...claudeAnalysis.entities])],
+            insights: claudeAnalysis.insights || []
+        };
+    } catch (error) {
+        console.error('Error in combined analysis:', error);
+        throw error;
     }
 }
