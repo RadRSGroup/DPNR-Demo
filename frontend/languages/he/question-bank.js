@@ -1,15 +1,4 @@
-// Hebrew question bank placeholder
-// TODO: Populate with assessment questions structured as needed
+// Re-export Hebrew question bank from central file
+import { hebrewQuestionBank } from '../../hebrew-question-bank.js';
 
-export default [
-  /*
-  {
-    id: 'q1',
-    text: 'מה שלומך?',
-    options: [
-      { id: 'a1', text: 'טוב' },
-      { id: 'a2', text: 'בסדר' },
-    ],
-  },
-  */
-]; 
+export default hebrewQuestionBank; 
