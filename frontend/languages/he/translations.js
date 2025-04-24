@@ -1,6 +1,12 @@
-// Hebrew translations placeholder
-// TODO: Fill with key: translation pairs
-
+// Hebrew translations
 export default {
-  // example: greeting: 'שלום',
+  titleApp: 'הדגמת DPNR',
+  languageLabel: 'שפה:',
+  languageEnglish: 'אנגלית',
+  languageHebrew: 'עברית',
+  welcomeTitle: 'ברוכים הבאים למבחן האישיות המרכזי',
+  welcomeDescription: 'נא למלא מידע בסיסי כדי להתחיל את המבחן שלך.',
+  nameLabel: 'שם',
+  emailLabel: 'אימייל',
+  beginAssessment: 'התחל את המבחן',
 }; 
