@@ -2,6 +2,7 @@
 
 export { languageConfig, getLanguageConfig } from './config.js';
 export { detectLanguage } from './detect.js';
+export { switchLanguage } from './switch.js';
 
 // Dynamically import translations/question banks/personas based on language
 export async function loadLanguageResources(lang = 'en') {
