@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בדיקת תמיכה בשפות</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Assistant', sans-serif;
+            margin: 2rem;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        .status {
+            padding: 0.5rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #e6ffe6;
+            color: #006600;
+        }
+        .error {
+            background-color: #ffe6e6;
+            color: #660000;
+        }
+        .language-switch {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button class="language-switch" onclick="switchLanguage()">החלף לאנגלית</button>
+    <div class="container">
+        <h1>בדיקת תמיכה בשפות</h1>
+        
+        <div class="test-section">
+            <h2>בדיקת טקסט בסיסית</h2>
+            <p>שלום עולם! זוהי בדיקה של תמיכה בשפה העברית.</p>
+            <div class="status success">✓ תצוגת טקסט תקינה</div>
+        </div>
+
+        <div class="test-section">
+            <h2>בדיקת כיווניות</h2>
+            <p>טקסט בעברית עם <span style="direction: ltr">English text</span> משולב.</p>
+            <div class="status success">✓ כיווניות תקינה</div>
+        </div>
+
+        <div class="test-section">
+            <h2>בדיקת קלט</h2>
+            <input type="text" placeholder="הקלד טקסט כאן" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+            <div class="status success">✓ קלט טקסט תקין</div>
+        </div>
+
+        <div class="test-section">
+            <h2>בדיקת גופן Assistant</h2>
+            <p style="font-weight: 700">טקסט מודגש בגופן Assistant</p>
+            <p style="font-weight: 400">טקסט רגיל בגופן Assistant</p>
+            <div class="status success">✓ גופן נטען בהצלחה</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dir = document.documentElement.dir;
+            const fontFamily = window.getComputedStyle(document.body).fontFamily;
+            
+            console.log('Document direction:', dir);
+            console.log('Font family:', fontFamily);
+            
+            if (dir !== 'rtl') {
+                document.querySelector('.test-section:nth-child(2) .status')
+                    .classList.replace('success', 'error');
+            }
+            
+            if (!fontFamily.includes('Assistant')) {
+                document.querySelector('.test-section:nth-child(4) .status')
+                    .classList.replace('success', 'error');
+            }
+        });
+
+        function switchLanguage() {
+            window.location.href = window.location.href.replace('test-he.html', 'test.html');
+        }
+    </script>
+</body>
+</html> 

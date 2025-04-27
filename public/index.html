@@ -108,18 +108,6 @@
             document.getElementById('loading-overlay').style.display = 'none';
         };
         
-        // Ensure Chart.js is loaded before initializing app
-        window.addEventListener('load', function() {
-            if (window.chartLoadError) {
-                console.error('Chart.js failed to load. Some features may be unavailable.');
-            }
-            // Initialize app
-            if (window.Chart) {
-                console.log('Chart.js loaded successfully');
-            }
-            hideLoading();
-        });
-        
         // Show loading initially
         showLoading();
     </script>

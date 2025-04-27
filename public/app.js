@@ -1,19 +1,19 @@
 // Add production optimization flags
-import { IS_PRODUCTION } from './config.js';
+const IS_PRODUCTION = window.location.hostname !== 'localhost';
 const ENABLE_LOGGING = !IS_PRODUCTION;
 
 // Import dependencies
-import { textAnalysisAgent } from './text-analysis-agent.js';
-import { claudeAgent } from './claude-agent.js';
-import { assessmentManager } from './js/core/assessment-manager.js';
-import { t, setTranslations, refreshI18nTexts } from './i18n.js';
-import { switchLanguage, detectLanguage } from './languages/index.js';
-import { recordMetric } from './monitoring/performance-monitor.js';
-import { logUserMetrics } from './monitoring/user-metrics.js';
-import { personas } from './personas.js';
-import { LanguageHandler } from './language-handler.js';
-import { LanguageSelector } from './components/language-selector.js';
-import { LanguageTest } from './components/LanguageTest.js';
+import { textAnalysisAgent } from '/text-analysis-agent.js';
+import { claudeAgent } from '/claude-agent.js';
+import { assessmentManager } from '/js/core/assessment-manager.js';
+import { t, setTranslations, refreshI18nTexts } from '/i18n.js';
+import { switchLanguage, detectLanguage } from '/languages/index.js';
+import { recordMetric } from '/monitoring/performance-monitor.js';
+import { logUserMetrics } from '/monitoring/user-metrics.js';
+import { personas } from '/personas.js';
+import { LanguageHandler } from '/language-handler.js';
+import { LanguageSelector } from '/components/language-selector.js';
+import { LanguageTest } from '/components/LanguageTest.js';
 
 // Initialize components after DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
@@ -23,9 +23,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Failed to initialize text analysis agent:', error);
         });
 
-        // Initialize Claude agent with API key
-        const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY; // Make sure to set this in your environment
-        await claudeAgent.initialize(CLAUDE_API_KEY).catch(error => {
+        // Initialize Claude agent
+        // Note: API key should be provided by the backend
+        await claudeAgent.initialize().catch(error => {
             console.error('Failed to initialize Claude agent:', error);
         });
 
@@ -128,4 +128,4 @@ window.addEventListener('beforeunload', () => {
     // For demo, log metrics to console
     logMetrics();
     logUserMetrics();
-});
+}); 

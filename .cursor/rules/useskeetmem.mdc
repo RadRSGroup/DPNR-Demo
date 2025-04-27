@@ -1,0 +1,199 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Enforce consistent memory usage for task tracking and enhanced documentation between task dependencies
+globs: **/*.{ts,tsx,js,jsx}
+alwaysApply: true
+---
+
+- **Memory Integration for Task Management**
+  - Create a memory for each task and subtask when starting work
+  - Query related memories before beginning any new task
+  - Update memories with implementation details and status changes
+  - Link memories using relations to maintain dependency chains
+  - Example:
+  ```typescript
+  // ✅ DO: Create detailed task memory
+  await createMemory({
+    type: 'Task',
+    title: 'Task 3: Docker Configuration',
+    content: `Status: In Progress
+    Dependencies: Task 1 (Complete)
+    Current Implementation:
+    - Dockerfile created with multi-stage build
+    - Development environment configured
+    Issues Encountered:
+    - Volume mapping needs adjustment for hot reload
+    Next Steps:
+    - Configure production optimization
+    - Test deployment pipeline`
+  });
+  
+  // ❌ DON'T: Create vague or incomplete memories
+  await createMemory({
+    type: 'Task',
+    title: 'Docker Setup',
+    content: 'Working on Docker configuration'
+  });
+  ```
+
+- **Documentation Requirements Between Dependencies**
+  - **For Parent Tasks:**
+    - Document all assumptions and prerequisites
+    - List expected outputs that dependent tasks rely on
+    - Include configuration requirements
+    - Document any shared resources or services
+    - Example:
+    ```typescript
+    // ✅ DO: Document clear dependencies
+    await updateMemory({
+      id: 'task-3',
+      content: `
+      Provides:
+      - Docker development environment at localhost:3000
+      - Production-ready container with optimizations
+      - Volume mapping for source code at /app/src
+      Required by:
+      - Task 4: Uses .env handling in containers
+      - Task 20: Requires production container for deployment`
+    });
+    ```
+
+  - **For Subtasks:**
+    - Document specific input requirements from parent task
+    - List completion criteria that parent task depends on
+    - Include error handling expectations
+    - Document testing requirements between subtasks
+    - Example:
+    ```typescript
+    // ✅ DO: Document subtask relationships
+    await createMemory({
+      type: 'Task',
+      title: 'Subtask 3.1: Base Dockerfile',
+      content: `
+      Parent Task: Docker Configuration
+      Provides:
+      - Base image configuration
+      - Development dependencies setup
+      Required by:
+      - Subtask 3.2: Uses base image for compose setup
+      Error Handling:
+      - Handle missing node_modules volume
+      - Validate environment variables
+      Testing Criteria:
+      - Build success in CI pipeline
+      - Development hot reload working`
+    });
+    ```
+
+- **Error Troubleshooting Documentation**
+  - **Required Error Documentation:**
+    - Document all known error scenarios
+    - Include error codes and messages
+    - Provide troubleshooting steps
+    - List required logs for debugging
+    - Example:
+    ```typescript
+    // ✅ DO: Document error handling
+    await updateMemory({
+      id: 'task-3-errors',
+      content: `
+      Common Errors:
+      1. ECONNREFUSED on port 3000:
+         - Check container is running
+         - Verify port mapping in docker-compose
+         - Ensure no conflicts with local services
+      2. Volume mount issues:
+         - Verify correct paths in docker-compose
+         - Check file permissions
+         - Restart Docker daemon if persists`
+    });
+    ```
+
+- **Memory Querying Best Practices**
+  - Query task dependencies before starting work
+  - Check for related error documentation
+  - Review implementation notes from dependent tasks
+  - Example:
+  ```typescript
+  // ✅ DO: Comprehensive memory queries
+  const relatedMemories = await searchMemories({
+    type: 'Task',
+    keyword: 'Docker configuration',
+    includeRelated: true
+  });
+
+  // Review dependencies
+  const dependencyDocs = await getRelatedMemories({
+    id: 'task-3',
+    relationType: 'DEPENDS_ON'
+  });
+  ```
+
+- **Memory Update Requirements**
+  - Update task status in real-time
+  - Document all implementation decisions
+  - Record deviations from original plan
+  - Log all error encounters and resolutions
+  - Example:
+  ```typescript
+  // ✅ DO: Regular status updates
+  await updateMemory({
+    id: 'task-3',
+    content: `
+    Status: In Progress
+    Updates:
+    [2024-03-20 14:30] Switched to multi-stage build
+    [2024-03-20 15:45] Fixed volume mapping issue
+    [2024-03-20 16:20] Added production optimization
+    Current Blockers:
+    - Waiting on environment variable configuration
+    - Need security review for production setup`
+  });
+  ```
+
+- **Cross-Task Documentation**
+  - Document shared utilities and helpers
+  - Record common configuration patterns
+  - Note reusable solutions
+  - Example:
+  ```typescript
+  // ✅ DO: Document shared patterns
+  await createMemory({
+    type: 'Config',
+    title: 'Docker Environment Setup',
+    content: `
+    Common Patterns:
+    1. Environment Variable Handling:
+       - Use .env.local for development
+       - Use Docker secrets for production
+    2. Volume Mapping:
+       - Map source code to /app/src
+       - Use named volumes for persistence`
+  });
+  ```
+
+- **Maintenance and Review**
+  - Regularly review and update documentation
+  - Clean up outdated error logs
+  - Update troubleshooting guides
+  - Archive completed task memories
+  - Example:
+  ```typescript
+  // ✅ DO: Regular maintenance
+  await searchMemories({
+    type: 'Task',
+    status: 'completed',
+    olderThan: '30d'
+  }).then(memories => {
+    memories.forEach(memory => {
+      // Archive completed task documentation
+      archiveMemory(memory.id);
+    });
+  });
+  ```
+
+Follow [taskmaster.mdc](mdc:.cursor/rules/taskmaster.mdc) for task management integration and [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) for workflow guidelines.

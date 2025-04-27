@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Support Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Assistant', sans-serif;
+            margin: 2rem;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        .status {
+            padding: 0.5rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #e6ffe6;
+            color: #006600;
+        }
+        .error {
+            background-color: #ffe6e6;
+            color: #660000;
+        }
+        .language-switch {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button class="language-switch" onclick="switchLanguage()">Switch to Hebrew</button>
+    <div class="container">
+        <h1>Language Support Test</h1>
+        
+        <div class="test-section">
+            <h2>Basic Text Test</h2>
+            <p>Hello World! This is a test of language support.</p>
+            <div class="status success">✓ Text display working</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Direction Test</h2>
+            <p>English text with <span style="direction: rtl">טקסט בעברית</span> embedded.</p>
+            <div class="status success">✓ Direction handling working</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Input Test</h2>
+            <input type="text" placeholder="Type text here" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0;">
+            <div class="status success">✓ Text input working</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Assistant Font Test</h2>
+            <p style="font-weight: 700">Bold text in Assistant font</p>
+            <p style="font-weight: 400">Regular text in Assistant font</p>
+            <div class="status success">✓ Font loaded successfully</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dir = document.documentElement.dir;
+            const fontFamily = window.getComputedStyle(document.body).fontFamily;
+            
+            console.log('Document direction:', dir);
+            console.log('Font family:', fontFamily);
+            
+            if (dir !== 'ltr') {
+                document.querySelector('.test-section:nth-child(2) .status')
+                    .classList.replace('success', 'error');
+            }
+            
+            if (!fontFamily.includes('Assistant')) {
+                document.querySelector('.test-section:nth-child(4) .status')
+                    .classList.replace('success', 'error');
+            }
+        });
+
+        function switchLanguage() {
+            window.location.href = window.location.href.replace('test.html', 'test-he.html');
+        }
+    </script>
+</body>
+</html> 

@@ -1,5 +1,4 @@
-// Get production flag from window
-const IS_PRODUCTION = window.location.hostname !== 'localhost';
+import { IS_PRODUCTION } from './config.js';
 
 // Text Analysis Agent Interface
 class TextAnalysisAgent {

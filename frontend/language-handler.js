@@ -1,7 +1,7 @@
 import { languageConfig, hebrewTranslations, hebrewPersonaDescriptions } from './language-config';
 import { personas } from './personas.js';
 
-class LanguageHandler {
+export class LanguageHandler {
     constructor() {
         this.currentLanguage = 'en';
         this.supportedLanguages = Object.keys(languageConfig);
@@ -57,13 +57,14 @@ class LanguageHandler {
         this.fallbackLanguage = 'en';
     }
 
-    // Initialize with English personas
-    initializeEnglishPersonas(englishPersonas) {
+    async initializeEnglishPersonas(englishPersonas) {
         this.personaDescriptions.en = englishPersonas;
         this.personas = englishPersonas;
+        this.translations.en = {
+            ...this.personas
+        };
     }
 
-    // Set the current language
     setLanguage(lang) {
         if (this.supportedLanguages.includes(lang)) {
             const previousLang = this.currentLanguage;
@@ -85,7 +86,6 @@ class LanguageHandler {
         return false;
     }
 
-    // Get translation for a key
     getTranslation(key, params = {}) {
         const keys = key.split('.');
         let translation = this.translations[this.currentLanguage];
@@ -109,7 +109,6 @@ class LanguageHandler {
         return key; // Return key if translation not found
     }
 
-    // Get persona description
     getPersonaDescription(personaId) {
         const currentLangDescriptions = this.personaDescriptions[this.currentLanguage];
         const fallbackDescriptions = this.personaDescriptions[this.fallbackLanguage];
@@ -117,7 +116,6 @@ class LanguageHandler {
         return currentLangDescriptions[personaId] || fallbackDescriptions[personaId] || this.personas[personaId];
     }
 
-    // Add translation observer
     addObserver(observer) {
         if (typeof observer === 'function') {
             this.observers.add(observer);
@@ -126,12 +124,10 @@ class LanguageHandler {
         return false;
     }
 
-    // Remove translation observer
     removeObserver(observer) {
         return this.observers.delete(observer);
     }
 
-    // Notify all observers of changes
     notifyObservers(event) {
         this.observers.forEach(observer => {
             try {
@@ -142,7 +138,6 @@ class LanguageHandler {
         });
     }
 
-    // Get fallback translation
     getFallbackTranslation(key) {
         const keys = key.split('.');
         let translation = this.translations[this.fallbackLanguage];
@@ -158,34 +153,28 @@ class LanguageHandler {
         return translation;
     }
 
-    // Interpolate parameters in translation string
     interpolateParams(text, params) {
         return text.replace(/\{(\w+)\}/g, (match, key) => {
             return params[key] !== undefined ? params[key] : match;
         });
     }
 
-    // Get current language direction
     getDirection() {
         return languageConfig[this.currentLanguage].dir;
     }
 
-    // Get current language name
     getLanguageName() {
         return languageConfig[this.currentLanguage].name;
     }
 
-    // Get date format for current language
     getDateFormat() {
         return languageConfig[this.currentLanguage].dateFormat;
     }
 
-    // Check if current language is RTL
     isRTL() {
         return this.getDirection() === 'rtl';
     }
 
-    // Add new translations for a language
     addTranslations(lang, translations) {
         if (!this.translations[lang]) {
             this.translations[lang] = {};
@@ -202,7 +191,6 @@ class LanguageHandler {
         }
     }
 
-    // Add new persona descriptions for a language
     addPersonaDescriptions(lang, descriptions) {
         if (!this.personaDescriptions[lang]) {
             this.personaDescriptions[lang] = {};
@@ -214,7 +202,6 @@ class LanguageHandler {
         };
     }
 
-    // Get all supported languages
     getSupportedLanguages() {
         return this.supportedLanguages.map(lang => ({
             code: lang,
@@ -222,6 +209,8 @@ class LanguageHandler {
             dir: languageConfig[lang].dir
         }));
     }
-}
 
-export default LanguageHandler; 
+    getCurrentLanguage() {
+        return this.currentLanguage;
+    }
+} 

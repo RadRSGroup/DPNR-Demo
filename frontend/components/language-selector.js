@@ -1,57 +1,30 @@
 // language-selector.js
-class LanguageSelector {
+export class LanguageSelector {
     constructor(languageHandler, containerId) {
         this.languageHandler = languageHandler;
         this.container = document.getElementById(containerId);
-        this.render();
-        this.attachEventListeners();
+        this.initialize();
     }
 
-    render() {
-        const languages = this.languageHandler.getSupportedLanguages();
-        const currentLanguage = this.languageHandler.currentLanguage;
+    initialize() {
+        if (!this.container) return;
 
-        const selectHtml = `
-            <div class="language-selector">
-                <select class="form-select" id="language-select" aria-label="Select language">
-                    ${languages.map(lang => `
-                        <option value="${lang.code}" ${lang.code === currentLanguage ? 'selected' : ''}>
-                            ${lang.name}
-                        </option>
-                    `).join('')}
-                </select>
-            </div>
-        `;
+        // Create language select element
+        const select = document.getElementById('languageSelect');
+        if (!select) return;
 
-        if (this.container) {
-            this.container.innerHTML = selectHtml;
-        }
+        // Add event listener
+        select.addEventListener('change', (e) => {
+            const selectedLang = e.target.value;
+            this.languageHandler.setLanguage(selectedLang);
+            this.updateStyles();
+        });
     }
 
-    attachEventListeners() {
-        const select = document.getElementById('language-select');
-        if (select) {
-            select.addEventListener('change', (e) => {
-                this.languageHandler.setLanguage(e.target.value);
-            });
-
-            // Update selector when language changes
-            this.languageHandler.addObserver(event => {
-                if (event.type === 'languageChange') {
-                    select.value = event.newLang;
-                }
-            });
-        }
-    }
-
-    // Add custom styling for RTL languages
     updateStyles() {
-        const select = document.getElementById('language-select');
-        if (select) {
-            select.style.direction = this.languageHandler.getDirection();
-            select.style.textAlign = this.languageHandler.isRTL() ? 'right' : 'left';
-        }
+        document.documentElement.setAttribute('dir', 
+            this.languageHandler.isRTL() ? 'rtl' : 'ltr'
+        );
+        document.body.classList.toggle('rtl', this.languageHandler.isRTL());
     }
-}
-
-export default LanguageSelector; 
+} 

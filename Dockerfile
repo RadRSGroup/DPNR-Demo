@@ -1,11 +1,11 @@
 # Use the official Nginx image as the base image
-FROM nginx:alpine
+FROM nginx:1.27.5-alpine
 
-# Copy the frontend files to the Nginx html directory
-COPY frontend /usr/share/nginx/html
-
-# Copy the Nginx configuration
+# Copy Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy frontend files
+COPY frontend/ /usr/share/nginx/html/
 
 # Expose port 80
 EXPOSE 80

@@ -7,28 +7,43 @@ export { getDirection, applyTextDirection } from './text-direction.js';
 
 // Dynamically import translations/question banks/personas based on language
 export async function loadLanguageResources(lang = 'en') {
-  switch (lang) {
-    case 'he':
-      return Promise.all([
-        import('./he/translations.js'),
-        import('./he/question-bank.js'),
-        import('./he/personas.js'),
-      ]).then(([translations, questions, personas]) => ({
-        translations: translations.default || translations,
-        questions: questions.default || questions,
-        personas: personas.default || personas,
-      }));
+  try {
+    switch (lang) {
+      case 'he':
+        return Promise.all([
+          import('./he/translations.js'),
+          import('./he/question-bank.js'),
+          import('./he/personas.js'),
+        ]).then(([translations, questions, personas]) => ({
+          translations: translations.default || translations,
+          questions: questions.default || questions,
+          personas: personas.default || personas,
+        }));
 
-    case 'en':
-      return Promise.all([
-        import('./en/translations.js'),
-      ]).then(([translations]) => ({
-        translations: translations.default || translations,
-        questions: [],
-        personas: {},
-      }));
+      case 'en':
+        return Promise.all([
+          import('./en/translations.js'),
+        ]).then(([translations]) => ({
+          translations: translations.default || translations,
+          questions: [],
+          personas: {},
+        }));
 
-    default:
-      return { translations: {}, questions: [], personas: {} };
+      default:
+        return { translations: {}, questions: [], personas: {} };
+    }
+  } catch (error) {
+    const [{ logError }] = await Promise.all([
+      import('../utils/error-logger.js'),
+      import('../utils/notification.js'),
+    ]);
+    logError('Content loading failed', error);
+
+    const { notifyUser } = await import('../utils/notification.js');
+    notifyUser('Content unavailable, falling back to English.');
+    if (lang !== 'en') {
+      return loadLanguageResources('en');
+    }
+    return { translations: {}, questions: [], personas: {} };
   }
 } 

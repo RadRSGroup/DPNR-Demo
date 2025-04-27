@@ -16,8 +16,8 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy frontend files
-COPY frontend /usr/share/nginx/html
+# Copy public directory
+COPY public /usr/share/nginx/html
 
 # Expose port
 EXPOSE 80

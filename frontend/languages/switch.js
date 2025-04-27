@@ -3,6 +3,7 @@ import { loadLanguageResources } from './index.js';
 import { setStoredLanguage } from './storage.js';
 import { loadFont } from './font-loader.js';
 import { applyDirection } from '../rtl.js';
+import { incrementUserMetric, recordUserMetric } from '../monitoring/user-metrics.js';
 
 /**
  * Switch application language
@@ -16,8 +17,9 @@ export async function switchLanguage(lang) {
   }
 
   try {
-    // Persist preference
+    // Persist preference and record preference metric
     setStoredLanguage(lang);
+    recordUserMetric('languagePreference', lang);
 
     // Load language resources
     const { translations, questions, personas } = await loadLanguageResources(lang);
@@ -31,8 +33,23 @@ export async function switchLanguage(lang) {
     await loadFont(font);
     applyDirection(rtl);
     document.documentElement.style.fontFamily = font;
+
+    incrementUserMetric('switchSuccess');
   } catch (error) {
-    console.error('Language switch failed', error);
-    throw error;
+    import('../utils/error-logger.js').then(({ logError }) => {
+      logError('Language switch failed', error);
+    });
+    incrementUserMetric('switchFail');
+
+    // Fallback to English if switching failed
+    if (lang !== 'en') {
+      try {
+        await switchLanguage('en');
+      } catch (fallbackErr) {
+        import('../utils/error-logger.js').then(({ logError }) => {
+          logError('Fallback to English also failed', fallbackErr);
+        });
+      }
+    }
   }
 } 

@@ -1,0 +1,471 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Sequential Thinking with Branching
+
+## Core Principles
+
+- Break down complex problems into sequential steps
+- Allow for branching when multiple paths need exploration
+- Maintain context across branches and steps
+- Document decision points and reasoning
+- Track dependencies between steps
+- Integrate with Task Master for task management
+
+## Integration with Task Master
+
+- Use Task Master tools for managing implementation steps:
+  ```typescript
+  // ✅ DO: Use Task Master for step tracking
+  {
+    taskId: "5.2",
+    title: "Implement Container Component",
+    details: `
+      1. Create Container.tsx in components/layout
+      2. Define size variants (sm, md, lg, xl, full)
+      3. Implement responsive padding
+      4. Add className prop for customization
+    `,
+    status: "in-progress",
+    dependencies: ["5.1"]
+  }
+
+  // ❌ DON'T: Track steps informally
+  {
+    step: "container component",
+    todo: "make responsive container"
+  }
+  ```
+
+## Step Structure
+
+- **Required Elements:**
+  ```typescript
+  // ✅ DO: Detailed step documentation
+  {
+    stepNumber: 1,
+    description: "Create Container component",
+    context: {
+      previousFindings: ["Layout system uses Tailwind CSS"],
+      assumptions: ["Tailwind is configured properly"],
+      dependencies: ["RootLayout component exists"]
+    },
+    reasoning: "Need reusable container for consistent page widths",
+    outcome: "Responsive container component with size variants"
+  }
+
+  // ❌ DON'T: Minimal documentation
+  {
+    step: 1,
+    desc: "Make container",
+    done: false
+  }
+  ```
+
+## Branching Guidelines
+
+- **When to Branch:**
+  - Multiple viable solutions need exploration
+  - Different edge cases require separate handling
+  - Alternative approaches need evaluation
+  - Parallel paths can be explored independently
+
+- **Branch Structure:**
+  ```typescript
+  // ✅ DO: Clear branch documentation
+  {
+    branchId: "container-sizing",
+    parentStep: 3,
+    alternatives: [
+      {
+        path: "Tailwind Classes",
+        reasoning: "Built-in responsive classes",
+        tradeoffs: ["Less customizable but simpler"]
+      },
+      {
+        path: "Custom CSS Variables",
+        reasoning: "More flexible sizing control",
+        tradeoffs: ["More complex, requires maintenance"]
+      }
+    ],
+    selectedPath: "Tailwind Classes",
+    justification: "Matches existing component patterns"
+  }
+
+  // ❌ DON'T: Unclear branching
+  {
+    branch: "sizing",
+    choice: "tailwind"
+  }
+  ```
+
+## Context Management
+
+- **Required Context Elements:**
+  ```typescript
+  // ✅ DO: Comprehensive context
+  const stepContext = {
+    previousSteps: [
+      { id: 1, outcome: "RootLayout component created" },
+      { id: 2, outcome: "Tailwind configured with container plugin" }
+    ],
+    assumptions: [
+      "Tailwind breakpoints are standard",
+      "Container should be centered"
+    ],
+    constraints: [
+      "Must support all screen sizes",
+      "Should work with existing layout"
+    ],
+    dependencies: [
+      "Tailwind configuration complete",
+      "Utils library available"
+    ]
+  }
+
+  // ❌ DON'T: Minimal context
+  const context = {
+    step: 3,
+    status: "working"
+  }
+  ```
+
+## Implementation Patterns
+
+- **Component Creation:**
+  ```typescript
+  // ✅ DO: Clear implementation structure
+  // Container.tsx
+  interface ContainerProps {
+    children: ReactNode
+    className?: string
+    as?: keyof JSX.IntrinsicElements
+    size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
+  }
+
+  const containerSizes = {
+    sm: 'max-w-screen-sm',
+    md: 'max-w-screen-md',
+    lg: 'max-w-screen-lg',
+    xl: 'max-w-screen-xl',
+    full: 'max-w-full'
+  }
+
+  // ❌ DON'T: Unclear structure
+  function Container(props) {
+    return <div className="container">{props.children}</div>
+  }
+  ```
+
+## Progress Tracking
+
+- **Track for Each Step:**
+  ```typescript
+  // ✅ DO: Detailed progress tracking
+  const progress = {
+    step: "Container Implementation",
+    status: "completed",
+    timeSpent: "2h 30m",
+    blockers: [
+      {
+        description: "Tailwind types missing",
+        resolution: "Added @types/tailwindcss",
+        timeImpact: "30m"
+      }
+    ],
+    dependenciesResolved: [
+      "Utils library imported",
+      "Tailwind config updated"
+    ],
+    outcomes: [
+      "Container component created",
+      "Size variants implemented",
+      "Tests passing"
+    ]
+  }
+
+  // ❌ DON'T: Basic tracking
+  const status = {
+    done: true,
+    time: "2h"
+  }
+  ```
+
+## Integration with Development Workflow
+
+- Link steps to Task Master tasks
+- Reference code changes and PRs
+- Document impact on other components
+- Track technical debt
+- Plan follow-up tasks
+
+## Best Practices
+
+- Start with high-level sequence before details
+- Document assumptions at each step
+- Validate outcomes before proceeding
+- Keep branching depth manageable
+- Merge branches when clear winner emerges
+- Review and update documentation regularly
+- Use Task Master for task management
+
+## Example Workflow
+
+1. **Initial Planning:**
+   ```typescript
+   const plan = {
+     task: "Create Container Component",
+     subtasks: [
+       "Define props interface",
+       "Create size variants",
+       "Implement responsive padding",
+       "Add className support"
+     ],
+     dependencies: ["RootLayout", "Utils"],
+     expectedOutcome: "Reusable container component"
+   }
+   ```
+
+2. **Implementation Steps:**
+   ```typescript
+   const implementation = {
+     steps: [
+       {
+         id: 1,
+         action: "Create base component",
+         code: `
+           export default function Container({ 
+             children, 
+             className,
+             as: Component = 'div',
+             size = 'xl'
+           }: ContainerProps) {
+             return (
+               <Component className={cn(
+                 'mx-auto w-full px-4',
+                 containerSizes[size],
+                 className
+               )}>
+                 {children}
+               </Component>
+             )
+           }
+         `
+       }
+     ]
+   }
+   ```
+
+3. **Validation:**
+   ```typescript
+   const validation = {
+     checks: [
+       "Props interface complete",
+       "Size variants working",
+       "Responsive padding applied",
+       "className properly merged"
+     ],
+     testing: [
+       "Component renders",
+       "Sizes apply correctly",
+       "Custom className works"
+     ]
+   }
+   ```
+
+See [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) for workflow integration and [taskmaster.mdc](mdc:.cursor/rules/taskmaster.mdc) for task management guidelines.
+
+## When to Use
+
+- Breaking down complex problems into manageable steps
+- Planning and design tasks that need room for revision
+- Analysis that might need course correction
+- Problems where the full scope isn't clear initially
+- Tasks requiring multi-step solutions
+- Situations requiring context preservation across steps
+- Cases where irrelevant information needs filtering
+- When multiple solution paths need exploration
+
+## Core Process
+
+### 1. Initial Analysis
+```typescript
+interface ThoughtStep {
+  stepNumber: number;
+  content: string;
+  assumptions: string[];
+  dependencies: string[];
+  branchId?: string;
+  revision?: number;
+  context?: {
+    currentState: string;
+    relevantFiles: string[];
+    knownConstraints: string[];
+  };
+}
+```
+
+### 2. Branch Creation
+```typescript
+interface ThoughtBranch {
+  branchId: string;
+  parentStepNumber: number;
+  description: string;
+  alternativeTo?: string;
+  evaluationCriteria: string[];
+  status: 'exploring' | 'validated' | 'rejected' | 'merged';
+}
+```
+
+## Implementation Guidelines
+
+### 1. Root Thought Formation
+- Start with a clear problem statement
+- List all known constraints and requirements
+- Document initial assumptions
+- Identify key decision points
+- Filter out irrelevant information
+
+### 2. Sequential Breakdown
+- Break the problem into logical steps
+- Each step should have clear inputs and outputs
+- Document dependencies between steps
+- Maintain context across step transitions
+- Allow for step revision and refinement
+
+### 3. Branch Management
+- Create branches at significant decision points
+- Document the reason for each branch
+- Compare alternative approaches systematically
+- Maintain clear criteria for branch evaluation
+- Allow branches to influence earlier thinking
+
+### 4. Context Preservation
+- Track the current context explicitly
+- Document context switches
+- Maintain dependency chains
+- Record impact of changes
+- Keep reference to original problem
+
+### 5. Revision Process
+- Allow thoughts to be updated with new insights
+- Document reasons for revisions
+- Track impact on dependent thoughts
+- Maintain history of changes
+- Update related branches as needed
+
+## Example Application
+
+```typescript
+const taskAnalysis = {
+  root: {
+    stepNumber: 1,
+    content: "Implement routing structure for Next.js application",
+    assumptions: [
+      "Using App Router",
+      "Need dynamic routes",
+      "Require authentication"
+    ],
+    context: {
+      currentState: "Initial planning",
+      relevantFiles: ["app/layout.tsx", "app/page.tsx"],
+      knownConstraints: ["Must maintain SEO", "Need fast page loads"]
+    }
+  },
+  branches: [
+    {
+      branchId: "approach-a",
+      parentStepNumber: 1,
+      description: "Folder-based routing with middleware",
+      steps: [
+        {
+          stepNumber: 1.1,
+          content: "Define base route structure",
+          dependencies: ["root"]
+        },
+        {
+          stepNumber: 1.2,
+          content: "Implement middleware for auth",
+          dependencies: ["1.1"]
+        }
+      ]
+    },
+    {
+      branchId: "approach-b",
+      parentStepNumber: 1,
+      description: "Route groups with HOCs",
+      steps: [
+        {
+          stepNumber: 1.1,
+          content: "Create route groups",
+          dependencies: ["root"]
+        },
+        {
+          stepNumber: 1.2,
+          content: "Implement HOC auth wrapper",
+          dependencies: ["1.1"]
+        }
+      ]
+    }
+  ]
+};
+```
+
+## Best Practices
+
+1. **Problem Decomposition**
+   - Start with high-level understanding
+   - Break down into manageable steps
+   - Identify clear dependencies
+   - Allow for refinement
+
+2. **Branch Creation**
+   - Create branches at clear decision points
+   - Document branch purpose
+   - Define evaluation criteria
+   - Track branch status
+
+3. **Context Management**
+   - Maintain clear context boundaries
+   - Document context switches
+   - Track dependencies
+   - Record impact analysis
+
+4. **Revision Handling**
+   - Document revision reasoning
+   - Update dependent thoughts
+   - Maintain change history
+   - Ensure clarity
+
+## Integration with Development
+
+1. **Planning Phase**
+   - Use for initial task breakdown
+   - Create multiple approach branches
+   - Document assumptions
+   - Plan evaluation criteria
+
+2. **Development Phase**
+   - Track implementation decisions
+   - Document deviations
+   - Create alternative branches
+   - Maintain context
+
+3. **Review Phase**
+   - Evaluate outcomes
+   - Merge successful approaches
+   - Update documentation
+   - Archive learnings
+
+## Notes
+
+- Always start with a clear problem statement
+- Allow for multiple solution paths
+- Document decision points and reasoning
+- Maintain traceability of changes
+- Keep context across the entire process
+- Review and update earlier thoughts
+- Merge successful approaches back to main flow
+- Archive valuable insights for future reference
