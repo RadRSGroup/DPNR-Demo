@@ -42,4 +42,8 @@ docker-compose.override.yml
 *.log
 
 # Local development
-.DS_Store 
+.DS_Store
+
+# Node modules
+node_modules/
+transcription-ui/node_modules/ 

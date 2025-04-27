@@ -7,11 +7,19 @@ const FormData = require('form-data');
 const fs = require('fs');
 const { PDFDocument } = require('pdf-lib');
 const mammoth = require('mammoth');
+const pdfParse = require('pdf-parse');
 
 const app = express();
 const port = process.env.PORT || 3003;
 const whisperUrl = process.env.WHISPER_URL || 'http://whisper:9000';
 const ollamaUrl = process.env.OLLAMA_URL || 'http://host.docker.internal:11434';
+
+// Configure CORS
+app.use(cors({
+  origin: ['http://localhost:8081', 'http://localhost:3003'],
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -55,81 +63,48 @@ const upload = multer({
   }
 });
 
+// Configure axios with increased limits
+const axiosInstance = axios.create({
+  maxBodyLength: Infinity,
+  maxContentLength: Infinity,
+  timeout: 300000 // 5 minute timeout
+});
+
 // Middleware
-app.use(cors());
+app.use(express.static('public'));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-// Get available Ollama models
-async function getModels() {
+// Helper function to check if Ollama is available
+async function checkOllamaConnection() {
   try {
-    console.log('Fetching models from Ollama...');
-    const response = await axios.get(`${ollamaUrl}/api/tags`, {
-      timeout: 5000 // 5 second timeout
-    });
-    
-    // Validate response structure
-    if (!response.data) {
-      console.error('Empty response from Ollama');
-      throw new Error('Invalid response: Empty response from Ollama service');
-    }
-
-    // Handle the case where models is not an array
-    if (!Array.isArray(response.data.models)) {
-      console.error('Invalid models format:', response.data);
-      throw new Error('Invalid response: Expected models to be an array');
-    }
-    
-    // Validate each model object has required properties
-    const validModels = response.data.models.filter(model => {
-      return model && typeof model === 'object' && typeof model.name === 'string';
-    });
-
-    if (validModels.length === 0) {
-      throw new Error('No valid models found in Ollama response');
-    }
-    
-    console.log('Available models:', validModels);
-    return validModels;
+    console.log('Checking Ollama connection...');
+    const response = await axios.get(`${ollamaUrl}/api/tags`);
+    console.log('Ollama connection successful:', response.data);
+    return true;
   } catch (error) {
-    console.error('Error fetching models:', {
+    console.error('Ollama connection error:', {
       message: error.message,
       code: error.code,
       response: error.response?.data
     });
-    
-    if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-      throw new Error('Cannot connect to Ollama service. Please ensure Ollama is running.');
-    }
-
-    // Handle specific error cases
-    if (error.response?.status === 404) {
-      throw new Error('Ollama API endpoint not found. Please check your Ollama installation.');
-    }
-    
-    if (error.message.includes('Invalid response')) {
-      throw new Error(`Ollama returned an invalid response: ${error.message}`);
-    }
-    
-    throw new Error(`Failed to fetch models: ${error.message}`);
+    return false;
   }
 }
 
 // Helper function to extract text from PDF
 async function extractTextFromPDF(filePath) {
   try {
-    const pdfBytes = fs.readFileSync(filePath);
-    const pdfDoc = await PDFDocument.load(pdfBytes);
-    const pages = pdfDoc.getPages();
-    let text = '';
-    
-    for (let i = 0; i < pages.length; i++) {
-      const page = pages[i];
-      text += await page.getText() + '\n';
-    }
-    
-    return text;
+    console.log('Extracting text from PDF:', filePath);
+    // Switch to pdf-parse for reliable text extraction
+    const dataBuffer = fs.readFileSync(filePath);
+    const data = await pdfParse(dataBuffer);
+    console.log('PDF text extraction successful, length:', data.text.length);
+    return data.text;
   } catch (error) {
+    console.error('PDF extraction error:', {
+      message: error.message,
+      stack: error.stack
+    });
     throw new Error(`Failed to extract text from PDF: ${error.message}`);
   }
 }
@@ -137,9 +112,15 @@ async function extractTextFromPDF(filePath) {
 // Helper function to extract text from DOCX
 async function extractTextFromDOCX(filePath) {
   try {
+    console.log('Extracting text from DOCX:', filePath);
     const result = await mammoth.extractRawText({ path: filePath });
+    console.log('DOCX text extraction successful, length:', result.value.length);
     return result.value;
   } catch (error) {
+    console.error('DOCX extraction error:', {
+      message: error.message,
+      stack: error.stack
+    });
     throw new Error(`Failed to extract text from DOCX: ${error.message}`);
   }
 }
@@ -147,8 +128,15 @@ async function extractTextFromDOCX(filePath) {
 // Helper function to read text from TXT
 async function readTextFromTXT(filePath) {
   try {
-    return fs.readFileSync(filePath, 'utf8');
+    console.log('Reading text file:', filePath);
+    const text = fs.readFileSync(filePath, 'utf8');
+    console.log('Text file read successful, length:', text.length);
+    return text;
   } catch (error) {
+    console.error('Text file read error:', {
+      message: error.message,
+      stack: error.stack
+    });
     throw new Error(`Failed to read text file: ${error.message}`);
   }
 }
@@ -157,112 +145,179 @@ async function readTextFromTXT(filePath) {
 async function transcribeMedia(filePath) {
   console.log('Starting transcription...');
   const formData = new FormData();
-  formData.append('audio_file', fs.createReadStream(filePath));
-
+  
   try {
+    // Get file stats
+    const stats = fs.statSync(filePath);
+    console.log(`File size: ${(stats.size / (1024 * 1024)).toFixed(2)} MB`);
+    
+    // Stream the file instead of loading it all at once
+    formData.append('audio_file', fs.createReadStream(filePath));
+    formData.append('task', 'transcribe');
+    formData.append('language', 'en');
+
     console.log(`Sending request to ${whisperUrl}/asr`);
-    const response = await axios.post(`${whisperUrl}/asr`, formData, {
+    const response = await axiosInstance.post(`${whisperUrl}/asr`, formData, {
       headers: {
         ...formData.getHeaders(),
         'Accept': 'application/json'
       },
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
       timeout: 300000 // 5 minute timeout
     });
 
-    console.log('Transcription completed successfully');
+    console.log('Transcription completed successfully:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Transcription error:', error.message);
-    if (error.response) {
-      console.error('Whisper response:', error.response.data);
+    console.error('Transcription error:', {
+      message: error.message,
+      code: error.code,
+      response: error.response?.data,
+      stack: error.stack
+    });
+    
+    // Provide more specific error messages
+    if (error.code === 'ECONNREFUSED') {
+      throw new Error('Could not connect to transcription service. Please ensure the service is running.');
     }
-    throw new Error('Transcription failed: ' + error.message);
+    if (error.code === 'ETIMEDOUT') {
+      throw new Error('Transcription request timed out. The file might be too large or the service is busy.');
+    }
+    if (error.response?.status === 413) {
+      throw new Error('File is too large for the transcription service to process.');
+    }
+    
+    throw new Error(`Transcription failed: ${error.message}`);
   }
 }
 
 // Analyze text using Ollama
 async function analyzeText(text, prompt, model) {
   try {
-    const response = await axios.post(`${ollamaUrl}/api/generate`, {
-      model: model,
-      prompt: `${prompt}\n\n${text}`,
-      stream: false
+    // Check Ollama connection first
+    const isOllamaAvailable = await checkOllamaConnection();
+    if (!isOllamaAvailable) {
+      throw new Error('Cannot connect to Ollama service. Please ensure Ollama is running and accessible.');
+    }
+
+    console.log('Sending analysis request to Ollama:', {
+      model,
+      promptLength: prompt.length,
+      textLength: text.length
     });
 
+    // Format the prompt to be more explicit
+    const formattedPrompt = `You are a text analysis assistant. Your task is to ${prompt}\n\nHere is the text to analyze:\n\n"${text}"\n\nPlease provide your analysis:`;
+
+    const response = await axios.post(`${ollamaUrl}/api/generate`, {
+      model: model,
+      prompt: formattedPrompt,
+      stream: false,
+      options: {
+        temperature: 0.7,
+        top_p: 0.9,
+        top_k: 40,
+        num_predict: 2048
+      }
+    }, {
+      timeout: 300000 // 5 minute timeout
+    });
+
+    if (!response.data || !response.data.response) {
+      console.error('Invalid Ollama response:', response.data);
+      throw new Error('Invalid response from Ollama service');
+    }
+
+    console.log('Analysis completed successfully, response length:', response.data.response.length);
     return response.data.response;
   } catch (error) {
-    console.error('Analysis error:', error.message);
+    console.error('Analysis error:', {
+      message: error.message,
+      code: error.code,
+      response: error.response?.data,
+      stack: error.stack
+    });
+    
+    if (error.code === 'ECONNREFUSED') {
+      throw new Error('Cannot connect to Ollama service. Please ensure Ollama is running and accessible.');
+    }
+    if (error.response?.status === 404) {
+      throw new Error(`Model '${model}' not found. Please ensure the model is installed in Ollama.`);
+    }
     throw new Error('Analysis failed: ' + error.message);
   }
 }
-
-// Routes
-app.get('/models', async (req, res) => {
-  try {
-    // Test Ollama connection first
-    try {
-      await axios.get(`${ollamaUrl}/api/version`, { timeout: 2000 });
-    } catch (error) {
-      console.error('Ollama service check failed:', error.message);
-      return res.status(503).json({
-        error: 'Ollama service unavailable',
-        details: 'Cannot connect to Ollama. Please ensure the service is running.',
-        code: error.code
-      });
-    }
-
-    const models = await getModels();
-    res.json({ models });
-  } catch (error) {
-    console.error('Error in /models endpoint:', error);
-    res.status(500).json({ 
-      error: 'Error fetching models',
-      details: error.message,
-      code: error.code
-    });
-  }
-});
 
 app.post('/upload', upload.single('file'), async (req, res) => {
   let textContent = null;
   let analysisResult = null;
 
   try {
+    console.log('Upload request received');
+    
     if (!req.file) {
+      console.error('No file uploaded');
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
     console.log('File received:', {
       filename: req.file.originalname,
       mimetype: req.file.mimetype,
-      size: req.file.size
+      size: req.file.size,
+      path: req.file.path
     });
 
     // Extract text based on file type
-    switch (req.file.mimetype) {
-      case 'application/pdf':
-        textContent = await extractTextFromPDF(req.file.path);
-        break;
-      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-        textContent = await extractTextFromDOCX(req.file.path);
-        break;
-      case 'text/plain':
-        textContent = await readTextFromTXT(req.file.path);
-        break;
-      default:
-        // For audio/video files, use transcription
-        const transcriptionResult = await transcribeMedia(req.file.path);
-        textContent = transcriptionResult.text;
+    try {
+      switch (req.file.mimetype) {
+        case 'application/pdf':
+          textContent = await extractTextFromPDF(req.file.path);
+          break;
+        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+          textContent = await extractTextFromDOCX(req.file.path);
+          break;
+        case 'text/plain':
+          textContent = await readTextFromTXT(req.file.path);
+          break;
+        default:
+          // For audio/video files, use transcription
+          const transcriptionResult = await transcribeMedia(req.file.path);
+          textContent = transcriptionResult.text;
+      }
+    } catch (error) {
+      console.error('Text extraction error:', {
+        message: error.message,
+        stack: error.stack
+      });
+      throw new Error(`Failed to extract text: ${error.message}`);
     }
+
+    if (!textContent || textContent.trim().length === 0) {
+      console.error('No text content extracted');
+      throw new Error('No text content could be extracted from the file');
+    }
+
+    console.log('Text extraction successful, length:', textContent.length);
 
     // Analyze the text
     try {
       const analysisPrompt = req.body.prompt || 'Analyze the following text and provide insights about its content, sentiment, and key points:';
       const model = req.body.model || 'llama2';
       
+      console.log('Starting analysis with:', {
+        model,
+        promptLength: analysisPrompt.length
+      });
+
       analysisResult = await analyzeText(textContent, analysisPrompt, model);
       console.log('Analysis successful, length:', analysisResult.length);
     } catch (error) {
+      console.error('Analysis error:', {
+        message: error.message,
+        stack: error.stack
+      });
+      // If analysis fails but we have text, return the text with a warning
       return res.json({
         text: textContent,
         analysis: null,
@@ -271,201 +326,42 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     }
 
     // Return both results
+    console.log('Sending successful response');
     res.json({
       text: textContent,
       analysis: analysisResult
     });
 
   } catch (error) {
-    console.error('Error processing file:', error);
-    console.error('Error details:', {
+    console.error('Error processing file:', {
       message: error.message,
-      textSuccess: !!textContent,
-      analysisSuccess: !!analysisResult
+      stack: error.stack,
+      textContent: !!textContent,
+      analysisResult: !!analysisResult
     });
-
     res.status(500).json({ 
       error: 'Error processing file',
-      details: error.message,
-      text: textContent, // Include text if we have it
-      analysis: null
+      details: error.message
     });
-
   } finally {
     // Clean up uploaded file
     if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+      try {
+        fs.unlinkSync(req.file.path);
+        console.log('Cleaned up uploaded file:', req.file.path);
+      } catch (error) {
+        console.error('Error cleaning up file:', {
+          path: req.file.path,
+          message: error.message
+        });
+      }
     }
   }
 });
 
-// Generate endpoint for direct text generation
-app.post('/generate', async (req, res) => {
-  try {
-    const { model, prompt, stream = false } = req.body;
-
-    // Validate required fields
-    if (!model) {
-      return res.status(400).json({
-        error: 'Missing required field',
-        details: 'Model name is required'
-      });
-    }
-
-    if (!prompt || prompt.trim().length === 0) {
-      return res.status(400).json({
-        error: 'Missing required field',
-        details: 'Prompt cannot be empty'
-      });
-    }
-
-    // Check if model exists
-    try {
-      const models = await getModels();
-      if (!models.some(m => m.name === model)) {
-        return res.status(400).json({
-          error: 'Invalid model',
-          details: `Model '${model}' is not available. Please choose from: ${models.map(m => m.name).join(', ')}`
-        });
-      }
-    } catch (error) {
-      console.error('Error checking model availability:', error);
-      return res.status(503).json({
-        error: 'Service unavailable',
-        details: 'Could not verify model availability. Please ensure Ollama is running.'
-      });
-    }
-
-    // Make request to Ollama
-    try {
-      console.log('Starting generation with:', {
-        model,
-        promptLength: prompt.length,
-        stream
-      });
-
-      if (stream) {
-        // Set headers for SSE
-        res.setHeader('Content-Type', 'text/event-stream');
-        res.setHeader('Cache-Control', 'no-cache');
-        res.setHeader('Connection', 'keep-alive');
-
-        // Create axios request with responseType: 'stream'
-        const response = await axios.post(`${ollamaUrl}/api/generate`, {
-          model,
-          prompt,
-          stream: true
-        }, {
-          responseType: 'stream',
-          timeout: 300000 // 5 minute timeout for streaming
-        });
-
-        // Handle streaming response
-        response.data.on('data', chunk => {
-          try {
-            const lines = chunk.toString().split('\n').filter(line => line.trim());
-            lines.forEach(line => {
-              try {
-                const data = JSON.parse(line);
-                // Send each chunk as an SSE event
-                res.write(`data: ${JSON.stringify({
-                  response: data.response,
-                  done: data.done
-                })}\n\n`);
-
-                // If this is the final message, end the stream
-                if (data.done) {
-                  res.end();
-                }
-              } catch (e) {
-                console.error('Error parsing streaming response:', e);
-              }
-            });
-          } catch (e) {
-            console.error('Error processing stream chunk:', e);
-          }
-        });
-
-        // Handle stream errors
-        response.data.on('error', error => {
-          console.error('Stream error:', error);
-          res.write(`data: ${JSON.stringify({
-            error: 'Stream error',
-            details: error.message,
-            done: true
-          })}\n\n`);
-          res.end();
-        });
-
-        // Clean up on client disconnect
-        req.on('close', () => {
-          response.data.destroy();
-        });
-      } else {
-        // Non-streaming response (existing code)
-        const response = await axios.post(`${ollamaUrl}/api/generate`, {
-          model,
-          prompt,
-          stream: false
-        }, {
-          timeout: 60000 // 1 minute timeout for non-streaming
-        });
-
-        if (!response.data || !response.data.response) {
-          throw new Error('Invalid response from Ollama');
-        }
-
-        res.json({
-          response: response.data.response,
-          model,
-          prompt_length: prompt.length
-        });
-      }
-    } catch (error) {
-      console.error('Generation error:', error);
-      
-      if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-        return res.status(503).json({
-          error: 'Service unavailable',
-          details: 'Cannot connect to Ollama service. Please ensure it is running.'
-        });
-      }
-
-      if (error.response?.status === 404) {
-        return res.status(404).json({
-          error: 'Model not found',
-          details: `Model '${model}' was not found in Ollama`
-        });
-      }
-
-      if (error.response?.status === 400) {
-        return res.status(400).json({
-          error: 'Bad request',
-          details: error.response.data.error || 'Invalid request to Ollama service'
-        });
-      }
-
-      res.status(500).json({
-        error: 'Generation failed',
-        details: error.message
-      });
-    }
-  } catch (error) {
-    console.error('Unexpected error in /generate:', error);
-    res.status(500).json({
-      error: 'Internal server error',
-      details: 'An unexpected error occurred'
-    });
-  }
-});
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ status: 'healthy' });
-});
-
+// Start server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  console.log(`Whisper service URL: ${whisperUrl}`);
-  console.log(`Ollama service URL: ${ollamaUrl}`);
+  console.log(`Whisper URL: ${whisperUrl}`);
+  console.log(`Ollama URL: ${ollamaUrl}`);
 }); 
