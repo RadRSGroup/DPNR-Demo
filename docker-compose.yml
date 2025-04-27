@@ -27,7 +27,7 @@ services:
     ports:
       - "8081:3003"
     environment:
-      - WHISPER_URL=http://whisper:9000
+      - WHISPER_URL=http://dpnr-whisper:9000
       - OLLAMA_URL=http://host.docker.internal:11434
       - NODE_ENV=production
       - PORT=3003
@@ -77,6 +77,14 @@ services:
     container_name: dpnr-whisper
     ports:
       - "9000:9000"
+    environment:
+      - ASR_MODEL=base
+      - ASR_ENGINE=faster_whisper
+      - ASR_MAX_FILE_SIZE=100000000
+      - ASR_MAX_CONTENT_LENGTH=100000000
+      - ASR_UPLOAD_CHUNK_SIZE=10000000
+      - ASR_UPLOAD_MAX_MEMORY_SIZE=100000000
+      - ASR_REQUEST_TIMEOUT=300
     networks:
       - dpnr-network
 

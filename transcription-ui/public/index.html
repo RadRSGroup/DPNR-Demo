@@ -70,7 +70,6 @@
             border-radius: 4px;
         }
         .progress {
-            display: none;
             margin: 20px 0;
             text-align: center;
             color: #2196F3;
@@ -130,13 +129,14 @@
         <div class="config-section">
             <h3>Analysis Configuration</h3>
             <div class="model-select-container">
-                <label for="modelSelect">Select Ollama Model:</label>
+                <label for="modelSelect">Select Model:</label>
                 <select id="modelSelect" class="model-select">
-                    <option value="">Loading models...</option>
+                    <option value="llama2">Llama 2</option>
+                    <option value="mistral">Mistral</option>
+                    <option value="codellama">CodeLlama</option>
                 </select>
-                <button id="refreshModels" class="refresh-models">Refresh Models</button>
             </div>
-            <textarea id="promptInput" placeholder="Enter your analysis prompt here. For example: 'Analyze this text and provide: 1) Main topics discussed 2) Key action items 3) Overall sentiment'">Analyze the following text and provide:
+            <textarea id="promptInput" placeholder="Enter your analysis prompt here...">Analyze the following text and provide:
 1. Main topics and themes
 2. Key points and insights
 3. Overall sentiment and tone
@@ -149,7 +149,10 @@
             <input type="file" id="fileInput" accept=".txt,.pdf,.docx,audio/*,video/*">
         </div>
 
-        <div class="progress" id="progress">
+        <div id="progress" class="progress" style="display: none;">
+            <div id="uploadProgress" style="display: none;">
+                <p>Uploading file... <span id="uploadPercent">0%</span></p>
+            </div>
             <div id="processingProgress" style="display: none;">
                 <p>Processing file... This may take a few minutes.</p>
             </div>
@@ -163,11 +166,13 @@
         <div id="textResult" class="result-section" style="display: none;">
             <h2>Extracted Text</h2>
             <div class="result-content"></div>
+            <button onclick="copyText('textResult')" class="copy-button">Copy Text</button>
         </div>
 
         <div id="analysisResult" class="result-section" style="display: none;">
             <h2>Analysis</h2>
             <div class="result-content"></div>
+            <button onclick="copyText('analysisResult')" class="copy-button">Copy Analysis</button>
         </div>
     </div>
 
@@ -175,80 +180,26 @@
         const dropArea = document.getElementById('dropArea');
         const fileInput = document.getElementById('fileInput');
         const progress = document.getElementById('progress');
+        const uploadProgress = document.getElementById('uploadProgress');
+        const processingProgress = document.getElementById('processingProgress');
+        const analysisProgress = document.getElementById('analysisProgress');
+        const uploadPercent = document.getElementById('uploadPercent');
         const error = document.getElementById('error');
         const textResult = document.getElementById('textResult');
         const analysisResult = document.getElementById('analysisResult');
         const promptInput = document.getElementById('promptInput');
         const modelSelect = document.getElementById('modelSelect');
-        const refreshModels = document.getElementById('refreshModels');
-
-        // Load available models on page load
-        loadModels();
-
-        // Refresh models button
-        refreshModels.addEventListener('click', loadModels);
-
-        async function loadModels() {
-            try {
-                modelSelect.disabled = true;
-                refreshModels.disabled = true;
-                error.style.display = 'none';
-                
-                const response = await fetch('/models');
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.details || data.error || 'Failed to load models');
-                }
-
-                if (!data.models || !Array.isArray(data.models) || data.models.length === 0) {
-                    throw new Error('No models available. Please ensure Ollama has models installed.');
-                }
-
-                // Validate model format
-                const validModels = data.models.filter(model => model && typeof model === 'object' && model.name);
-                if (validModels.length === 0) {
-                    throw new Error('No valid models found in the response');
-                }
-
-                modelSelect.innerHTML = validModels.map(model => 
-                    `<option value="${model.name}">${model.name}</option>`
-                ).join('');
-
-                // Select llama2 by default if available
-                const llama2Option = Array.from(modelSelect.options)
-                    .find(option => option.value === 'llama2');
-                if (llama2Option) {
-                    modelSelect.value = 'llama2';
-                }
-            } catch (err) {
-                console.error('Error loading models:', err);
-                let errorMessage;
-                
-                if (err.message.includes('Failed to fetch')) {
-                    errorMessage = 'Cannot connect to server. Please ensure the application is running.';
-                } else if (err.message.includes('Invalid response')) {
-                    errorMessage = 'Server returned an invalid response. Please check Ollama installation.';
-                } else if (err.message.includes('No models available')) {
-                    errorMessage = 'No models found. Please install models in Ollama using "ollama pull llama2" or similar commands.';
-                } else {
-                    errorMessage = err.message;
-                }
-                
-                modelSelect.innerHTML = '<option value="">Error loading models</option>';
-                error.textContent = `Model Loading Error: ${errorMessage}`;
-                error.style.display = 'block';
-            } finally {
-                modelSelect.disabled = false;
-                refreshModels.disabled = false;
-            }
-        }
 
         // Prevent default drag behaviors
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, preventDefaults, false);
             document.body.addEventListener(eventName, preventDefaults, false);
         });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
         // Highlight drop zone when item is dragged over it
         ['dragenter', 'dragover'].forEach(eventName => {
@@ -259,16 +210,6 @@
             dropArea.addEventListener(eventName, unhighlight, false);
         });
 
-        // Handle dropped files
-        dropArea.addEventListener('drop', handleDrop, false);
-        dropArea.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', handleFileSelect);
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
         function highlight(e) {
             dropArea.classList.add('dragover');
         }
@@ -276,6 +217,11 @@
         function unhighlight(e) {
             dropArea.classList.remove('dragover');
         }
+
+        // Handle dropped files
+        dropArea.addEventListener('drop', handleDrop, false);
+        dropArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
 
         function handleDrop(e) {
             const dt = e.dataTransfer;
@@ -288,22 +234,38 @@
             handleFiles(files);
         }
 
-        function handleFiles(files) {
+        function copyText(elementId) {
+            const content = document.querySelector(`#${elementId} .result-content`).textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                const button = document.querySelector(`#${elementId} .copy-button`);
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        async function handleFiles(files) {
             if (files.length === 0) return;
             
             const file = files[0];
-            uploadFile(file);
-        }
+            const maxSize = 100 * 1024 * 1024; // 100MB
+            
+            if (file.size > maxSize) {
+                error.textContent = `File size exceeds maximum limit of 100MB`;
+                error.style.display = 'block';
+                return;
+            }
 
-        async function uploadFile(file) {
             // Reset UI
             error.style.display = 'none';
-            error.textContent = '';
             textResult.style.display = 'none';
             analysisResult.style.display = 'none';
-            document.getElementById('processingProgress').style.display = 'block';
-            document.getElementById('analysisProgress').style.display = 'none';
             progress.style.display = 'block';
+            uploadProgress.style.display = 'block';
+            processingProgress.style.display = 'none';
+            analysisProgress.style.display = 'none';
             
             const formData = new FormData();
             formData.append('file', file);
@@ -311,12 +273,14 @@
             formData.append('model', modelSelect.value);
 
             try {
-                const response = await fetch('/upload', {
+                const response = await fetch('http://localhost:8081/upload', {
                     method: 'POST',
                     body: formData
                 });
 
+                console.log('Response status:', response.status);
                 const data = await response.json();
+                console.log('Response data:', data);
                 
                 if (!response.ok) {
                     throw new Error(data.error || data.details || 'Upload failed');
@@ -324,20 +288,21 @@
 
                 // Display extracted text if available
                 if (data.text) {
+                    console.log('Displaying text, length:', data.text.length);
                     textResult.style.display = 'block';
                     textResult.querySelector('.result-content').textContent = data.text;
                     
                     // Show analysis progress
-                    document.getElementById('processingProgress').style.display = 'none';
-                    document.getElementById('analysisProgress').style.display = 'block';
+                    processingProgress.style.display = 'none';
+                    analysisProgress.style.display = 'block';
                 }
 
                 // Display analysis if available
                 if (data.analysis) {
+                    console.log('Displaying analysis, length:', data.analysis.length);
                     analysisResult.style.display = 'block';
                     analysisResult.querySelector('.result-content').textContent = data.analysis;
                 } else if (data.warning) {
-                    // Show warning if analysis failed but text extraction succeeded
                     error.textContent = data.warning;
                     error.style.display = 'block';
                 }
