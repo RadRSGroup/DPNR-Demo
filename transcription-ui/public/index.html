@@ -119,6 +119,38 @@
             font-family: inherit;
             resize: vertical;
         }
+        /* New CSS classes for assessment section */
+        .hidden {
+            display: none;
+        }
+        .section {
+            margin-top: 20px;
+        }
+        .nav-item {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .nav-item:hover {
+            background-color: #45a049;
+        }
+        #assessment-container {
+            min-height: 300px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .loading-indicator {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -175,10 +207,18 @@
             <div class="result-content"></div>
             <button onclick="copyText('analysisResult')" class="copy-button">Copy Analysis</button>
         </div>
+        
         <div class="nav-item" onclick="showAssessment()">Emotional Persona Assessment</div>
+        
         <div id="assessment-section" class="section hidden">
-            <div id="assessment-container"></div>
-        </div> 
+            <div id="assessment-container">
+                <div class="loading-indicator">Loading assessment interface...</div>
+            </div>
+        </div>
+        
+        <div id="main-nav" style="margin-top: 20px; text-align: center;">
+            <button onclick="showMainUI()" style="display: none;" id="backToMainButton">Back to Main UI</button>
+        </div>
     </div>
 
     <script>
@@ -194,6 +234,7 @@
         const analysisResult = document.getElementById('analysisResult');
         const promptInput = document.getElementById('promptInput');
         const modelSelect = document.getElementById('modelSelect');
+        const backToMainButton = document.getElementById('backToMainButton');
 
         // Prevent default drag behaviors
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -319,19 +360,45 @@
                 progress.style.display = 'none';
             }
         }
-    </script>
-    <script>
-        // Your existing script code...
-        
-        // Add this to your existing section handling code
-        function showAssessment() {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.add('hidden');
-            });
+
+        // Show the main UI (text analysis section)
+        function showMainUI() {
+            console.log('Showing main UI...');
             
-            // Show assessment section
-            document.getElementById('assessment-section').classList.remove('hidden');
+            // Hide assessment section
+            document.getElementById('assessment-section').style.display = 'none';
+            backToMainButton.style.display = 'none';
+            
+            // Show main components
+            document.getElementById('dropArea').style.display = 'block';
+            document.querySelector('.config-section').style.display = 'block';
+            
+            // Keep showing results if they were previously visible
+            if (textResult.querySelector('.result-content').textContent) {
+                textResult.style.display = 'block';
+            }
+            if (analysisResult.querySelector('.result-content').textContent) {
+                analysisResult.style.display = 'block';
+            }
+        }
+        
+        // Show the assessment UI
+        function showAssessment() {
+            console.log('Showing assessment UI...');
+            
+            // Hide main components
+            document.getElementById('dropArea').style.display = 'none';
+            document.getElementById('textResult').style.display = 'none';
+            document.getElementById('analysisResult').style.display = 'none';
+            document.querySelector('.config-section').style.display = 'none';
+            error.style.display = 'none';
+            progress.style.display = 'none';
+            
+            // Show assessment section and back button
+            const assessmentSection = document.getElementById('assessment-section');
+            assessmentSection.style.display = 'block';
+            assessmentSection.classList.remove('hidden');
+            backToMainButton.style.display = 'inline-block';
             
             // Load assessment if not already loaded
             if (!window.assessmentLoaded) {
@@ -340,49 +407,93 @@
             }
         }
         
+        // Load the React and related scripts for assessment
         function loadAssessmentUI() {
+            console.log('Loading assessment UI dependencies...');
+            
             // Load React and ReactDOM if not already loaded
             if (!window.React) {
-                const reactScript = document.createElement('script');
-                reactScript.src = 'https://unpkg.com/react@17/umd/react.development.js';
-                reactScript.crossOrigin = '';
+                // Load scripts sequentially to ensure proper loading order
+                const scripts = [
+                    { src: 'https://unpkg.com/react@17/umd/react.production.min.js' },
+                    { src: 'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js' },
+                    { src: 'https://unpkg.com/@babel/standalone/babel.min.js' }
+                ];
                 
-                const reactDOMScript = document.createElement('script');
-                reactDOMScript.src = 'https://unpkg.com/react-dom@17/umd/react-dom.development.js';
-                reactDOMScript.crossOrigin = '';
+                let promise = Promise.resolve();
+                scripts.forEach(script => {
+                    promise = promise.then(() => {
+                        return new Promise((resolve, reject) => {
+                            console.log(`Loading script: ${script.src}`);
+                            const scriptEl = document.createElement('script');
+                            scriptEl.src = script.src;
+                            scriptEl.onload = () => {
+                                console.log(`Loaded script: ${script.src}`);
+                                resolve();
+                            };
+                            scriptEl.onerror = (error) => {
+                                console.error(`Failed to load script: ${script.src}`, error);
+                                reject(error);
+                            };
+                            document.body.appendChild(scriptEl);
+                        });
+                    });
+                });
                 
-                document.body.appendChild(reactScript);
-                document.body.appendChild(reactDOMScript);
-                
-                // Load babel for JSX processing
-                const babelScript = document.createElement('script');
-                babelScript.src = 'https://unpkg.com/@babel/standalone/babel.min.js';
-                document.body.appendChild(babelScript);
-                
-                // Check when scripts are loaded
-                reactDOMScript.onload = () => {
-                    loadAssessmentComponent();
-                };
+                promise
+                    .then(() => {
+                        console.log('All dependencies loaded, loading component...');
+                        loadAssessmentComponent();
+                    })
+                    .catch(error => {
+                        console.error('Error loading dependencies:', error);
+                        document.getElementById('assessment-container').innerHTML = 
+                            '<div style="color: red; padding: 20px;">Failed to load required libraries. Check console for details.</div>';
+                    });
             } else {
+                console.log('React already loaded, loading component...');
                 loadAssessmentComponent();
             }
         }
         
+        // Load the AssessmentUI component
         function loadAssessmentComponent() {
+            console.log('Loading assessment component...');
+            
             // Create script tag for the assessment component
             const assessmentScript = document.createElement('script');
-            assessmentScript.src = 'components/assessment/AssessmentUI.js';
+            assessmentScript.src = '/components/assessment/AssessmentUI.js';
             assessmentScript.type = 'text/babel';
-            document.body.appendChild(assessmentScript);
+            
+            // Add error handling
+            assessmentScript.onerror = (error) => {
+                console.error('Failed to load AssessmentUI.js:', error);
+                document.getElementById('assessment-container').innerHTML = 
+                    '<div style="color: red; padding: 20px;">Failed to load the assessment component. Check console for details.</div>';
+            };
             
             // Render when script is loaded
             assessmentScript.onload = () => {
-                ReactDOM.render(
-                    React.createElement(AssessmentUI),
-                    document.getElementById('assessment-container')
-                );
+                console.log('AssessmentUI.js loaded, attempting to render...');
+                
+                try {
+                    // Allow time for Babel to process
+                    setTimeout(() => {
+                        ReactDOM.render(
+                            React.createElement(AssessmentUI),
+                            document.getElementById('assessment-container')
+                        );
+                        console.log('Assessment component rendered successfully');
+                    }, 300);
+                } catch (error) {
+                    console.error('Error rendering AssessmentUI:', error);
+                    document.getElementById('assessment-container').innerHTML = 
+                        '<div style="color: red; padding: 20px;">Error rendering the assessment component. Check console for details.</div>';
+                }
             };
+            
+            document.body.appendChild(assessmentScript);
         }
     </script>
 </body>
-</html> 
+</html>
