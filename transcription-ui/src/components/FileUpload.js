@@ -6,7 +6,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
-const FileUpload = ({ onTranscriptionComplete, onError, prompt, model }) => {
+const FileUpload = ({ onTranscriptionComplete, onError, prompt, model, assessmentMode = false, onAssessmentTextReady }) => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState(null);
@@ -18,6 +18,10 @@ const FileUpload = ({ onTranscriptionComplete, onError, prompt, model }) => {
     if (file.size > MAX_FILE_SIZE) {
       setError(`File size (${(file.size / (1024 * 1024)).toFixed(2)}MB) exceeds the maximum limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB`);
       return;
+    }
+    // Trigger callback in assessment mode immediately (before upload) if needed
+    if (assessmentMode && onAssessmentTextReady) {
+      onAssessmentTextReady(file.name);
     }
 
     setUploading(true);
@@ -46,6 +50,11 @@ const FileUpload = ({ onTranscriptionComplete, onError, prompt, model }) => {
       }
 
       onTranscriptionComplete(response.data);
+
+      // Invoke assessment callback with extracted text after successful upload
+      if (assessmentMode && onAssessmentTextReady && response.data?.text) {
+        onAssessmentTextReady(response.data.text);
+      }
     } catch (error) {
       console.error('Upload error:', error);
       const errorMessage = error.response?.data?.error || error.message || 'An error occurred during upload';
@@ -55,7 +64,7 @@ const FileUpload = ({ onTranscriptionComplete, onError, prompt, model }) => {
       setUploading(false);
       setUploadProgress(0);
     }
-  }, [onTranscriptionComplete, onError, prompt, model]);
+  }, [onTranscriptionComplete, onError, prompt, model, assessmentMode, onAssessmentTextReady]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

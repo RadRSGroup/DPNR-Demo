@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="components/assessment/assessment.css">
     <title>Text Analysis Service</title>
     <style>
         body {
@@ -174,6 +175,10 @@
             <div class="result-content"></div>
             <button onclick="copyText('analysisResult')" class="copy-button">Copy Analysis</button>
         </div>
+        <div class="nav-item" onclick="showAssessment()">Emotional Persona Assessment</div>
+        <div id="assessment-section" class="section hidden">
+            <div id="assessment-container"></div>
+        </div> 
     </div>
 
     <script>
@@ -313,6 +318,70 @@
             } finally {
                 progress.style.display = 'none';
             }
+        }
+    </script>
+    <script>
+        // Your existing script code...
+        
+        // Add this to your existing section handling code
+        function showAssessment() {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show assessment section
+            document.getElementById('assessment-section').classList.remove('hidden');
+            
+            // Load assessment if not already loaded
+            if (!window.assessmentLoaded) {
+                loadAssessmentUI();
+                window.assessmentLoaded = true;
+            }
+        }
+        
+        function loadAssessmentUI() {
+            // Load React and ReactDOM if not already loaded
+            if (!window.React) {
+                const reactScript = document.createElement('script');
+                reactScript.src = 'https://unpkg.com/react@17/umd/react.development.js';
+                reactScript.crossOrigin = '';
+                
+                const reactDOMScript = document.createElement('script');
+                reactDOMScript.src = 'https://unpkg.com/react-dom@17/umd/react-dom.development.js';
+                reactDOMScript.crossOrigin = '';
+                
+                document.body.appendChild(reactScript);
+                document.body.appendChild(reactDOMScript);
+                
+                // Load babel for JSX processing
+                const babelScript = document.createElement('script');
+                babelScript.src = 'https://unpkg.com/@babel/standalone/babel.min.js';
+                document.body.appendChild(babelScript);
+                
+                // Check when scripts are loaded
+                reactDOMScript.onload = () => {
+                    loadAssessmentComponent();
+                };
+            } else {
+                loadAssessmentComponent();
+            }
+        }
+        
+        function loadAssessmentComponent() {
+            // Create script tag for the assessment component
+            const assessmentScript = document.createElement('script');
+            assessmentScript.src = 'components/assessment/AssessmentUI.js';
+            assessmentScript.type = 'text/babel';
+            document.body.appendChild(assessmentScript);
+            
+            // Render when script is loaded
+            assessmentScript.onload = () => {
+                ReactDOM.render(
+                    React.createElement(AssessmentUI),
+                    document.getElementById('assessment-container')
+                );
+            };
         }
     </script>
 </body>

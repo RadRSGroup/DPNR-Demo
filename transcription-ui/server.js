@@ -8,6 +8,8 @@ const fs = require('fs');
 const { PDFDocument } = require('pdf-lib');
 const mammoth = require('mammoth');
 const pdfParse = require('pdf-parse');
+const analysisService = require('./server/routes/analysis-service');
+const { EMOTIONAL_PERSONAS } = require('../scoringengine');
 
 const app = express();
 const port = process.env.PORT || 3003;
@@ -20,6 +22,7 @@ app.use(cors({
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
+app.use('/api', analysisService);
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -357,6 +360,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       }
     }
   }
+});
+
+app.get('/api/personas', (req, res) => {
+  res.json(EMOTIONAL_PERSONAS);
 });
 
 // Start server
