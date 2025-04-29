@@ -1,22 +1,23 @@
-// Define the AssessmentUI component to be accessible from the global scope
+// Enhanced AssessmentUI component with multiple-choice and text input questions
+// This would replace the AssessmentUI.js file in the components/assessment directory
+
 function AssessmentUI() {
     // Use React hooks for state management
     const [step, setStep] = React.useState(0);
-    // Only questionnaire assessment type is supported now
-    const assessmentType = 'questionnaire';
     const [responses, setResponses] = React.useState({});
-    const [uploadedText, setUploadedText] = React.useState('');
     const [results, setResults] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
-  
-    // Steps in the assessment process (method selection removed)
+    
+    // Steps in the assessment process
     const steps = ['Complete Assessment', 'View Results'];
-  
-    // Sample questions for the questionnaire
+    
+    // Enhanced questions array with different question types
     const questions = [
+      // Single-select question (original type)
       {
         id: 'qQ101',
+        type: 'single-select',
         text: 'When faced with a difficult decision, I typically:',
         options: [
           { id: 'A101', text: 'Take time to analyze all possible outcomes before deciding', persona: 'observer' },
@@ -30,23 +31,40 @@ function AssessmentUI() {
           { id: 'A109', text: 'Find a compromise that keeps everyone happy', persona: 'harmonizer' }
         ]
       },
+      // Multi-select question (new type)
       {
         id: 'qQ102',
-        text: 'The thing that bothers me most in life is:',
+        type: 'multi-select',
+        text: 'Which of the following qualities do you value most in yourself? (Select all that apply)',
+        minSelections: 1,
+        maxSelections: 3,
         options: [
-          { id: 'A110', text: 'Being overwhelmed with too many demands or expectations', persona: 'observer' },
-          { id: 'A111', text: 'Feeling like my contributions aren not appreciated', persona: 'giver' },
-          { id: 'A112', text: 'Not achieving my goals or living up to my potential', persona: 'driver' },
-          { id: 'A113', text: 'Feeling misunderstood or having to be inauthentic', persona: 'seeker' },
-          { id: 'A114', text: 'Seeing things done incorrectly or without proper standards', persona: 'upholder' },
-          { id: 'A115', text: 'Uncertainty or not being prepared for what might happen', persona: 'guardian' },
-          { id: 'A116', text: 'Being restricted or missing out on opportunities', persona: 'explorer' },
-          { id: 'A117', text: 'Being controlled or having my autonomy threatened', persona: 'protector' },
-          { id: 'A118', text: 'Conflict or discord in my relationships', persona: 'harmonizer' }
+          { id: 'A110', text: 'Being analytical and thoughtful', persona: 'observer' },
+          { id: 'A111', text: 'Being caring and supportive of others', persona: 'giver' },
+          { id: 'A112', text: 'Being productive and achieving goals', persona: 'driver' },
+          { id: 'A113', text: 'Being authentic and emotionally expressive', persona: 'seeker' },
+          { id: 'A114', text: 'Being principled and doing things right', persona: 'upholder' },
+          { id: 'A115', text: 'Being prepared for all possibilities', persona: 'guardian' },
+          { id: 'A116', text: 'Being optimistic and enthusiastic', persona: 'explorer' },
+          { id: 'A117', text: 'Being strong and standing up for others', persona: 'protector' },
+          { id: 'A118', text: 'Being peaceful and keeping harmony', persona: 'harmonizer' }
         ]
       },
+      // Text input question (new type)
+      {
+        id: 'qQ103',
+        type: 'text-input',
+        text: 'Describe a challenging situation you faced recently and how you handled it:',
+        placeholder: 'Write at least 100 characters...',
+        minLength: 100,
+        maxLength: 1000,
+        // List of personas for text analysis mapping
+        personas: ['observer', 'giver', 'driver', 'seeker', 'upholder', 'guardian', 'explorer', 'protector', 'harmonizer']
+      },
+      // Single-select question
       {
         id: 'qQ201',
+        type: 'single-select',
         text: 'In my relationships, I tend to:',
         options: [
           { id: 'A201', text: 'Need personal space and time to process my thoughts', persona: 'observer' },
@@ -59,23 +77,83 @@ function AssessmentUI() {
           { id: 'A208', text: 'Be protective and direct, but sometimes intimidating', persona: 'protector' },
           { id: 'A209', text: 'Be accommodating and avoid creating conflict', persona: 'harmonizer' }
         ]
+      },
+      // Multi-select question
+      {
+        id: 'qQ202',
+        type: 'multi-select',
+        text: 'When I feel stressed, I am most likely to: (Select all that apply)',
+        minSelections: 1,
+        maxSelections: 3,
+        options: [
+          { id: 'A210', text: 'Withdraw to process information and recharge alone', persona: 'observer' },
+          { id: 'A211', text: 'Reach out to others for support or to help them', persona: 'giver' },
+          { id: 'A212', text: 'Create a plan of action to solve the problem', persona: 'driver' },
+          { id: 'A213', text: 'Express my emotions or channel them into creative outlets', persona: 'seeker' },
+          { id: 'A214', text: 'Focus on what I can control and improve', persona: 'upholder' },
+          { id: 'A215', text: 'Prepare for the worst while seeking reassurance', persona: 'guardian' },
+          { id: 'A216', text: 'Look for distractions or silver linings', persona: 'explorer' },
+          { id: 'A217', text: 'Take charge of the situation or confront issues directly', persona: 'protector' },
+          { id: 'A218', text: 'Try to maintain calm and avoid conflict', persona: 'harmonizer' }
+        ]
+      },
+      // Text input question
+      {
+        id: 'qQ106',
+        type: 'text-input',
+        text: 'What are your most important goals in life right now?',
+        placeholder: 'Write at least 50 characters...',
+        minLength: 50,
+        maxLength: 500,
+        personas: ['observer', 'giver', 'driver', 'seeker', 'upholder', 'guardian', 'explorer', 'protector', 'harmonizer']
       }
     ];
-  
-    // Handle question responses
-    const handleResponse = (questionId, optionId) => {
-      console.log('Response recorded:', questionId, optionId);
+    
+    // Handle question responses based on question type
+    const handleResponse = (question, value) => {
+      const questionId = question.id;
+      let updatedResponse;
+      
+      switch(question.type) {
+        case 'single-select':
+          // For single select, just set the array with one option ID
+          updatedResponse = [value];
+          break;
+          
+        case 'multi-select':
+          // For multi-select, toggle the presence of the option ID
+          const currentSelections = responses[questionId] || [];
+          if (currentSelections.includes(value)) {
+            // If already selected, remove it
+            updatedResponse = currentSelections.filter(id => id !== value);
+          } else {
+            // If not selected, add it (respecting maxSelections)
+            if (currentSelections.length < question.maxSelections) {
+              updatedResponse = [...currentSelections, value];
+            } else {
+              // If max selections reached, replace the first one
+              updatedResponse = [...currentSelections.slice(1), value];
+            }
+          }
+          break;
+          
+        case 'text-input':
+          // For text input, store the text directly
+          updatedResponse = value;
+          break;
+          
+        default:
+          console.error('Unknown question type:', question.type);
+          return;
+      }
+      
+      console.log('Response recorded:', questionId, updatedResponse);
       setResponses({
         ...responses,
-        [questionId]: [optionId] // Using array for potential multi-select in future
+        [questionId]: updatedResponse
       });
     };
-  
-    // Handle text input for analysis
-    const handleTextInput = (event) => {
-      setUploadedText(event.target.value);
-    };
-  
+    
     // Submit assessment for analysis
     const submitAssessment = async () => {
       console.log('Submitting assessment for analysis');
@@ -83,21 +161,14 @@ function AssessmentUI() {
       setError(null);
       
       try {
-        let response;
-        
-        // Handle questionnaire submission
-        if (assessmentType === 'questionnaire') {
-          console.log('Submitting questionnaire responses:', responses);
-          response = await fetch('/api/analyze-assessment', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ responses }),
-          });
-        } else {
-          throw new Error('No data to analyze');
-        }
+        console.log('Submitting questionnaire responses:', responses);
+        const response = await fetch('/api/analyze-assessment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ responses }),
+        });
         
         if (!response.ok) {
           const errorData = await response.json();
@@ -107,7 +178,7 @@ function AssessmentUI() {
         const data = await response.json();
         console.log('Analysis results received:', data);
         setResults(data);
-        setStep(1); // Move to results step since steps array length is 2
+        setStep(1); // Move to results step
       } catch (error) {
         console.error('Analysis error:', error);
         setError(error.message);
@@ -115,7 +186,7 @@ function AssessmentUI() {
         setLoading(false);
       }
     };
-  
+    
     // Navigation handlers
     const handleNext = () => {
       if (step === 0) {
@@ -128,16 +199,145 @@ function AssessmentUI() {
     const handleBack = () => {
       setStep(step - 1);
     };
-  
+    
     // Check if user can proceed to next step
     const canProceed = () => {
       if (step === 0) {
-        // Check that all questions have responses
-        return questions.every(q => responses[q.id]);
+        // Check that all questions have valid responses
+        return questions.every(question => {
+          const response = responses[question.id];
+          
+          // If no response yet
+          if (response === undefined) return false;
+          
+          switch(question.type) {
+            case 'single-select':
+              return response && response.length === 1;
+              
+            case 'multi-select':
+              return response && 
+                response.length >= question.minSelections && 
+                response.length <= question.maxSelections;
+                
+            case 'text-input':
+              return typeof response === 'string' && 
+                response.length >= question.minLength && 
+                response.length <= question.maxLength;
+                
+            default:
+              return false;
+          }
+        });
       }
       return true;
     };
-  
+    
+    // Count characters for text inputs
+    const getCharCount = (questionId) => {
+      const text = responses[questionId] || '';
+      return typeof text === 'string' ? text.length : 0;
+    };
+    
+    // Render different question types
+    const renderQuestion = (question, index) => {
+      const commonHeader = [
+        React.createElement('h3', { key: 'question' }, `${index + 1}. ${question.text}`)
+      ];
+      
+      switch(question.type) {
+        case 'single-select':
+          return React.createElement(
+            'div',
+            { key: question.id, className: 'question-container single-select' },
+            [
+              ...commonHeader,
+              React.createElement(
+                'div',
+                { key: 'options', className: 'options-container' },
+                question.options.map(option => 
+                  React.createElement(
+                    'div',
+                    { 
+                      key: option.id,
+                      className: `option ${responses[question.id]?.includes(option.id) ? 'selected' : ''}`,
+                      onClick: () => handleResponse(question, option.id)
+                    },
+                    option.text
+                  )
+                )
+              )
+            ]
+          );
+          
+        case 'multi-select':
+          return React.createElement(
+            'div',
+            { key: question.id, className: 'question-container multi-select' },
+            [
+              ...commonHeader,
+              React.createElement(
+                'p', 
+                { key: 'instruction', className: 'selection-guide' },
+                `Select between ${question.minSelections} and ${question.maxSelections} options`
+              ),
+              React.createElement(
+                'div',
+                { key: 'selections', className: 'selection-counter' },
+                `${(responses[question.id]?.length || 0)} of ${question.maxSelections} selected`
+              ),
+              React.createElement(
+                'div',
+                { key: 'options', className: 'options-container' },
+                question.options.map(option => 
+                  React.createElement(
+                    'div',
+                    { 
+                      key: option.id,
+                      className: `option ${responses[question.id]?.includes(option.id) ? 'selected' : ''}`,
+                      onClick: () => handleResponse(question, option.id)
+                    },
+                    option.text
+                  )
+                )
+              )
+            ]
+          );
+          
+        case 'text-input':
+          const charCount = getCharCount(question.id);
+          const isValid = charCount >= question.minLength && charCount <= question.maxLength;
+          
+          return React.createElement(
+            'div',
+            { key: question.id, className: 'question-container text-input' },
+            [
+              ...commonHeader,
+              React.createElement(
+                'textarea',
+                {
+                  key: 'textinput',
+                  placeholder: question.placeholder,
+                  value: responses[question.id] || '',
+                  onChange: (e) => handleResponse(question, e.target.value),
+                  className: isValid ? 'valid' : (charCount > 0 ? 'invalid' : '')
+                }
+              ),
+              React.createElement(
+                'div',
+                { 
+                  key: 'char-counter',
+                  className: `char-counter ${isValid ? 'valid' : (charCount > 0 ? 'invalid' : '')}`
+                },
+                `${charCount} / ${question.minLength}-${question.maxLength} characters`
+              )
+            ]
+          );
+          
+        default:
+          return React.createElement('div', { key: question.id }, 'Unknown question type');
+      }
+    };
+    
     // Render functions for each step
     const renderQuestionnaire = () => {
       return React.createElement(
@@ -145,32 +345,9 @@ function AssessmentUI() {
         { className: 'assessment-questionnaire' },
         [
           React.createElement('h2', { key: 'title' }, 'Complete the Assessment'),
-          React.createElement('p', { key: 'desc' }, 'Select the option that best describes you in each scenario:'),
+          React.createElement('p', { key: 'desc' }, 'Answer the following questions about yourself:'),
           
-          ...questions.map((question, index) => 
-            React.createElement(
-              'div',
-              { key: question.id, className: 'question-container' },
-              [
-                React.createElement('h3', { key: 'question' }, `${index + 1}. ${question.text}`),
-                React.createElement(
-                  'div',
-                  { key: 'options', className: 'options-container' },
-                  question.options.map(option => 
-                    React.createElement(
-                      'div',
-                      { 
-                        key: option.id,
-                        className: `option ${responses[question.id]?.includes(option.id) ? 'selected' : ''}`,
-                        onClick: () => handleResponse(question.id, option.id)
-                      },
-                      option.text
-                    )
-                  )
-                )
-              ]
-            )
-          )
+          ...questions.map((question, index) => renderQuestion(question, index))
         ]
       );
     };
@@ -275,6 +452,23 @@ function AssessmentUI() {
                 )
               )
             ]
+          ),
+          
+          // New section for text analysis insights
+          results.textInsights && results.textInsights.length > 0 &&
+          React.createElement(
+            'div',
+            { key: 'textAnalysis', className: 'text-analysis' },
+            [
+              React.createElement('h3', { key: 'title' }, 'Text Analysis Insights'),
+              React.createElement(
+                'div',
+                { key: 'insights', className: 'text-insights' },
+                results.textInsights.map((insight, idx) => 
+                  React.createElement('p', { key: `insight-${idx}` }, insight)
+                )
+              )
+            ]
           )
         ]
       );
@@ -291,7 +485,7 @@ function AssessmentUI() {
           return React.createElement('div', {}, 'Unknown step');
       }
     };
-  
+    
     // Main component render
     return React.createElement(
       'div',
@@ -374,8 +568,8 @@ function AssessmentUI() {
       ]
     );
   };
-
-// Expose globally (window.AssessmentUI) for scripts that load the component dynamically
-if (typeof window !== 'undefined') {
-  window.AssessmentUI = AssessmentUI;
-}
+  
+  // Expose globally (window.AssessmentUI) for scripts that load the component dynamically
+  if (typeof window !== 'undefined') {
+    window.AssessmentUI = AssessmentUI;
+  }

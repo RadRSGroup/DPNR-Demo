@@ -205,3 +205,1343 @@ To help you identify persona patterns, here are some example markers:
 - Avoids strong positions or conflict
 - Mentions comfort, peace, or stability
 - May be less self-referential, focusing on others or external situations
+
+
+?
+
+//The following is code to be incorporated//
+
+AssessmentUI:
+
+// Define the AssessmentUI component to be accessible from the global scope
+function AssessmentUI() {
+    // Use React hooks for state management
+    const [step, setStep] = React.useState(0);
+    // Only questionnaire assessment type is supported now
+    const assessmentType = 'questionnaire';
+    const [responses, setResponses] = React.useState({});
+    const [results, setResults] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
+  
+    // Steps in the assessment process
+    const steps = ['Complete Assessment', 'View Results'];
+  
+    // Sample questions for the questionnaire with different types
+    const questions = [
+      // Single-select question (original type)
+      {
+        id: 'qQ101',
+        type: 'single-select',
+        text: 'When faced with a difficult decision, I typically:',
+        options: [
+          { id: 'A101', text: 'Take time to analyze all possible outcomes before deciding', persona: 'observer' },
+          { id: 'A102', text: 'Consider how it will impact others before myself', persona: 'giver' },
+          { id: 'A103', text: 'Look for the most efficient and successful solution', persona: 'driver' },
+          { id: 'A104', text: 'Trust my gut feeling about what feels most authentic', persona: 'seeker' },
+          { id: 'A105', text: 'Make sure I follow the right procedures and standards', persona: 'upholder' },
+          { id: 'A106', text: 'Consider all risks and prepare for potential problems', persona: 'guardian' },
+          { id: 'A107', text: 'Look for the most exciting and positive option', persona: 'explorer' },
+          { id: 'A108', text: 'Assert my position and take control of the situation', persona: 'protector' },
+          { id: 'A109', text: 'Find a compromise that keeps everyone happy', persona: 'harmonizer' }
+        ]
+      },
+      // Multi-select question (new type)
+      {
+        id: 'qQ102',
+        type: 'multi-select',
+        text: 'Which of the following qualities do you value most in yourself? (Select all that apply)',
+        minSelections: 1,
+        maxSelections: 4,
+        options: [
+          { id: 'A201', text: 'Analytical thinking and objectivity', persona: 'observer' },
+          { id: 'A202', text: 'Kindness and generosity toward others', persona: 'giver' },
+          { id: 'A203', text: 'Ambition and the drive to succeed', persona: 'driver' },
+          { id: 'A204', text: 'Authenticity and emotional depth', persona: 'seeker' },
+          { id: 'A205', text: 'Moral integrity and doing what\'s right', persona: 'upholder' },
+          { id: 'A206', text: 'Loyalty and careful planning', persona: 'guardian' },
+          { id: 'A207', text: 'Optimism and enthusiasm for life', persona: 'explorer' },
+          { id: 'A208', text: 'Strength and standing up for others', persona: 'protector' },
+          { id: 'A209', text: 'Peacefulness and bringing people together', persona: 'harmonizer' }
+        ]
+      },
+      // Text input question (new type)
+      {
+        id: 'qQ103',
+        type: 'text-input',
+        text: 'Describe a challenging situation you faced recently and how you handled it:',
+        placeholder: 'Write at least 100 characters...',
+        minLength: 100,
+        maxLength: 1000,
+        personas: ['observer', 'giver', 'driver', 'seeker', 'upholder', 'guardian', 'explorer', 'protector', 'harmonizer']
+      },
+      // Single-select question (original type)
+      {
+        id: 'qQ104',
+        type: 'single-select',
+        text: 'In my relationships, I tend to:',
+        options: [
+          { id: 'A401', text: 'Need personal space and time to process my thoughts', persona: 'observer' },
+          { id: 'A402', text: 'Focus on the needs of others and how I can support them', persona: 'giver' },
+          { id: 'A403', text: 'Be goal-oriented and sometimes struggle with vulnerability', persona: 'driver' },
+          { id: 'A404', text: 'Seek deep emotional connection and authentic exchange', persona: 'seeker' },
+          { id: 'A405', text: 'Have high expectations and notice when things are not right', persona: 'upholder' },
+          { id: 'A406', text: 'Be loyal but cautious about trusting too quickly', persona: 'guardian' },
+          { id: 'A407', text: 'Bring energy and fun but may avoid serious issues', persona: 'explorer' },
+          { id: 'A408', text: 'Be protective and direct, but sometimes intimidating', persona: 'protector' },
+          { id: 'A409', text: 'Be accommodating and avoid creating conflict', persona: 'harmonizer' }
+        ]
+      },
+      // Multi-select question (new type)
+      {
+        id: 'qQ105',
+        type: 'multi-select',
+        text: 'When I feel stressed, I am most likely to: (Select all that apply)',
+        minSelections: 1,
+        maxSelections: 3,
+        options: [
+          { id: 'A501', text: 'Withdraw to process information and recharge alone', persona: 'observer' },
+          { id: 'A502', text: 'Reach out to others for support or to help them', persona: 'giver' },
+          { id: 'A503', text: 'Create a plan of action to solve the problem', persona: 'driver' },
+          { id: 'A504', text: 'Express my emotions or channel them into creative outlets', persona: 'seeker' },
+          { id: 'A505', text: 'Focus on what I can control and improve', persona: 'upholder' },
+          { id: 'A506', text: 'Prepare for the worst while seeking reassurance', persona: 'guardian' },
+          { id: 'A507', text: 'Look for distractions or silver linings', persona: 'explorer' },
+          { id: 'A508', text: 'Take charge of the situation or confront issues directly', persona: 'protector' },
+          { id: 'A509', text: 'Try to maintain calm and avoid conflict', persona: 'harmonizer' }
+        ]
+      },
+      // Text input question (new type)
+      {
+        id: 'qQ106',
+        type: 'text-input',
+        text: 'What are your most important goals in life right now?',
+        placeholder: 'Write at least 50 characters...',
+        minLength: 50,
+        maxLength: 500,
+        personas: ['observer', 'giver', 'driver', 'seeker', 'upholder', 'guardian', 'explorer', 'protector', 'harmonizer']
+      }
+    ];
+  
+    // Handle question responses based on question type
+    const handleResponse = (question, value) => {
+      const questionId = question.id;
+      let updatedResponse;
+      
+      switch(question.type) {
+        case 'single-select':
+          // For single select, just set the array with one option ID
+          updatedResponse = [value];
+          break;
+          
+        case 'multi-select':
+          // For multi-select, toggle the presence of the option ID
+          const currentSelections = responses[questionId] || [];
+          if (currentSelections.includes(value)) {
+            // If already selected, remove it
+            updatedResponse = currentSelections.filter(id => id !== value);
+          } else {
+            // If not selected, add it (respecting maxSelections)
+            if (currentSelections.length < question.maxSelections) {
+              updatedResponse = [...currentSelections, value];
+            } else {
+              // If max selections reached, replace the first one
+              updatedResponse = [...currentSelections.slice(1), value];
+            }
+          }
+          break;
+          
+        case 'text-input':
+          // For text input, store the text directly
+          updatedResponse = value;
+          break;
+          
+        default:
+          console.error('Unknown question type:', question.type);
+          return;
+      }
+      
+      console.log('Response recorded:', questionId, updatedResponse);
+      setResponses({
+        ...responses,
+        [questionId]: updatedResponse
+      });
+    };
+  
+    // Submit assessment for analysis
+    const submitAssessment = async () => {
+      console.log('Submitting assessment for analysis');
+      setLoading(true);
+      setError(null);
+      
+      try {
+        let response;
+        
+        // Handle questionnaire submission
+        if (assessmentType === 'questionnaire') {
+          console.log('Submitting questionnaire responses:', responses);
+          response = await fetch('/api/analyze-assessment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ responses }),
+          });
+        } else {
+          throw new Error('No data to analyze');
+        }
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Analysis failed');
+        }
+        
+        const data = await response.json();
+        console.log('Analysis results received:', data);
+        setResults(data);
+        setStep(1); // Move to results step
+      } catch (error) {
+        console.error('Analysis error:', error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    // Navigation handlers
+    const handleNext = () => {
+      if (step === 0) {
+        submitAssessment();
+      } else {
+        setStep(step + 1);
+      }
+    };
+    
+    const handleBack = () => {
+      setStep(step - 1);
+    };
+  
+    // Check if user can proceed to next step
+    const canProceed = () => {
+      if (step === 0) {
+        // Check that all questions have valid responses
+        return questions.every(question => {
+          const response = responses[question.id];
+          
+          // If no response yet
+          if (response === undefined) return false;
+          
+          switch(question.type) {
+            case 'single-select':
+              return response && response.length === 1;
+              
+            case 'multi-select':
+              return response && 
+                response.length >= question.minSelections && 
+                response.length <= question.maxSelections;
+                
+            case 'text-input':
+              return typeof response === 'string' && 
+                response.length >= question.minLength && 
+                response.length <= question.maxLength;
+                
+            default:
+              return false;
+          }
+        });
+      }
+      return true;
+    };
+  
+    // Count characters for text inputs
+    const getCharCount = (questionId) => {
+      const text = responses[questionId] || '';
+      return typeof text === 'string' ? text.length : 0;
+    };
+  
+    // Render different question types
+    const renderQuestion = (question, index) => {
+      const commonHeader = [
+        React.createElement('h3', { key: 'question' }, `${index + 1}. ${question.text}`)
+      ];
+      
+      switch(question.type) {
+        case 'single-select':
+          return React.createElement(
+            'div',
+            { key: question.id, className: 'question-container single-select' },
+            [
+              ...commonHeader,
+              React.createElement(
+                'div',
+                { key: 'options', className: 'options-container' },
+                question.options.map(option => 
+                  React.createElement(
+                    'div',
+                    { 
+                      key: option.id,
+                      className: `option ${responses[question.id]?.includes(option.id) ? 'selected' : ''}`,
+                      onClick: () => handleResponse(question, option.id)
+                    },
+                    option.text
+                  )
+                )
+              )
+            ]
+          );
+          
+        case 'multi-select':
+          return React.createElement(
+            'div',
+            { key: question.id, className: 'question-container multi-select' },
+            [
+              ...commonHeader,
+              React.createElement(
+                'p', 
+                { key: 'instruction', className: 'selection-guide' },
+                `Select between ${question.minSelections} and ${question.maxSelections} options`
+              ),
+              React.createElement(
+                'div',
+                { key: 'selections', className: 'selection-counter' },
+                `${(responses[question.id]?.length || 0)} of ${question.maxSelections} selected`
+              ),
+              React.createElement(
+                'div',
+                { key: 'options', className: 'options-container' },
+                question.options.map(option => 
+                  React.createElement(
+                    'div',
+                    { 
+                      key: option.id,
+                      className: `option ${responses[question.id]?.includes(option.id) ? 'selected' : ''}`,
+                      onClick: () => handleResponse(question, option.id)
+                    },
+                    option.text
+                  )
+                )
+              )
+            ]
+          );
+          
+        case 'text-input':
+          const charCount = getCharCount(question.id);
+          const isValid = charCount >= question.minLength && charCount <= question.maxLength;
+          
+          return React.createElement(
+            'div',
+            { key: question.id, className: 'question-container text-input' },
+            [
+              ...commonHeader,
+              React.createElement(
+                'textarea',
+                {
+                  key: 'textinput',
+                  placeholder: question.placeholder,
+                  value: responses[question.id] || '',
+                  onChange: (e) => handleResponse(question, e.target.value),
+                  className: isValid ? 'valid' : (charCount > 0 ? 'invalid' : '')
+                }
+              ),
+              React.createElement(
+                'div',
+                { 
+                  key: 'char-counter',
+                  className: `char-counter ${isValid ? 'valid' : (charCount > 0 ? 'invalid' : '')}`
+                },
+                `${charCount} / ${question.minLength}-${question.maxLength} characters`
+              )
+            ]
+          );
+          
+        default:
+          return React.createElement('div', { key: question.id }, 'Unknown question type');
+      }
+    };
+  
+    // Render functions for each step
+    const renderQuestionnaire = () => {
+      return React.createElement(
+        'div',
+        { className: 'assessment-questionnaire' },
+        [
+          React.createElement('h2', { key: 'title' }, 'Complete the Assessment'),
+          React.createElement('p', { key: 'desc' }, 'Answer the following questions about yourself:'),
+          
+          ...questions.map((question, index) => renderQuestion(question, index))
+        ]
+      );
+    };
+    
+    const renderResults = () => {
+      if (loading) {
+        return React.createElement(
+          'div',
+          { className: 'loading' },
+          'Analyzing your responses...'
+        );
+      }
+      
+      if (error) {
+        return React.createElement(
+          'div',
+          { className: 'error' },
+          `Error: ${error}`
+        );
+      }
+      
+      if (!results) {
+        return React.createElement(
+          'div',
+          { className: 'no-results' },
+          'No results available.'
+        );
+      }
+      
+      return React.createElement(
+        'div',
+        { className: 'assessment-results' },
+        [
+          React.createElement('h2', { key: 'title' }, 'Your Emotional Persona Assessment Results'),
+          
+          React.createElement(
+            'div',
+            { key: 'primary', className: 'primary-persona' },
+            [
+              React.createElement('h3', { key: 'title' }, `Primary Persona: ${results.primaryPersona.name}`),
+              React.createElement('p', { key: 'desc' }, results.primaryPersona.description)
+            ]
+          ),
+          
+          results.secondaryPersonas?.length > 0 &&
+          React.createElement(
+            'div',
+            { key: 'secondary', className: 'secondary-personas' },
+            [
+              React.createElement('h3', { key: 'title' }, 'Secondary Personas'),
+              React.createElement(
+                'div',
+                { key: 'personas', className: 'persona-chips' },
+                results.secondaryPersonas.map(persona => 
+                  React.createElement(
+                    'span',
+                    { key: persona.name, className: 'persona-chip' },
+                    persona.name
+                  )
+                )
+              )
+            ]
+          ),
+          
+          React.createElement(
+            'div',
+            { key: 'values', className: 'core-values' },
+            [
+              React.createElement('h3', { key: 'title' }, 'Core Values'),
+              React.createElement(
+                'div',
+                { key: 'chips', className: 'value-chips' },
+                results.coreValues?.map(value => 
+                  React.createElement(
+                    'span',
+                    { key: value, className: 'value-chip' },
+                    value
+                  )
+                )
+              )
+            ]
+          ),
+          
+          React.createElement(
+            'div',
+            { key: 'domains', className: 'life-domains' },
+            [
+              React.createElement('h3', { key: 'title' }, 'Life Domain Impact'),
+              
+              ...Object.entries(results.lifeDomains || {}).map(([domain, impact]) => 
+                React.createElement(
+                  'div',
+                  { key: domain, className: 'domain-impact' },
+                  [
+                    React.createElement(
+                      'h4',
+                      { key: 'title' },
+                      domain.charAt(0).toUpperCase() + domain.slice(1)
+                    ),
+                    React.createElement('p', { key: 'impact' }, impact)
+                  ]
+                )
+              )
+            ]
+          ),
+          
+          // New section to display text analysis insights
+          React.createElement(
+            'div',
+            { key: 'textAnalysis', className: 'text-analysis' },
+            [
+              React.createElement('h3', { key: 'title' }, 'Free Text Analysis'),
+              React.createElement('p', { key: 'desc' }, 'Key insights derived from your written responses:'),
+              React.createElement(
+                'div',
+                { key: 'insights', className: 'text-insights' },
+                results.textInsights?.map((insight, idx) => 
+                  React.createElement('p', { key: `insight-${idx}` }, insight)
+                ) || React.createElement('p', {}, 'No text insights available.')
+              )
+            ]
+          )
+        ]
+      );
+    };
+    
+    // Render current step content
+    const renderStepContent = () => {
+      switch (step) {
+        case 0:
+          return renderQuestionnaire();
+        case 1:
+          return renderResults();
+        default:
+          return React.createElement('div', {}, 'Unknown step');
+      }
+    };
+  
+    // Main component render
+    return React.createElement(
+      'div',
+      { className: 'assessment-container' },
+      [
+        React.createElement(
+          'div',
+          { key: 'header', className: 'assessment-header' },
+          [
+            React.createElement('h1', { key: 'title' }, 'Emotional Persona Assessment'),
+            React.createElement(
+              'p',
+              { key: 'desc' },
+              'Discover your emotional personas, core values, and how they impact different life domains.'
+            )
+          ]
+        ),
+        
+        React.createElement(
+          'div',
+          { key: 'stepper', className: 'assessment-stepper' },
+          steps.map((label, index) => 
+            React.createElement(
+              'div',
+              { 
+                key: label,
+                className: `step ${index === step ? 'active' : ''} ${index < step ? 'completed' : ''}`
+              },
+              [
+                React.createElement('div', { key: 'number', className: 'step-number' }, index + 1),
+                React.createElement('div', { key: 'label', className: 'step-label' }, label)
+              ]
+            )
+          )
+        ),
+        
+        React.createElement(
+          'div',
+          { key: 'content', className: 'assessment-content' },
+          renderStepContent()
+        ),
+        
+        React.createElement(
+          'div',
+          { key: 'actions', className: 'assessment-actions' },
+          [
+            step > 0 && React.createElement(
+              'button',
+              { 
+                key: 'back',
+                className: 'back-button',
+                onClick: handleBack,
+                disabled: loading
+              },
+              'Back'
+            ),
+            
+            step < steps.length - 1 && React.createElement(
+              'button',
+              { 
+                key: 'next',
+                className: 'next-button',
+                onClick: handleNext,
+                disabled: !canProceed() || loading
+              },
+              loading ? 'Loading...' : 'Next'
+            ),
+            
+            step === steps.length - 1 && React.createElement(
+              'button',
+              { 
+                key: 'finish',
+                className: 'finish-button',
+                onClick: () => window.location.reload()
+              },
+              'Start New Assessment'
+            )
+          ]
+        )
+      ]
+    );
+  };
+
+// Expose globally (window.AssessmentUI) for scripts that load the component dynamically
+if (typeof window !== 'undefined') {
+  window.AssessmentUI = AssessmentUI;
+}
+
+
+?
+Assessment.css
+
+/* General Assessment Styles */
+.assessment-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.assessment-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.assessment-header h1 {
+  color: #3a3a3a;
+  margin-bottom: 10px;
+}
+
+.assessment-header p {
+  color: #666;
+  font-size: 18px;
+}
+
+/* Stepper Navigation */
+.assessment-stepper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+  position: relative;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  height: 2px;
+  background-color: #ccc;
+  width: 100%;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+}
+
+.step.completed:not(:last-child)::after {
+  background-color: #4CAF50;
+}
+
+.step-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #ccc;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.step.active .step-number {
+  background-color: #2196F3;
+}
+
+.step.completed .step-number {
+  background-color: #4CAF50;
+}
+
+.step-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.step.active .step-label {
+  font-weight: bold;
+  color: #2196F3;
+}
+
+/* Assessment Content */
+.assessment-content {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.assessment-questionnaire h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Question Containers */
+.question-container {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.question-container h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Options for Single and Multi Select */
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option {
+  padding: 12px 15px;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option:hover {
+  background-color: #e0e0e0;
+}
+
+.option.selected {
+  background-color: #2196F3;
+  color: white;
+}
+
+/* Multi-select specific styles */
+.multi-select .option.selected {
+  background-color: #4CAF50;
+}
+
+.selection-guide {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.selection-counter {
+  font-size: 14px;
+  color: #2196F3;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+/* Text Input specific styles */
+.text-input textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 16px;
+  resize: vertical;
+  margin-bottom: 10px;
+  transition: border 0.2s ease;
+}
+
+.text-input textarea:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.text-input textarea.valid {
+  border-color: #4CAF50;
+}
+
+.text-input textarea.invalid {
+  border-color: #F44336;
+}
+
+.char-counter {
+  font-size: 14px;
+  color: #666;
+  text-align: right;
+}
+
+.char-counter.valid {
+  color: #4CAF50;
+}
+
+.char-counter.invalid {
+  color: #F44336;
+}
+
+/* Action Buttons */
+.assessment-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.back-button,
+.next-button,
+.finish-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.back-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.back-button:hover {
+  background-color: #e0e0e0;
+}
+
+.next-button,
+.finish-button {
+  background-color: #2196F3;
+  color: white;
+}
+
+.next-button:hover,
+.finish-button:hover {
+  background-color: #0b7dda;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Results Styling */
+.assessment-results h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.primary-persona,
+.secondary-personas,
+.core-values,
+.life-domains,
+.text-analysis {
+  margin-bottom: 25px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.primary-persona h3,
+.secondary-personas h3,
+.core-values h3,
+.life-domains h3,
+.text-analysis h3 {
+  color: #2196F3;
+  margin-bottom: 10px;
+}
+
+.domain-impact {
+  margin-bottom: 15px;
+}
+
+.domain-impact h4 {
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.persona-chips,
+.value-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.persona-chip,
+.value-chip {
+  padding: 6px 12px;
+  background-color: #e3f2fd;
+  color: #2196F3;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.text-insights p {
+  margin-bottom: 10px;
+  line-height: 1.5;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-left: 3px solid #2196F3;
+  border-radius: 3px;
+}
+
+/* Loading and Error states */
+.loading,
+.error,
+.no-results {
+  padding: 40px;
+  text-align: center;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.loading {
+  color: #2196F3;
+  font-size: 18px;
+}
+
+.error {
+  color: #F44336;
+  font-size: 18px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .assessment-container {
+    padding: 15px;
+  }
+  
+  .question-container {
+    padding: 15px;
+  }
+  
+  .assessment-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .back-button,
+  .next-button,
+  .finish-button {
+    width: 100%;
+  }
+}
+
+?
+Server-side analysis:
+// This is an example of the server-side Node.js code to analyze assessment responses
+// This would be placed in your API route handler (e.g., /api/analyze-assessment)
+
+const { Configuration, OpenAIApi } = require('openai');
+
+// Initialize OpenAI client (assuming you're using OpenAI for analysis)
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+// Define persona information
+const personaInfo = {
+  'observer': {
+    name: 'The Observer (Type 5)',
+    description: 'You are analytical, perceptive, and value knowledge. You prefer to gather information before acting and often need space to process your thoughts. Your methodical approach to life and problem-solving allows you to see patterns others might miss.',
+    values: ['Knowledge', 'Autonomy', 'Competence', 'Objectivity', 'Privacy']
+  },
+  'giver': {
+    name: 'The Giver (Type 2)',
+    description: 'You are generous, empathetic, and relationship-focused. Your natural inclination is to support others and anticipate their needs. You find fulfillment in making meaningful connections and being appreciated for your contributions.',
+    values: ['Generosity', 'Compassion', 'Connection', 'Recognition', 'Harmony']
+  },
+  'driver': {
+    name: 'The Driver (Type 3)',
+    description: 'You are achievement-oriented, efficient, and adaptable. You focus on goals and outcomes, often excelling in competitive environments. Your ability to adapt to situations and present yourself effectively helps you succeed in various contexts.',
+    values: ['Success', 'Efficiency', 'Progress', 'Recognition', 'Excellence']
+  },
+  'seeker': {
+    name: 'The Seeker (Type 4)',
+    description: 'You are authentic, emotionally deep, and creative. You value personal meaning and seek to express your unique identity. Your sensitivity to emotions and desire for depth creates rich experiences and meaningful connections.',
+    values: ['Authenticity', 'Meaning', 'Creativity', 'Depth', 'Individuality']
+  },
+  'upholder': {
+    name: 'The Upholder (Type 1)',
+    description: 'You are principled, responsible, and improvement-oriented. You have high standards for yourself and others, with a strong sense of right and wrong. Your dedication to integrity and doing things correctly creates order and reliability.',
+    values: ['Integrity', 'Responsibility', 'Improvement', 'Order', 'Correctness']
+  },
+  'guardian': {
+    name: 'The Guardian (Type 6)',
+    description: 'You are loyal, prepared, and security-focused. You anticipate problems and work to create safety for yourself and others. Your ability to identify risks and plan accordingly makes you a dependable ally and thoughtful decision-maker.',
+    values: ['Security', 'Loyalty', 'Preparation', 'Responsibility', 'Community']
+  },
+  'explorer': {
+    name: 'The Explorer (Type 7)',
+    description: 'You are enthusiastic, optimistic, and versatile. You seek variety and positive experiences, bringing energy to any situation. Your ability to see possibilities and maintain optimism helps you navigate life with flexibility and joy.',
+    values: ['Freedom', 'Joy', 'Variety', 'Adventure', 'Possibility']
+  },
+  'protector': {
+    name: 'The Protector (Type 8)',
+    description: 'You are strong, decisive, and justice-oriented. You naturally take charge in situations and stand up for yourself and others. Your directness and willingness to confront challenges makes you a powerful advocate and leader.',
+    values: ['Strength', 'Justice', 'Independence', 'Protection', 'Truth']
+  },
+  'harmonizer': {
+    name: 'The Harmonizer (Type 9)',
+    description: 'You are peaceful, accepting, and supportive. You seek harmony and find common ground between different perspectives. Your ability to see multiple viewpoints and mediate conflicts creates stability and unity in relationships.',
+    values: ['Peace', 'Harmony', 'Unity', 'Stability', 'Inclusion']
+  }
+};
+
+// Main analysis handler
+async function analyzeAssessment(req, res) {
+  try {
+    const { responses } = req.body;
+    
+    if (!responses) {
+      return res.status(400).json({ error: 'No responses provided' });
+    }
+    
+    // Collect all responses and format them for analysis
+    const formattedResponses = formatResponsesForAnalysis(responses);
+    
+    // Calculate scores based on multiple-choice questions
+    const personaScores = calculatePersonaScores(responses);
+    
+    // Get text inputs for LLM analysis
+    const textInputs = extractTextInputs(responses);
+    
+    // Combine all text inputs into one document for analysis
+    const combinedText = textInputs.join('\n\n');
+    
+    // Only send to LLM if there's text to analyze
+    let textAnalysisResults = {};
+    if (combinedText.trim().length > 0) {
+      // Send to OpenAI for text analysis
+      textAnalysisResults = await analyzeTextWithLLM(combinedText);
+    }
+    
+    // Combine multiple-choice results with text analysis
+    const finalResults = combineResults(personaScores, textAnalysisResults);
+    
+    // Format final output
+    const outputResults = formatOutputResults(finalResults);
+    
+    return res.status(200).json(outputResults);
+  } catch (error) {
+    console.error('Analysis error:', error);
+    return res.status(500).json({ error: 'Analysis failed: ' + error.message });
+  }
+}
+
+// Format responses for readability in logs/analysis
+function formatResponsesForAnalysis(responses) {
+  const formatted = {};
+  
+  // Group responses by question ID
+  Object.entries(responses).forEach(([questionId, response]) => {
+    // Check if response is array (multiple/single choice) or string (text input)
+    if (Array.isArray(response)) {
+      formatted[questionId] = response;
+    } else {
+      formatted[questionId] = response; // Text input
+    }
+  });
+  
+  return formatted;
+}
+
+// Calculate persona scores based on multiple-choice responses
+function calculatePersonaScores(responses) {
+  // Initialize scores for each persona
+  const scores = {
+    observer: 0,
+    giver: 0,
+    driver: 0,
+    seeker: 0,
+    upholder: 0,
+    guardian: 0,
+    explorer: 0,
+    protector: 0,
+    harmonizer: 0
+  };
+  
+  // Count how many options we've processed for each persona
+  const counts = { ...scores };
+  
+  // Process each response
+  Object.entries(responses).forEach(([questionId, response]) => {
+    // Skip text input questions (they're strings, not arrays)
+    if (!Array.isArray(response)) return;
+    
+    // For questions where we have the answer key mapping
+    if (questionId.startsWith('qQ')) {
+      // Get question type based on number of selected options
+      const isMultiSelect = response.length > 1;
+      
+      // Process each selected option
+      response.forEach(optionId => {
+        // This is where you'd normally look up which persona this option maps to
+        // For this example, we're assuming the option already has a persona tag
+        // In a real implementation, you'd have a mapping of optionId -> persona
+        
+        // Example logic - replace with your actual mapping logic
+        // For demonstration purposes, assuming options follow pattern from the UI code
+        // where each option has a persona property
+        const optionPersona = getPersonaForOption(optionId);
+        
+        if (optionPersona && scores.hasOwnProperty(optionPersona)) {
+          // For multi-select questions, we give less weight to each selection
+          // since the user can choose multiple options
+          const weight = isMultiSelect ? (1 / response.length) : 1;
+          scores[optionPersona] += weight;
+          counts[optionPersona]++;
+        }
+      });
+    }
+  });
+  
+  // Normalize scores (divide by count to get average)
+  Object.keys(scores).forEach(persona => {
+    if (counts[persona] > 0) {
+      scores[persona] = (scores[persona] / counts[persona]) * 100; // Convert to 0-100 scale
+    }
+  });
+  
+  return scores;
+}
+
+// Mock function to map option IDs to personas
+// In a real implementation, this would use your actual option -> persona mapping
+function getPersonaForOption(optionId) {
+  // This is a simplified example - you would replace this with your actual mapping
+  // For this example, we're extracting the last digit and mapping it to a persona
+  const lastDigit = parseInt(optionId.slice(-1));
+  
+  const personaMap = {
+    1: 'observer',
+    2: 'giver',
+    3: 'driver',
+    4: 'seeker',
+    5: 'upholder',
+    6: 'guardian',
+    7: 'explorer',
+    8: 'protector',
+    9: 'harmonizer'
+  };
+  
+  return personaMap[lastDigit] || null;
+}
+
+// Extract text inputs for LLM analysis
+function extractTextInputs(responses) {
+  const textInputs = [];
+  
+  Object.entries(responses).forEach(([questionId, response]) => {
+    // Only process text inputs (not arrays)
+    if (typeof response === 'string') {
+      // Add some context about which question this was
+      const questionText = getQuestionText(questionId);
+      textInputs.push(`Question: ${questionText}\nResponse: ${response}`);
+    }
+  });
+  
+  return textInputs;
+}
+
+// Mock function to get question text
+// In a real implementation, you would look this up from your questions database/config
+function getQuestionText(questionId) {
+  // Example mapping - replace with your actual questions
+  const questionMap = {
+    'qQ103': 'Describe a challenging situation you faced recently and how you handled it',
+    'qQ106': 'What are your most important goals in life right now?'
+  };
+  
+  return questionMap[questionId] || 'Unknown question';
+}
+
+// Analyze text inputs with LLM
+async function analyzeTextWithLLM(text) {
+  try {
+    // Create the LLM prompt based on the prompt content in llm_prompt.txt
+    const prompt = createEmotionalPersonaPrompt(text);
+    
+    // Call OpenAI API
+    const completion = await openai.createCompletion({
+      model: "gpt-4-0125-preview", // Use appropriate model
+      prompt: prompt,
+      max_tokens: 1500,
+      temperature: 0.3,
+    });
+    
+    // Parse the response to extract structured data
+    return parsePersonaAnalysisResponse(completion.data.choices[0].text);
+  } catch (error) {
+    console.error('LLM analysis error:', error);
+    return {
+      personaScores: {},
+      coreValues: [],
+      textInsights: ['Error analyzing text input.']
+    };
+  }
+}
+
+// Create the emotional persona analysis prompt
+function createEmotionalPersonaPrompt(userText) {
+  // This would contain the full prompt from llm_prompt.txt
+  // For brevity, this is simplified here
+  return `
+# Emotional Persona Analysis
+
+Analyze the following text according to the 9 Emotional Personas framework:
+
+${userText}
+
+Provide the following:
+1. Persona scores (0-100) for each of the 9 types
+2. Core values expressed in the text
+3. Key insights about the person's emotional patterns
+`;
+}
+
+// Parse the LLM response into structured data
+function parsePersonaAnalysisResponse(response) {
+  // This is a simplified parser - you would implement a more robust parser
+  // based on your actual LLM response format
+  
+  try {
+    // Mock result - in real implementation, parse the actual LLM response
+    return {
+      personaScores: {
+        observer: 65,
+        giver: 40,
+        driver: 70,
+        seeker: 55,
+        upholder: 30,
+        guardian: 45,
+        explorer: 60,
+        protector: 50,
+        harmonizer: 35
+      },
+      coreValues: ['Growth', 'Achievement', 'Autonomy', 'Understanding', 'Connection'],
+      textInsights: [
+        'Shows a pattern of analytical problem-solving and self-reflection',
+        'Exhibits strong drive for personal achievement and recognition',
+        'Values independence but also seeks meaningful connections',
+        'Demonstrates curiosity and openness to new experiences',
+        'May struggle with perfectionism and self-criticism'
+      ]
+    };
+  } catch (error) {
+    console.error('Error parsing LLM response:', error);
+    return {
+      personaScores: {},
+      coreValues: [],
+      textInsights: ['Error parsing analysis results.']
+    };
+  }
+}
+
+// Combine multiple-choice scores with text analysis results
+function combineResults(mcScores, textResults) {
+  // Initialize with multiple-choice scores
+  const combinedScores = { ...mcScores };
+  
+  // If we have text analysis results, combine the scores
+  if (textResults.personaScores) {
+    // Weight between multiple-choice (60%) and text analysis (40%)
+    const mcWeight = 0.6;
+    const textWeight = 0.4;
+    
+    Object.keys(combinedScores).forEach(persona => {
+      if (textResults.personaScores[persona]) {
+        // Weighted average of both scores
+        combinedScores[persona] = (
+          mcScores[persona] * mcWeight + 
+          textResults.personaScores[persona] * textWeight
+        );
+      }
+    });
+  }
+  
+  return {
+    personaScores: combinedScores,
+    coreValues: textResults.coreValues || [],
+    textInsights: textResults.textInsights || []
+  };
+}
+
+// Format the final output results
+function formatOutputResults(results) {
+  // Find primary persona (highest score)
+  const sortedPersonas = Object.entries(results.personaScores)
+    .sort((a, b) => b[1] - a[1])
+    .map(([persona, score]) => ({ 
+      persona, 
+      score,
+      info: personaInfo[persona] 
+    }));
+    
+  const primaryPersona = sortedPersonas[0];
+  
+  // Get secondary personas (next two highest scores that are at least 70% of primary score)
+  const secondaryPersonas = sortedPersonas
+    .slice(1, 4)
+    .filter(p => p.score >= primaryPersona.score * 0.7)
+    .map(p => p.info);
+  
+  // Create life domain analysis
+  const lifeDomains = createLifeDomainAnalysis(primaryPersona.persona, secondaryPersonas.map(p => p.name));
+  
+  return {
+    primaryPersona: primaryPersona.info,
+    secondaryPersonas: secondaryPersonas,
+    coreValues: results.coreValues,
+    lifeDomains: lifeDomains,
+    textInsights: results.textInsights
+  };
+}
+
+// Create life domain analysis based on persona types
+function createLifeDomainAnalysis(primaryPersona, secondaryPersonas) {
+  // This is where you would generate personalized domain analysis
+  // This is simplified for this example
+  
+  // Example domain analyses for each persona
+  const domainPatterns = {
+    observer: {
+      relationships: "You tend to value deep but limited connections, preferring quality over quantity in relationships. You may need more space than others and appreciate partners who respect your need for privacy and independence.",
+      career: "You excel in roles requiring analytical thinking, research, or specialized expertise. Your methodical approach and attention to detail are strengths, though you may need to work on collaborative skills.",
+      health: "You take an informed approach to health, researching before making decisions. Consider balancing intellectual pursuits with physical activity and social connection for overall wellbeing."
+    },
+    // Add entries for other personas here
+    giver: {
+      relationships: "You naturally attune to others' needs and create deep emotional connections. Be mindful of maintaining healthy boundaries and ensuring your own needs are met alongside supporting others.",
+      career: "You thrive in supportive, helping roles and team environments where your interpersonal skills shine. Your ability to build relationships is a professional asset.",
+      health: "Your tendency to prioritize others may lead to neglecting your own wellbeing. Creating self-care routines and learning to receive support are important for your health."
+    },
+    // ... other personas ...
+  };
+  
+  // Get domain analysis for primary persona
+  const domains = domainPatterns[primaryPersona] || {
+    relationships: "No specific pattern identified.",
+    career: "No specific pattern identified.",
+    health: "No specific pattern identified."
+  };
+  
+  return domains;
+}
+
+module.exports = { analyzeAssessment };

@@ -263,7 +263,7 @@ const EMOTIONAL_PERSONAS = {
       `;
       
       // Call the LLM analysis service
-      // Note: You'll need to update this to use your existing axios config for Ollama
+     
       const response = await axios.post(process.env.OLLAMA_URL || 'http://host.docker.internal:11434/api/generate', {
         model: 'llama2',
         prompt: prompt,
