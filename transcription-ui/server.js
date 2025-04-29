@@ -9,20 +9,28 @@ const { PDFDocument } = require('pdf-lib');
 const mammoth = require('mammoth');
 const pdfParse = require('pdf-parse');
 const analysisService = require('./server/routes/analysis-service');
-const { EMOTIONAL_PERSONAS } = require('../scoringengine');
+const { EMOTIONAL_PERSONAS } = require('./server/modules/scoring-engine');
 
 const app = express();
 const port = process.env.PORT || 3003;
 const whisperUrl = process.env.WHISPER_URL || 'http://whisper:9000';
 const ollamaUrl = process.env.OLLAMA_URL || 'http://host.docker.internal:11434';
 
-// Configure CORS
+// Global middleware
 app.use(cors({
   origin: ['http://localhost:8081', 'http://localhost:3003'],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
+
+// Parse JSON bodies before hitting any routes
+app.use(express.json());
+
+// Mount API routes
 app.use('/api', analysisService);
+
+// Serve static files
+app.use(express.static('public'));
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -72,10 +80,6 @@ const axiosInstance = axios.create({
   maxContentLength: Infinity,
   timeout: 300000 // 5 minute timeout
 });
-
-// Middleware
-app.use(express.static('public'));
-app.use(express.json());
 
 // Helper function to check if Ollama is available
 async function checkOllamaConnection() {

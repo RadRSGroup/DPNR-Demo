@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="components/assessment/assessment.css">
-    <title>Text Analysis Service</title>
+    <title>Emotional Persona Assessment</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,481 +19,45 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .upload-area {
-            border: 2px dashed #ccc;
-            border-radius: 4px;
-            padding: 20px;
-            text-align: center;
-            margin: 20px 0;
-            cursor: pointer;
-        }
-        .upload-area.dragover {
-            border-color: #4CAF50;
-            background-color: #E8F5E9;
-        }
-        #fileInput {
-            display: none;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        .result-section {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .result-section h2 {
-            margin-top: 0;
-            color: #333;
-        }
-        .result-content {
-            white-space: pre-wrap;
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 4px;
-        }
-        .error {
-            color: #f44336;
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #ffebee;
-            border-radius: 4px;
-        }
-        .progress {
-            margin: 20px 0;
-            text-align: center;
-            color: #2196F3;
-        }
-        .config-section {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            background-color: #fafafa;
-        }
-        .config-section h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        .model-select-container {
-            margin: 15px 0;
-        }
-        .model-select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-            font-size: 14px;
-        }
-        .model-select:disabled {
-            background-color: #f5f5f5;
-            cursor: not-allowed;
-        }
-        .refresh-models {
-            background-color: #2196F3;
-            margin-top: 8px;
-            font-size: 14px;
-        }
-        .refresh-models:disabled {
-            background-color: #90CAF9;
-        }
-        textarea {
-            width: 100%;
-            min-height: 100px;
-            margin: 10px 0;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: inherit;
-            resize: vertical;
-        }
-        /* New CSS classes for assessment section */
-        .hidden {
-            display: none;
-        }
-        .section {
-            margin-top: 20px;
-        }
-        .nav-item {
-            display: inline-block;
-            padding: 10px 15px;
-            margin-top: 15px;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            text-align: center;
-        }
-        .nav-item:hover {
-            background-color: #45a049;
-        }
-        #assessment-container {
-            min-height: 300px;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            background-color: #fff;
-        }
         .loading-indicator {
             text-align: center;
             padding: 30px;
             color: #666;
         }
     </style>
+
+    <!-- Load React, Babel, and Assessment UI -->
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <!-- Assessment UI component (already plain JS) -->
+    <script src="components/assessment/AssessmentUI.js" type="text/javascript" defer></script>
 </head>
 <body>
     <div class="container">
-        <h1>Text Analysis Service</h1>
-        <p>Upload your file to get text analysis and insights.</p>
-        <p>Supported formats: .txt, .pdf, .docx, .wav, .mp3, .mp4, .mov</p>
-        
-        <div class="config-section">
-            <h3>Analysis Configuration</h3>
-            <div class="model-select-container">
-                <label for="modelSelect">Select Model:</label>
-                <select id="modelSelect" class="model-select">
-                    <option value="llama2">Llama 2</option>
-                    <option value="mistral">Mistral</option>
-                    <option value="codellama">CodeLlama</option>
-                </select>
-            </div>
-            <textarea id="promptInput" placeholder="Enter your analysis prompt here...">Analyze the following text and provide:
-1. Main topics and themes
-2. Key points and insights
-3. Overall sentiment and tone
-4. Action items or recommendations (if any)
-5. Questions raised or areas needing clarification</textarea>
-        </div>
+        <h1>Emotional Persona Assessment</h1>
+        <p>Answer the questions below to discover which emotional persona best matches your response patterns.</p>
 
-        <div class="upload-area" id="dropArea">
-            <p>Drag and drop your file here or click to select</p>
-            <input type="file" id="fileInput" accept=".txt,.pdf,.docx,audio/*,video/*">
-        </div>
-
-        <div id="progress" class="progress" style="display: none;">
-            <div id="uploadProgress" style="display: none;">
-                <p>Uploading file... <span id="uploadPercent">0%</span></p>
-            </div>
-            <div id="processingProgress" style="display: none;">
-                <p>Processing file... This may take a few minutes.</p>
-            </div>
-            <div id="analysisProgress" style="display: none;">
-                <p>Analyzing content... This may take a few minutes.</p>
-            </div>
-        </div>
-
-        <div id="error" class="error" style="display: none;"></div>
-        
-        <div id="textResult" class="result-section" style="display: none;">
-            <h2>Extracted Text</h2>
-            <div class="result-content"></div>
-            <button onclick="copyText('textResult')" class="copy-button">Copy Text</button>
-        </div>
-
-        <div id="analysisResult" class="result-section" style="display: none;">
-            <h2>Analysis</h2>
-            <div class="result-content"></div>
-            <button onclick="copyText('analysisResult')" class="copy-button">Copy Analysis</button>
-        </div>
-        
-        <div class="nav-item" onclick="showAssessment()">Emotional Persona Assessment</div>
-        
-        <div id="assessment-section" class="section hidden">
+        <!-- Assessment UI -->
+        <div id="assessment-section" class="section">
             <div id="assessment-container">
                 <div class="loading-indicator">Loading assessment interface...</div>
             </div>
         </div>
-        
-        <div id="main-nav" style="margin-top: 20px; text-align: center;">
-            <button onclick="showMainUI()" style="display: none;" id="backToMainButton">Back to Main UI</button>
-        </div>
     </div>
 
-    <script>
-        const dropArea = document.getElementById('dropArea');
-        const fileInput = document.getElementById('fileInput');
-        const progress = document.getElementById('progress');
-        const uploadProgress = document.getElementById('uploadProgress');
-        const processingProgress = document.getElementById('processingProgress');
-        const analysisProgress = document.getElementById('analysisProgress');
-        const uploadPercent = document.getElementById('uploadPercent');
-        const error = document.getElementById('error');
-        const textResult = document.getElementById('textResult');
-        const analysisResult = document.getElementById('analysisResult');
-        const promptInput = document.getElementById('promptInput');
-        const modelSelect = document.getElementById('modelSelect');
-        const backToMainButton = document.getElementById('backToMainButton');
-
-        // Prevent default drag behaviors
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, preventDefaults, false);
-            document.body.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
-        // Highlight drop zone when item is dragged over it
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropArea.addEventListener(eventName, highlight, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, unhighlight, false);
-        });
-
-        function highlight(e) {
-            dropArea.classList.add('dragover');
-        }
-
-        function unhighlight(e) {
-            dropArea.classList.remove('dragover');
-        }
-
-        // Handle dropped files
-        dropArea.addEventListener('drop', handleDrop, false);
-        dropArea.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', handleFileSelect);
-
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            handleFiles(files);
-        }
-
-        function handleFileSelect(e) {
-            const files = e.target.files;
-            handleFiles(files);
-        }
-
-        function copyText(elementId) {
-            const content = document.querySelector(`#${elementId} .result-content`).textContent;
-            navigator.clipboard.writeText(content).then(() => {
-                const button = document.querySelector(`#${elementId} .copy-button`);
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 2000);
-            });
-        }
-
-        async function handleFiles(files) {
-            if (files.length === 0) return;
-            
-            const file = files[0];
-            const maxSize = 100 * 1024 * 1024; // 100MB
-            
-            if (file.size > maxSize) {
-                error.textContent = `File size exceeds maximum limit of 100MB`;
-                error.style.display = 'block';
-                return;
-            }
-
-            // Reset UI
-            error.style.display = 'none';
-            textResult.style.display = 'none';
-            analysisResult.style.display = 'none';
-            progress.style.display = 'block';
-            uploadProgress.style.display = 'block';
-            processingProgress.style.display = 'none';
-            analysisProgress.style.display = 'none';
-            
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('prompt', promptInput.value);
-            formData.append('model', modelSelect.value);
-
-            try {
-                const response = await fetch('http://localhost:8081/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                console.log('Response status:', response.status);
-                const data = await response.json();
-                console.log('Response data:', data);
-                
-                if (!response.ok) {
-                    throw new Error(data.error || data.details || 'Upload failed');
-                }
-
-                // Display extracted text if available
-                if (data.text) {
-                    console.log('Displaying text, length:', data.text.length);
-                    textResult.style.display = 'block';
-                    textResult.querySelector('.result-content').textContent = data.text;
-                    
-                    // Show analysis progress
-                    processingProgress.style.display = 'none';
-                    analysisProgress.style.display = 'block';
-                }
-
-                // Display analysis if available
-                if (data.analysis) {
-                    console.log('Displaying analysis, length:', data.analysis.length);
-                    analysisResult.style.display = 'block';
-                    analysisResult.querySelector('.result-content').textContent = data.analysis;
-                } else if (data.warning) {
-                    error.textContent = data.warning;
-                    error.style.display = 'block';
-                }
-            } catch (err) {
-                error.textContent = err.message;
-                error.style.display = 'block';
-                console.error('Error:', err);
-            } finally {
-                progress.style.display = 'none';
-            }
-        }
-
-        // Show the main UI (text analysis section)
-        function showMainUI() {
-            console.log('Showing main UI...');
-            
-            // Hide assessment section
-            document.getElementById('assessment-section').style.display = 'none';
-            backToMainButton.style.display = 'none';
-            
-            // Show main components
-            document.getElementById('dropArea').style.display = 'block';
-            document.querySelector('.config-section').style.display = 'block';
-            
-            // Keep showing results if they were previously visible
-            if (textResult.querySelector('.result-content').textContent) {
-                textResult.style.display = 'block';
-            }
-            if (analysisResult.querySelector('.result-content').textContent) {
-                analysisResult.style.display = 'block';
-            }
-        }
-        
-        // Show the assessment UI
-        function showAssessment() {
-            console.log('Showing assessment UI...');
-            
-            // Hide main components
-            document.getElementById('dropArea').style.display = 'none';
-            document.getElementById('textResult').style.display = 'none';
-            document.getElementById('analysisResult').style.display = 'none';
-            document.querySelector('.config-section').style.display = 'none';
-            error.style.display = 'none';
-            progress.style.display = 'none';
-            
-            // Show assessment section and back button
-            const assessmentSection = document.getElementById('assessment-section');
-            assessmentSection.style.display = 'block';
-            assessmentSection.classList.remove('hidden');
-            backToMainButton.style.display = 'inline-block';
-            
-            // Load assessment if not already loaded
-            if (!window.assessmentLoaded) {
-                loadAssessmentUI();
-                window.assessmentLoaded = true;
-            }
-        }
-        
-        // Load the React and related scripts for assessment
-        function loadAssessmentUI() {
-            console.log('Loading assessment UI dependencies...');
-            
-            // Load React and ReactDOM if not already loaded
-            if (!window.React) {
-                // Load scripts sequentially to ensure proper loading order
-                const scripts = [
-                    { src: 'https://unpkg.com/react@17/umd/react.production.min.js' },
-                    { src: 'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js' },
-                    { src: 'https://unpkg.com/@babel/standalone/babel.min.js' }
-                ];
-                
-                let promise = Promise.resolve();
-                scripts.forEach(script => {
-                    promise = promise.then(() => {
-                        return new Promise((resolve, reject) => {
-                            console.log(`Loading script: ${script.src}`);
-                            const scriptEl = document.createElement('script');
-                            scriptEl.src = script.src;
-                            scriptEl.onload = () => {
-                                console.log(`Loaded script: ${script.src}`);
-                                resolve();
-                            };
-                            scriptEl.onerror = (error) => {
-                                console.error(`Failed to load script: ${script.src}`, error);
-                                reject(error);
-                            };
-                            document.body.appendChild(scriptEl);
-                        });
-                    });
-                });
-                
-                promise
-                    .then(() => {
-                        console.log('All dependencies loaded, loading component...');
-                        loadAssessmentComponent();
-                    })
-                    .catch(error => {
-                        console.error('Error loading dependencies:', error);
-                        document.getElementById('assessment-container').innerHTML = 
-                            '<div style="color: red; padding: 20px;">Failed to load required libraries. Check console for details.</div>';
-                    });
+    <!-- Render the Assessment UI once DOM is ready -->
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.AssessmentUI) {
+                ReactDOM.render(
+                    React.createElement(AssessmentUI),
+                    document.getElementById('assessment-container')
+                );
             } else {
-                console.log('React already loaded, loading component...');
-                loadAssessmentComponent();
+                document.getElementById('assessment-container').innerHTML =
+                    '<div style="color:red;padding:20px;">Failed to load assessment component.</div>';
             }
-        }
-        
-        // Load the AssessmentUI component
-        function loadAssessmentComponent() {
-            console.log('Loading assessment component...');
-            
-            // Create script tag for the assessment component
-            const assessmentScript = document.createElement('script');
-            assessmentScript.src = '/components/assessment/AssessmentUI.js';
-            assessmentScript.type = 'text/babel';
-            
-            // Add error handling
-            assessmentScript.onerror = (error) => {
-                console.error('Failed to load AssessmentUI.js:', error);
-                document.getElementById('assessment-container').innerHTML = 
-                    '<div style="color: red; padding: 20px;">Failed to load the assessment component. Check console for details.</div>';
-            };
-            
-            // Render when script is loaded
-            assessmentScript.onload = () => {
-                console.log('AssessmentUI.js loaded, attempting to render...');
-                
-                try {
-                    // Allow time for Babel to process
-                    setTimeout(() => {
-                        ReactDOM.render(
-                            React.createElement(AssessmentUI),
-                            document.getElementById('assessment-container')
-                        );
-                        console.log('Assessment component rendered successfully');
-                    }, 300);
-                } catch (error) {
-                    console.error('Error rendering AssessmentUI:', error);
-                    document.getElementById('assessment-container').innerHTML = 
-                        '<div style="color: red; padding: 20px;">Error rendering the assessment component. Check console for details.</div>';
-                }
-            };
-            
-            document.body.appendChild(assessmentScript);
-        }
+        });
     </script>
 </body>
 </html>

@@ -1,16 +1,17 @@
 // Define the AssessmentUI component to be accessible from the global scope
-window.AssessmentUI = function() {
+function AssessmentUI() {
     // Use React hooks for state management
     const [step, setStep] = React.useState(0);
-    const [assessmentType, setAssessmentType] = React.useState('questionnaire');
+    // Only questionnaire assessment type is supported now
+    const assessmentType = 'questionnaire';
     const [responses, setResponses] = React.useState({});
     const [uploadedText, setUploadedText] = React.useState('');
     const [results, setResults] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
   
-    // Steps in the assessment process
-    const steps = ['Choose Method', 'Complete Assessment', 'View Results'];
+    // Steps in the assessment process (method selection removed)
+    const steps = ['Complete Assessment', 'View Results'];
   
     // Sample questions for the questionnaire
     const questions = [
@@ -61,12 +62,6 @@ window.AssessmentUI = function() {
       }
     ];
   
-    // Handle selection of assessment method
-    const handleMethodSelection = (method) => {
-      console.log('Assessment method selected:', method);
-      setAssessmentType(method);
-    };
-  
     // Handle question responses
     const handleResponse = (questionId, optionId) => {
       console.log('Response recorded:', questionId, optionId);
@@ -100,20 +95,6 @@ window.AssessmentUI = function() {
             },
             body: JSON.stringify({ responses }),
           });
-        } 
-        // Handle text analysis submission
-        else if (assessmentType === 'text-analysis' && uploadedText) {
-          console.log('Submitting text for analysis:', uploadedText.substring(0, 100) + '...');
-          response = await fetch('/api/analyze-text', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-              text: uploadedText,
-              assessmentType: 'persona'
-            }),
-          });
         } else {
           throw new Error('No data to analyze');
         }
@@ -126,7 +107,7 @@ window.AssessmentUI = function() {
         const data = await response.json();
         console.log('Analysis results received:', data);
         setResults(data);
-        setStep(2); // Move to results step
+        setStep(1); // Move to results step since steps array length is 2
       } catch (error) {
         console.error('Analysis error:', error);
         setError(error.message);
@@ -137,7 +118,7 @@ window.AssessmentUI = function() {
   
     // Navigation handlers
     const handleNext = () => {
-      if (step === 1) {
+      if (step === 0) {
         submitAssessment();
       } else {
         setStep(step + 1);
@@ -151,74 +132,13 @@ window.AssessmentUI = function() {
     // Check if user can proceed to next step
     const canProceed = () => {
       if (step === 0) {
-        return true; // Can always proceed from method selection
+        // Check that all questions have responses
+        return questions.every(q => responses[q.id]);
       }
-      
-      if (step === 1) {
-        if (assessmentType === 'questionnaire') {
-          // Check if all questions have responses
-          return questions.every(q => responses[q.id]);
-        } else {
-          // Check if there's text to analyze
-          return uploadedText.length > 0;
-        }
-      }
-      
       return true;
     };
   
     // Render functions for each step
-    const renderMethodSelection = () => {
-      return React.createElement(
-        'div', 
-        { className: 'assessment-method-selection' },
-        [
-          React.createElement('h2', { key: 'title' }, 'Choose Your Assessment Method'),
-          React.createElement('p', { key: 'desc' }, 'Select how you\'d like to discover your emotional personas:'),
-          
-          React.createElement(
-            'div', 
-            { className: 'method-options', key: 'options' },
-            [
-              React.createElement(
-                'div',
-                { 
-                  key: 'questionnaire',
-                  className: `method-option ${assessmentType === 'questionnaire' ? 'selected' : ''}`,
-                  onClick: () => handleMethodSelection('questionnaire')
-                },
-                [
-                  React.createElement('h3', { key: 'title' }, 'Guided Questionnaire'),
-                  React.createElement('p', { key: 'desc' }, 'Answer a series of questions about your preferences and tendencies.'),
-                  React.createElement('p', { key: 'time' }, [
-                    React.createElement('strong', { key: 'label' }, 'Time:'),
-                    ' 5-10 minutes'
-                  ])
-                ]
-              ),
-              
-              React.createElement(
-                'div',
-                { 
-                  key: 'text-analysis',
-                  className: `method-option ${assessmentType === 'text-analysis' ? 'selected' : ''}`,
-                  onClick: () => handleMethodSelection('text-analysis')
-                },
-                [
-                  React.createElement('h3', { key: 'title' }, 'Text Analysis'),
-                  React.createElement('p', { key: 'desc' }, 'Share your thoughts in your own words or upload content for analysis.'),
-                  React.createElement('p', { key: 'time' }, [
-                    React.createElement('strong', { key: 'label' }, 'Time:'),
-                    ' Varies based on content'
-                  ])
-                ]
-              )
-            ]
-          )
-        ]
-      );
-    };
-    
     const renderQuestionnaire = () => {
       return React.createElement(
         'div',
@@ -250,40 +170,6 @@ window.AssessmentUI = function() {
                 )
               ]
             )
-          )
-        ]
-      );
-    };
-    
-    const renderTextAnalysis = () => {
-      return React.createElement(
-        'div',
-        { className: 'assessment-text-analysis' },
-        [
-          React.createElement('h2', { key: 'title' }, 'Share Your Thoughts'),
-          React.createElement('p', { key: 'desc' }, 'Enter or upload text that reflects your thoughts, experiences, or perspectives.'),
-          
-          React.createElement(
-            'div',
-            { key: 'text-input', className: 'text-input-container' },
-            [
-              React.createElement(
-                'textarea',
-                {
-                  key: 'textarea',
-                  placeholder: 'Enter your text here... (minimum 100 characters for accurate analysis)',
-                  value: uploadedText,
-                  onChange: handleTextInput,
-                  rows: 10
-                }
-              ),
-              
-              React.createElement(
-                'p',
-                { key: 'count', className: 'text-count' },
-                `${uploadedText.length} characters ${uploadedText.length < 100 ? '(min 100 recommended)' : ''}`
-              )
-            ]
           )
         ]
       );
@@ -398,12 +284,8 @@ window.AssessmentUI = function() {
     const renderStepContent = () => {
       switch (step) {
         case 0:
-          return renderMethodSelection();
+          return renderQuestionnaire();
         case 1:
-          return assessmentType === 'questionnaire' 
-            ? renderQuestionnaire() 
-            : renderTextAnalysis();
-        case 2:
           return renderResults();
         default:
           return React.createElement('div', {}, 'Unknown step');
@@ -492,3 +374,8 @@ window.AssessmentUI = function() {
       ]
     );
   };
+
+// Expose globally (window.AssessmentUI) for scripts that load the component dynamically
+if (typeof window !== 'undefined') {
+  window.AssessmentUI = AssessmentUI;
+}

@@ -6,7 +6,7 @@ services:
     build: ./app
     container_name: dpnr-app
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
@@ -42,7 +42,7 @@ services:
 
   # Database
   db:
-    image: postgres:14-alpine
+    image: postgres:15-alpine
     container_name: dpnr-db
     ports:
       - "5433:5432"
@@ -50,6 +50,9 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=dpnr
+      # Allow other containers on the Docker network (e.g., postgres-exporter)
+      # to authenticate over TCP using MD5 passwords.
+      - POSTGRES_HOST_AUTH_METHOD=md5
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -116,6 +119,9 @@ services:
     container_name: dpnr-redis-exporter
     ports:
       - "9121:9121"
+    environment:
+      # Point the exporter at the Redis service running in the stack instead of localhost
+      - REDIS_ADDR=redis://redis:6379
     networks:
       - dpnr-network
 

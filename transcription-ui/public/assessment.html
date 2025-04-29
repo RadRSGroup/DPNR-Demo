@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emotional Persona Assessment</title>
+  <link rel="stylesheet" href="components/assessment/assessment.css" />
+
+  <!-- React & Babel for in-browser compilation -->
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Emotional Persona Assessment</h1>
+    <p>Discover your emotional personas, core values, and how they influence your life.</p>
+
+    <!-- Assessment container -->
+    <div id="assessment-container">
+      <div class="loading-indicator">Loading assessment interface…</div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    // Load the AssessmentUI component and render it
+    (function loadAssessment() {
+      console.log('Loading AssessmentUI component…');
+
+      const script = document.createElement('script');
+      script.src = 'components/assessment/AssessmentUI.js'; // relative path (no leading slash)
+      script.type = 'text/babel';
+
+      script.onerror = (e) => {
+        console.error('Failed to load AssessmentUI.js', e);
+        document.getElementById('assessment-container').innerHTML =
+          '<div style="color:red;padding:20px;">Failed to load the assessment component.<br/>Check console for details.</div>';
+      };
+
+      script.onload = () => {
+        console.log('AssessmentUI.js loaded; rendering…');
+        try {
+          ReactDOM.render(
+            React.createElement(AssessmentUI),
+            document.getElementById('assessment-container')
+          );
+        } catch (err) {
+          console.error('Error rendering AssessmentUI:', err);
+          document.getElementById('assessment-container').innerHTML =
+            '<div style="color:red;padding:20px;">Error rendering the assessment component.<br/>Check console for details.</div>';
+        }
+      };
+
+      document.body.appendChild(script);
+    })();
+  </script>
+</body>
+</html> 
