@@ -161,3 +161,186 @@ custom_prompts = {
     }
 }
 ```
+
+## Agent-Driven Development for DPNR Platform
+
+### Overview
+The DPNR platform extends this system with therapeutic frameworks using an **agent-driven development approach** where AI agents autonomously create the missing therapeutic components.
+
+### Development Progress Tracking
+- **Current Phase**: 2 - Core Systems Implementation
+- **Current Step**: 4 - Digital Twin Generator Complete
+- **Status**: Ready for Next Component (PaRDeS Reflection Engine)
+- **Target**: Backend APIs only (no frontend/UI work)
+
+### ✅ COMPLETED SYSTEMS (Production Ready)
+1. **Mirror Room Engine** - IFS + Shadow Work integration with depth progression
+2. **IFS Agent** - Internal Family Systems parts identification and dialogue
+3. **Shadow Work Agent** - Jungian pattern detection and integration guidance  
+4. **Growth Tracker** - Multi-domain progress tracking with trend analysis
+5. **Digital Twin Generator** - Soul archetype evolution with visual representation
+
+### TherapeuticAgentBuilder Specifications
+The meta-agent that creates other therapeutic agents with the following requirements:
+- **Purpose**: Autonomously generates IFS, Shadow Work, Narrative Therapy, and other therapeutic agents
+- **Base Class**: Must extend the existing BaseAgent architecture
+- **Quality Gates**: 
+  - 85%+ therapeutic accuracy validation required
+  - Comprehensive test suite generation (85%+ coverage)
+  - Clinical validation checkpoints
+- **Output Format**: Production-ready Python code with full documentation
+
+### 🎯 NEXT PRIORITY SYSTEM TO IMPLEMENT
+**PaRDeS Reflection Engine** - Multi-depth interpretive framework for profound insights
+
+### ✅ COMPLETED THERAPEUTIC AGENTS
+1. **IFSAgent**: ✅ Internal Family Systems parts work and dialogue facilitation
+2. **ShadowWorkAgent**: ✅ Jungian shadow pattern detection and integration
+3. **GrowthTrackerAgent**: ✅ Multi-domain progress tracking with breakthrough detection
+4. **DigitalTwinAgent**: ✅ Soul archetype evolution with symbolic representation
+
+### 🔄 REMAINING THERAPEUTIC AGENTS TO CREATE
+1. **PaRDeSReflectionAgent**: 4-layer depth analysis (Pshat→Remez→Drash→Sod)
+2. **NarrativeTherapyAgent**: Story reframing and identity reconstruction
+3. **SomaticExperiencingAgent**: Body awareness and trauma processing
+4. **AttachmentStyleAgent**: Relationship pattern analysis
+
+### API Contracts for DPNR Backend
+
+#### IFS (Internal Family Systems) Endpoints
+```
+POST /api/v1/assessment/ifs/analyze
+- Input: { "text": string, "user_id": string, "session_id": string }
+- Output: { "parts": [{"type": "manager|firefighter|exile", "content": string, "emotion": string}], "confidence": float }
+
+POST /api/v1/assessment/ifs/dialogue
+- Input: { "part_id": string, "message": string, "session_id": string }
+- Output: { "response": string, "suggested_questions": [string], "unburdening_readiness": float }
+```
+
+#### Shadow Work Endpoints
+```
+POST /api/v1/assessment/shadow/detect
+- Input: { "text": string, "user_id": string, "history_context": object }
+- Output: { "shadow_patterns": [{"pattern": string, "trigger": string, "projection": string}], "confidence": float }
+
+POST /api/v1/assessment/shadow/integrate
+- Input: { "shadow_pattern_id": string, "user_response": string }
+- Output: { "integration_guidance": string, "next_steps": [string] }
+```
+
+#### Narrative Therapy Endpoints
+```
+POST /api/v1/assessment/narrative/analyze
+- Input: { "text": string, "user_id": string }
+- Output: { "dominant_story": string, "problem_story": string, "unique_outcomes": [string] }
+
+POST /api/v1/assessment/narrative/reframe
+- Input: { "story_id": string, "reframing_context": string }
+- Output: { "alternative_story": string, "value_alignment": object }
+```
+
+#### Mirror Room Engine Endpoints
+```
+POST /api/v1/mirror-room/session/start
+- Input: { "user_id": string, "initial_context": string, "depth_level": "surface|moderate|deep" }
+- Output: { "session_id": string, "initial_reflection": string, "available_agents": [string] }
+
+POST /api/v1/mirror-room/session/continue
+- Input: { "session_id": string, "user_response": string }
+- Output: { "reflection": string, "therapeutic_insights": [object], "depth_progression": float }
+
+GET /api/v1/mirror-room/session/{session_id}/summary
+- Output: { "key_insights": [string], "parts_identified": [object], "growth_areas": [string] }
+```
+
+#### Digital Twin APIs
+```
+POST /api/v1/digital-twin/generate
+- Input: { "user_id": string, "assessment_data": object }
+- Output: { "twin_id": string, "archetype": string, "soul_level": string, "visual_representation": object }
+
+GET /api/v1/digital-twin/{twin_id}/evolution
+- Output: { "timeline": [{"date": string, "changes": [string], "growth_metrics": object}] }
+```
+
+#### Growth Tracker APIs
+```
+POST /api/v1/growth/track
+- Input: { "user_id": string, "domain": string, "metric": string, "value": float }
+- Output: { "recorded": boolean, "trend": "improving|stable|declining", "insights": string }
+
+GET /api/v1/growth/report/{user_id}
+- Query params: { "period": "week|month|quarter", "domains": [string] }
+- Output: { "progress": object, "achievements": [string], "recommendations": [string] }
+```
+
+#### ✅ COMPLETED API ENDPOINTS
+
+**Growth Tracker APIs** (✅ Complete)
+```
+POST /api/v1/growth/track - Record growth metrics
+GET /api/v1/growth/report/{user_id} - Generate progress reports
+POST /api/v1/growth/trends - Analyze growth trends
+POST /api/v1/growth/insights - Generate personalized insights
+```
+
+**Digital Twin APIs** (✅ Complete)
+```
+POST /api/v1/digital-twin/generate - Create user's digital twin
+POST /api/v1/digital-twin/evolve - Evolve twin based on triggers
+GET /api/v1/digital-twin/{twin_id}/evolution - Get evolution timeline
+POST /api/v1/digital-twin/{twin_id}/insights - Generate twin insights
+```
+
+**Mirror Room APIs** (✅ Complete)
+```
+POST /api/v1/mirror-room/session/start - Start therapeutic session
+POST /api/v1/mirror-room/session/continue - Continue dialogue
+GET /api/v1/mirror-room/session/{id}/safety - Safety assessment
+```
+
+#### 🎯 NEXT TO IMPLEMENT: PaRDeS Reflection Engine
+```
+POST /api/v1/pardes/reflect
+- Input: { "insight": string, "context": object, "depth_requested": "pshat|remez|drash|sod" }
+- Output: { 
+    "layers": {
+      "pshat": string,    // Literal insight
+      "remez": string,    // Emotional pattern
+      "drash": string,    // Reframed meaning
+      "sod": string       // Soul truth
+    },
+    "metaphors": [string],
+    "integration_guidance": [string]
+  }
+```
+
+### Development Rules & Standards
+
+#### Agent Creation Standards
+1. **Backend Only**: No frontend/UI components in this phase
+2. **Extend Existing**: Build on current infrastructure, don't replace
+3. **Clinical Accuracy**: Minimum 85% therapeutic accuracy required
+4. **Test Coverage**: Minimum 85% test coverage for all generated code
+5. **Documentation**: Each agent must include comprehensive docstrings and usage examples
+
+#### Code Quality Requirements
+- Type hints required for all functions
+- Async/await patterns for all I/O operations
+- Pydantic models for all API inputs/outputs
+- Comprehensive error handling with specific exceptions
+- Structured logging with appropriate log levels
+
+#### Integration Requirements
+- Must integrate seamlessly with existing FastAPI server
+- Database schemas must extend current PostgreSQL structure
+- All agents must inherit from BaseAgent class
+- Use existing authentication and session management
+
+### Supervisor Approval Gates
+Each development phase requires explicit supervisor approval:
+1. **Step Completion**: Present deliverables and test results
+2. **Quality Verification**: Demonstrate adherence to standards
+3. **Integration Testing**: Show successful integration with existing system
+4. **Next Step Authorization**: Receive explicit approval before proceeding

@@ -1,0 +1,12 @@
+asyncpg
+cohere
+crewai
+fastapi
+numpy
+openai
+pydantic
+redis
+sentence-transformers
+transformers
+uvicorn
+websockets

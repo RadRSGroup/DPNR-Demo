@@ -28,7 +28,7 @@ try:
 except ImportError as e:
     ML_AVAILABLE = False
     logger.error(f"❌ ML libraries not available: {e}")
-    logger.error("Please run: source ml_env/bin/activate")
+    logger.error("Please install ML dependencies: pip install torch transformers sentence-transformers langdetect")
     sys.exit(1)
 
 class FullMLTranslationAgent:
@@ -513,7 +513,7 @@ async def main():
 if __name__ == "__main__":
     if not ML_AVAILABLE:
         print("❌ ML libraries not available. Please run:")
-        print("source ml_env/bin/activate")
+        print("pip install torch transformers sentence-transformers langdetect")
         sys.exit(1)
     
     asyncio.run(main())
