@@ -1,0 +1,41 @@
+services:
+  # Main Web Service - Agent System API
+  - type: web
+    name: mod-agents-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon
+    plan: starter
+    branch: ModAgents
+    rootDir: mod-agents
+    healthCheckPath: /health
+    envVars:
+      - key: LOG_LEVEL
+        value: INFO
+      - key: AGENT_MODE
+        value: production
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: mod-agents-redis
+          property: connectionString
+      - key: ENABLE_METRICS
+        value: "false"
+      - key: PORT
+        value: "8000"
+      - key: PYTHONPATH
+        value: /app/src
+      - key: PYTHONDONTWRITEBYTECODE
+        value: "1"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+    # Auto-deploy on push to ModAgents branch
+    autoDeploy: true
+
+  # Redis Cache Service
+  - type: redis
+    name: mod-agents-redis
+    region: oregon
+    plan: starter
+    # Redis configuration
+    ipAllowList: []
