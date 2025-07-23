@@ -1,6 +1,6 @@
 
 from crewai import Agent
-from ..tools.assessment_tools import (
+from ..tools.enhanced_assessment_tools import (
     BigFiveAssessmentTool, 
     EnneagramAssessmentTool,
     ValuesAssessmentTool,

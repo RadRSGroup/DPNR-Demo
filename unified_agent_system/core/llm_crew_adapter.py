@@ -226,8 +226,8 @@ class UpdatedAssessmentAgents:
     def __init__(self):
         self.enhanced_factory = create_enhanced_agents()
         
-        # Import original tools
-        from ..tools.assessment_tools import (
+        # Import enhanced tools
+        from ..tools.enhanced_assessment_tools import (
             BigFiveAssessmentTool, 
             EnneagramAssessmentTool,
             ValuesAssessmentTool,
