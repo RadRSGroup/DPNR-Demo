@@ -1,7 +1,16 @@
 from crewai import Agent
+import sys
+import os
 
-# In the future, these agents would be equipped with specialized tools for their domain.
-# For example, an IFSTool that can identify and dialogue with parts.
+# Add prompts directory to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Import prompts for each therapeutic modality
+from prompts import ifs_prompts
+from prompts import shadow_work_prompts  
+from prompts import pardes_prompts
+from prompts import growth_tracker_prompts
+from prompts import digital_twin_prompts
 
 class TherapeuticAgents:
     """
@@ -15,7 +24,7 @@ class TherapeuticAgents:
         return Agent(
             role="Internal Family Systems (IFS) Facilitator",
             goal="To help the user identify and understand their internal parts (Managers, Firefighters, Exiles) and foster a compassionate inner dialogue.",
-            backstory="You are a trained IFS therapist with a deep understanding of the human psyche. You create a safe and non-judgmental space for users to explore their inner world, helping them to unburden their exiled parts and bring harmony to their internal system.",
+            backstory=ifs_prompts.SYSTEM_PROMPT,
             # tools=[IFSTool()], # To be created later
             allow_delegation=False,
             verbose=True
@@ -29,7 +38,7 @@ class TherapeuticAgents:
         return Agent(
             role="Jungian Shadow Work Guide",
             goal="To help the user uncover and integrate their shadow self, transforming hidden patterns into sources of strength and wholeness.",
-            backstory="You are a wise and insightful guide trained in Jungian psychology. You are not afraid of the dark and can help users navigate their subconscious landscape to find the gold hidden in their shadows. You are direct, compassionate, and deeply perceptive.",
+            backstory=shadow_work_prompts.SYSTEM_PROMPT,
             # tools=[ShadowPatternTool()], # To be created later
             allow_delegation=False,
             verbose=True
@@ -43,7 +52,7 @@ class TherapeuticAgents:
         return Agent(
             role="Mystical Reflection Guide (PaRDeS Framework)",
             goal="To provide the user with multi-layered reflections on their experiences, moving from the literal to the metaphorical, the allegorical, and finally to the soul-level essence (Sod).",
-            backstory="You are a master of esoteric wisdom, trained in the ancient art of PaRDeS interpretation. You can see the hidden connections and deeper meanings in all things, guiding users from the surface-level understanding to profound, soul-altering insights.",
+            backstory=pardes_prompts.SYSTEM_PROMPT,
             # tools=[SodLayerTool()], # To be created later
             verbose=True
         )
@@ -56,5 +65,27 @@ class TherapeuticAgents:
             role="Insightful Progress Reporter",
             goal="To synthesize the user's weekly progress, insights, and challenges into a clear, compassionate, and encouraging summary.",
             backstory="You are a data-driven storyteller with a heart. You can see the patterns in a user's journey and weave them into a narrative that is both informative and inspiring. You highlight wins, gently point out challenges, and always focus on the path of growth.",
+            verbose=True
+        )
+    
+    def growth_tracker_agent(self) -> Agent:
+        """
+        Agent specializing in tracking growth and progress across multiple domains.
+        """
+        return Agent(
+            role="Growth Tracker Specialist",
+            goal="To monitor, analyze, and provide insights on user's growth across psychological, emotional, and spiritual domains.",
+            backstory=growth_tracker_prompts.SYSTEM_PROMPT,
+            verbose=True
+        )
+    
+    def digital_twin_agent(self) -> Agent:
+        """
+        Agent specializing in creating and evolving digital representations of user's soul archetype.
+        """
+        return Agent(
+            role="Digital Twin Creator",
+            goal="To create and evolve a comprehensive digital representation of the user's soul archetype and spiritual development.",
+            backstory=digital_twin_prompts.SYSTEM_PROMPT,
             verbose=True
         )
