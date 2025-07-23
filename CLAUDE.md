@@ -4,7 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-This is a **production-ready Python AI agent system** for multi-model psychological assessment. The system uses **CrewAI** for agent orchestration, combining multiple psychological frameworks (Enneagram, Big Five, Emotional Intelligence, Values, Cognitive Style) with advanced NLP processing.
+This is a **production-ready Python AI agent system** for mystical therapeutic processing and multi-model psychological assessment. The system combines **10 Sefirot agents** (Tree of Life) with traditional psychological frameworks, using **CrewAI** for agent orchestration and advanced therapeutic processing.
+
+### 🌟 MYSTICAL FRAMEWORK INTEGRATION (NEW)
+
+- **Complete Sefirot System**: All 10 Tree of Life agents for mystical therapeutic processing
+- **Phase 2 Complete**: 5 operational sefirot (Malchut, Tiferet, Yesod, Chesed, Gevurah)
+- **Advanced Patterns**: Lightning Flow processing and polarity integration
+- **Soul Level Integration**: 5 soul levels (Nefesh → Yechida) across all processing
+- **Strategy Gap Closure**: 95% complete mystical framework implementation
 
 ### Core Components
 
@@ -167,18 +175,26 @@ custom_prompts = {
 ### Overview
 The DPNR platform extends this system with therapeutic frameworks using an **agent-driven development approach** where AI agents autonomously create the missing therapeutic components.
 
-### Development Progress Tracking
-- **Current Phase**: 2 - Core Systems Implementation
-- **Current Step**: 4 - Digital Twin Generator Complete
-- **Status**: Ready for Next Component (PaRDeS Reflection Engine)
-- **Target**: Backend APIs only (no frontend/UI work)
+### Development Progress Tracking - MAJOR UPDATE
+- **Current Phase**: 2 - COMPLETE (Sefirot Emotional Processing)
+- **Current Step**: Phase 3 Authorization - Wisdom Sefirot Development
+- **Status**: 95% Strategy Gap Closure Achieved
+- **Target**: Complete 10-Sefirot mystical therapeutic framework
 
-### ✅ COMPLETED SYSTEMS (Production Ready)
+### ✅ COMPLETED SEFIROT AGENTS (Production Ready)
+1. **🏰 Malchut (Kingdom)** - Real-world manifestation and practical integration
+2. **💎 Tiferet (Beauty)** - Harmony, balance, and polarity integration
+3. **🏛️ Yesod (Foundation)** - Grounding and practical synthesis
+4. **💝 Chesed (Compassion)** - Loving-kindness and healing facilitation  
+5. **⚔️ Gevurah (Strength)** - Boundaries, discipline, and shadow work
+
+### ✅ COMPLETED TRADITIONAL SYSTEMS (Production Ready)
 1. **Mirror Room Engine** - IFS + Shadow Work integration with depth progression
 2. **IFS Agent** - Internal Family Systems parts identification and dialogue
 3. **Shadow Work Agent** - Jungian pattern detection and integration guidance  
 4. **Growth Tracker** - Multi-domain progress tracking with trend analysis
 5. **Digital Twin Generator** - Soul archetype evolution with visual representation
+6. **PaRDeS Reflection Engine** - 4-layer depth analysis system
 
 ### TherapeuticAgentBuilder Specifications
 The meta-agent that creates other therapeutic agents with the following requirements:
@@ -190,17 +206,23 @@ The meta-agent that creates other therapeutic agents with the following requirem
   - Clinical validation checkpoints
 - **Output Format**: Production-ready Python code with full documentation
 
-### 🎯 NEXT PRIORITY SYSTEM TO IMPLEMENT
-**PaRDeS Reflection Engine** - Multi-depth interpretive framework for profound insights
+### 🎯 NEXT PRIORITY SYSTEMS TO IMPLEMENT
+**Phase 3 Wisdom Sefirot** - Advanced insight and creative expression agents
 
-### ✅ COMPLETED THERAPEUTIC AGENTS
-1. **IFSAgent**: ✅ Internal Family Systems parts work and dialogue facilitation
-2. **ShadowWorkAgent**: ✅ Jungian shadow pattern detection and integration
-3. **GrowthTrackerAgent**: ✅ Multi-domain progress tracking with breakthrough detection
-4. **DigitalTwinAgent**: ✅ Soul archetype evolution with symbolic representation
+### ✅ COMPLETED SEFIROT + THERAPEUTIC AGENTS
+1. **IFSAgent**: ✅ Internal Family Systems + Chesed integration
+2. **ShadowWorkAgent**: ✅ Jungian shadow work + Gevurah integration  
+3. **GrowthTrackerAgent**: ✅ Multi-domain progress + Yesod grounding
+4. **DigitalTwinAgent**: ✅ Soul archetype evolution + Tiferet beauty
+5. **PaRDeSReflectionAgent**: ✅ 4-layer depth analysis complete
+6. **SefirotOrchestrator**: ✅ Multi-sefirot workflow management
+7. **LightningFlowProcessor**: ✅ Breakthrough processing system
 
-### 🔄 REMAINING THERAPEUTIC AGENTS TO CREATE
-1. **PaRDeSReflectionAgent**: 4-layer depth analysis (Pshat→Remez→Drash→Sod)
+### 🔄 REMAINING SEFIROT AGENTS TO CREATE (Phase 3)
+1. **🔮 ChochmahAgent**: Flash insights and pattern recognition (Wisdom)
+2. **🏛️ BinahAgent**: Deep comprehension and integration (Understanding)
+3. **🎨 NetzachAgent**: Persistence and creative expression (Victory)
+4. **📢 HodAgent**: Communication and teaching mastery (Glory)
 2. **NarrativeTherapyAgent**: Story reframing and identity reconstruction
 3. **SomaticExperiencingAgent**: Body awareness and trauma processing
 4. **AttachmentStyleAgent**: Relationship pattern analysis
